@@ -1,19 +1,25 @@
-
 import { GoogleGenAI } from "@google/genai";
-
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-  // In a real app, you'd handle this more gracefully.
-  // For this context, we'll proceed assuming it's set in the environment.
-  console.warn("API_KEY environment variable not set.");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
 
 const model = 'gemini-2.5-flash';
 
+// This function safely creates the GenAI client only when needed.
+const getGenAIClient = () => {
+    const API_KEY = process.env.API_KEY;
+    if (!API_KEY) {
+        console.error("Gemini API key is not configured. Please set the API_KEY environment variable in your deployment settings.");
+        return null;
+    }
+    return new GoogleGenAI({ apiKey: API_KEY });
+}
+
 export const askBYDAssistant = async (history: { role: 'user' | 'model'; parts: { text: string }[] }[], question: string) => {
+  const ai = getGenAIClient();
+
+  // If the client fails to initialize (e.g., missing key), return a user-friendly message.
+  if (!ai) {
+    return "I'm sorry, my AI capabilities are currently offline because the API key has not been configured correctly. Please contact the site administrator.";
+  }
+
   try {
     const chat = ai.chats.create({
       model: model,
