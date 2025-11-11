@@ -1,4 +1,8 @@
 
+
+// Fix: Import React to make it available for the global JSX declaration below.
+import React from 'react';
+
 export interface Vehicle {
   id: number;
   name: string;
@@ -13,6 +17,14 @@ export interface Vehicle {
   }[];
 }
 
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  password_hash: string; // In-memory "hash"
+  balance: number;
+}
+
 export interface EmailLog {
   id: number;
   sent_at?: Date | string;
@@ -25,6 +37,7 @@ export interface EmailLog {
 
 export interface Order {
     id: string;
+    userId?: number;
     customer_name: string;
     customer_email: string;
     vehicle_name: string;
@@ -56,4 +69,20 @@ export interface GiveawayEntry {
     raffle_code: string;
     payment_status: 'Paid';
     winner_status: 'No' | 'Yes';
+}
+
+export interface Investment {
+  id: number;
+  userId: number;
+  amount: number;
+  description: string;
+  date: string;
+}
+// Fix: Add global declaration for ion-icon to be recognized by TypeScript in JSX.
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'ion-icon': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { name: string; }, HTMLElement>;
+    }
+  }
 }

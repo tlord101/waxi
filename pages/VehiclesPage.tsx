@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import VehicleCard from '../components/VehicleCard';
-import { VEHICLES } from '../constants';
+import { getVehicles } from '../services/dbService';
 import { Page } from '../App';
 import { Vehicle } from '../types';
 import CompareBar from '../components/CompareBar';
@@ -21,6 +20,8 @@ const VehiclesPage: React.FC<VehiclesPageProps> = ({ setCurrentPage, onSelectFor
   // State for comparison feature
   const [compareList, setCompareList] = useState<Vehicle[]>([]);
   const [showCompareView, setShowCompareView] = useState(false);
+
+  const allVehicles = getVehicles();
 
   const handleToggleCompare = (vehicle: Vehicle) => {
     setCompareList(prev => {
@@ -46,7 +47,7 @@ const VehiclesPage: React.FC<VehiclesPageProps> = ({ setCurrentPage, onSelectFor
     setCompareList([]);
   };
 
-  const filteredVehicles = filter === 'All' ? VEHICLES : VEHICLES.filter(v => v.type === filter);
+  const filteredVehicles = filter === 'All' ? allVehicles : allVehicles.filter(v => v.type === filter);
   
   const vehicleTypes: VehicleType[] = ['All', 'Sedan', 'SUV', 'Hatchback', 'Commercial', 'Special'];
 

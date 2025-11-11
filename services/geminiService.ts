@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 
 const model = 'gemini-2.5-flash';
 
@@ -43,4 +43,70 @@ export const askBYDAssistant = async (history: { role: 'user' | 'model'; parts: 
     console.error("Error calling Gemini API:", error);
     return "I'm sorry, I'm having trouble connecting to my knowledge base right now. Please try again later.";
   }
+};
+
+export const getVehicleDetailsWithAI = async (vehicleName: string) => {
+    const ai = getGenAIClient();
+    if (!ai) {
+        return "AI capabilities are offline. API key is not configured.";
+    }
+
+    const schema = {
+        type: Type.OBJECT,
+        properties: {
+            type: {
+                type: Type.STRING,
+                description: 'The category of the vehicle.',
+                enum: ['Sedan', 'SUV', 'Hatchback', 'Commercial', 'Special'],
+            },
+            price: {
+                type: Type.NUMBER,
+                description: 'Estimated price in Chinese Yuan (CNY).',
+            },
+            description: {
+                type: Type.STRING,
+                description: 'A short, engaging marketing description for the vehicle.',
+            },
+            specs: {
+                type: Type.ARRAY,
+                description: 'A list of key technical specifications.',
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        icon: {
+                            type: Type.STRING,
+                            description: "An appropriate icon name from the Ionicons v7 library (e.g., 'flash-outline').",
+                        },
+                        name: {
+                            type: Type.STRING,
+                            description: "The name of the specification (e.g., 'Range').",
+                        },
+                        value: {
+                            type: Type.STRING,
+                            description: "The value of the specification (e.g., '700km').",
+                        },
+                    },
+                    required: ['icon', 'name', 'value'],
+                },
+            },
+        },
+        required: ['type', 'price', 'description', 'specs'],
+    };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: model,
+            contents: `Generate the vehicle details for the following model: "${vehicleName}". Provide an estimated price in Chinese Yuan (CNY). For specs, suggest an appropriate icon name from the Ionicons v7 library.`,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: schema,
+            },
+        });
+        
+        return response.text;
+
+    } catch (error) {
+        console.error("Error calling Gemini API for vehicle details:", error);
+        return "Failed to generate vehicle details. Please try again or fill them manually.";
+    }
 };

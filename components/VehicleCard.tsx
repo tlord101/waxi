@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Vehicle } from '../types';
 
@@ -31,7 +32,8 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallme
         <div className="grid grid-cols-2 gap-4 my-6 text-sm">
           {vehicle.specs.map(spec => (
             <div key={spec.name} className="flex items-center space-x-2">
-              <ion-icon name={spec.icon} class="text-byd-red text-xl"></ion-icon>
+              {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+              <ion-icon name={spec.icon} className="text-byd-red text-xl"></ion-icon>
               <div>
                 <p className="text-gray-500 dark:text-gray-400">{spec.name}</p>
                 <p className="font-bold text-black dark:text-white">{spec.value}</p>

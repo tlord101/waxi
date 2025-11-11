@@ -10,16 +10,23 @@ import ContactPage from './pages/ContactPage';
 import AIAssistant from './components/AIAssistant';
 import OrderPage from './pages/OrderPage';
 import AdminPage from './pages/AdminPage';
-import { Vehicle } from './types';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import DashboardPage from './pages/DashboardPage';
+import { Vehicle, User } from './types';
+import { addUser, loginUser } from './services/dbService';
 
-export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin';
+
+export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin' | 'Login' | 'Signup' | 'Dashboard';
 export type Theme = 'dark' | 'light';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('Home');
   const [selectedVehicleForInstallment, setSelectedVehicleForInstallment] = useState<Vehicle | null>(null);
   const [selectedVehicleForPurchase, setSelectedVehicleForPurchase] = useState<Vehicle | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined' && localStorage.getItem('byd-theme-mode')) {
       return localStorage.getItem('byd-theme-mode') as Theme;
@@ -54,23 +61,52 @@ const App: React.FC = () => {
     setCurrentPage('Order');
   };
 
-  const handleLogin = (password: string): boolean => {
-    if (password === 'admin123') {
-      setIsLoggedIn(true);
+  const handleAdminLogout = () => {
+    setIsAdminLoggedIn(false);
+    setCurrentPage('Home');
+  };
+
+  const handleUserLogin = (email: string, password: string): boolean => {
+    // Check for admin credentials first
+    if (email.toLowerCase() === 'admin@waxibyd.com' && password === 'admin101') {
+      setIsAdminLoggedIn(true);
       setCurrentPage('Admin');
+      return true;
+    }
+
+    // Proceed with regular user login
+    const user = loginUser(email, password);
+    if (user) {
+      setCurrentUser(user);
+      setCurrentPage('Dashboard');
+      return true;
+    }
+
+    return false;
+  };
+
+  const handleUserSignup = (name: string, email: string, password: string): boolean => {
+    const newUser = addUser(name, email, password);
+    if (newUser) {
+      setCurrentUser(newUser);
+      setCurrentPage('Dashboard');
       return true;
     }
     return false;
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const handleUserLogout = () => {
+    setCurrentUser(null);
     setCurrentPage('Home');
   };
   
   const renderPage = () => {
-    if (currentPage === 'Admin' && !isLoggedIn) {
-      return <HomePage setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} />;
+    // Protected routes
+    if (currentPage === 'Admin' && !isAdminLoggedIn) {
+      return <LoginPage onLogin={handleUserLogin} setCurrentPage={setCurrentPage} />;
+    }
+    if (currentPage === 'Dashboard' && !currentUser) {
+      return <LoginPage onLogin={handleUserLogin} setCurrentPage={setCurrentPage} />;
     }
 
     switch (currentPage) {
@@ -87,9 +123,15 @@ const App: React.FC = () => {
       case 'Contact':
         return <ContactPage />;
       case 'Order':
-        return <OrderPage vehicle={selectedVehicleForPurchase} setCurrentPage={setCurrentPage} />;
+        return <OrderPage vehicle={selectedVehicleForPurchase} setCurrentPage={setCurrentPage} currentUser={currentUser} setCurrentUser={setCurrentUser} />;
       case 'Admin':
         return <AdminPage />;
+      case 'Login':
+        return <LoginPage onLogin={handleUserLogin} setCurrentPage={setCurrentPage} />;
+      case 'Signup':
+        return <SignupPage onSignup={handleUserSignup} setCurrentPage={setCurrentPage} />;
+      case 'Dashboard':
+        return <DashboardPage user={currentUser!} onLogout={handleUserLogout} setCurrentPage={setCurrentPage} setCurrentUser={setCurrentUser} />;
       default:
         return <HomePage setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} />;
     }
@@ -100,9 +142,10 @@ const App: React.FC = () => {
       <Navbar 
         currentPage={currentPage} 
         setCurrentPage={setCurrentPage} 
-        isLoggedIn={isLoggedIn}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
+        isAdminLoggedIn={isAdminLoggedIn}
+        currentUser={currentUser}
+        onAdminLogout={handleAdminLogout}
+        onUserLogout={handleUserLogout}
         theme={theme}
         toggleTheme={toggleTheme}
       />

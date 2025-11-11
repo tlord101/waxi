@@ -1,13 +1,66 @@
-
-import React from 'react';
-import { VEHICLES } from '../../constants';
+import React, { useState, useEffect } from 'react';
+import { Vehicle } from '../../types';
+import { getVehicles, addVehicle, updateVehicle, deleteVehicle } from '../../services/dbService';
+import VehicleForm from './VehicleForm';
 
 const VehiclesTab: React.FC = () => {
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [view, setView] = useState<'list' | 'add' | 'edit'>('list');
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+
+  useEffect(() => {
+    setVehicles(getVehicles());
+  }, []);
+
+  const refreshVehicles = () => {
+    setVehicles(getVehicles());
+  };
+
+  const handleEditClick = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setView('edit');
+  };
+
+  const handleDeleteClick = (vehicleId: number) => {
+    if (window.confirm('Are you sure you want to delete this vehicle? This action cannot be undone.')) {
+      deleteVehicle(vehicleId);
+      refreshVehicles();
+    }
+  };
+
+  const handleFormSubmit = (vehicleData: Omit<Vehicle, 'id'> | Vehicle) => {
+    if ('id' in vehicleData) {
+      // Editing existing vehicle
+      updateVehicle(vehicleData);
+    } else {
+      // Adding new vehicle
+      addVehicle(vehicleData);
+    }
+    refreshVehicles();
+    setView('list');
+    setSelectedVehicle(null);
+  };
+
+  const handleCancel = () => {
+    setView('list');
+    setSelectedVehicle(null);
+  };
+  
+  if (view === 'add' || view === 'edit') {
+    return (
+        <VehicleForm 
+            initialVehicle={view === 'edit' ? selectedVehicle : null}
+            onSubmit={handleFormSubmit}
+            onCancel={handleCancel}
+        />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="text-right">
         <button 
-          onClick={() => alert('Opening form to add a new vehicle... (Simulated)')}
+          onClick={() => setView('add')}
           className="bg-byd-red text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-byd-red-dark transition-colors"
         >
           + Add New Vehicle
@@ -25,7 +78,7 @@ const VehiclesTab: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {VEHICLES.map((vehicle) => (
+            {vehicles.map((vehicle) => (
               <tr key={vehicle.id} className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                 <td className="px-6 py-4">
                   <img src={vehicle.imageUrl} alt={vehicle.name} className="w-16 h-12 object-cover rounded"/>
@@ -35,13 +88,13 @@ const VehiclesTab: React.FC = () => {
                 <td className="px-6 py-4">¥{vehicle.price.toLocaleString()}</td>
                 <td className="px-6 py-4 space-x-4">
                   <button 
-                    onClick={() => alert(`Editing ${vehicle.name}... (Simulated)`)}
+                    onClick={() => handleEditClick(vehicle)}
                     className="font-medium text-blue-500 dark:text-blue-400 hover:underline"
                   >
                     Edit
                   </button>
                   <button 
-                    onClick={() => alert(`Deleting ${vehicle.name}... (Simulated)`)}
+                    onClick={() => handleDeleteClick(vehicle.id)}
                     className="font-medium text-red-500 dark:text-red-400 hover:underline"
                   >
                     Delete

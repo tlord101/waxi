@@ -22,7 +22,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSelectPa
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <div className="flex items-center gap-3 mb-4">
-          <ion-icon name="lock-closed-outline" class="text-2xl"></ion-icon>
+          {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+          <ion-icon name="lock-closed-outline" className="text-2xl"></ion-icon>
           <h2 id="payment-modal-title" className="text-2xl font-bold">Secure Payment Notice</h2>
         </div>
         

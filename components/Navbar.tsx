@@ -3,29 +3,21 @@ import { Page, Theme } from '../App';
 import { NAV_LINKS } from '../constants';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
+import { User } from '../types';
 
 interface NavbarProps {
   currentPage: Page;
   setCurrentPage: (page: Page) => void;
-  isLoggedIn: boolean;
-  onLogin: (password: string) => boolean;
-  onLogout: () => void;
+  isAdminLoggedIn: boolean;
+  currentUser: User | null;
+  onAdminLogout: () => void;
+  onUserLogout: () => void;
   theme: Theme;
   toggleTheme: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isLoggedIn, onLogin, onLogout, theme, toggleTheme }) => {
+const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLoggedIn, currentUser, onAdminLogout, onUserLogout, theme, toggleTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleLoginClick = () => {
-    const password = prompt("Enter admin password:");
-    if (password) {
-      const success = onLogin(password);
-      if (!success) {
-        alert("Incorrect password.");
-      }
-    }
-  };
 
   return (
     <nav className="bg-white dark:bg-black text-black dark:text-white sticky top-0 z-50 shadow-lg dark:shadow-black/20 transition-colors duration-300">
@@ -49,37 +41,56 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isLoggedIn
                 {link.name}
               </a>
             ))}
+             {isAdminLoggedIn && (
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); setCurrentPage('Admin'); }}
+                className={`transition-colors duration-300 hover:text-byd-red hover:underline ${currentPage === 'Admin' ? 'text-byd-red font-semibold' : 'text-gray-700 dark:text-gray-200'}`}
+              >
+                Admin
+              </a>
+            )}
           </div>
 
           <div className="hidden lg:flex items-center space-x-4">
-             <button 
-              onClick={() => setCurrentPage('Giveaway')}
-              className="bg-yellow-400 text-black py-2 px-4 rounded-full hover:bg-yellow-500 transition-colors duration-300 font-semibold text-sm"
-            >
-              🎉 Apply for Giveaway
-            </button>
-            {isLoggedIn ? (
+            {currentUser ? (
               <div className="flex items-center space-x-4">
                  <button 
-                  onClick={() => setCurrentPage('Admin')}
+                  onClick={() => setCurrentPage('Dashboard')}
                   className="bg-gray-700 text-white py-2 px-6 rounded-full hover:bg-gray-600 transition-colors duration-300 font-semibold"
                 >
-                  Admin
+                  Dashboard
                 </button>
                 <button 
-                  onClick={onLogout}
+                  onClick={onUserLogout}
                   className="bg-byd-red text-white py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
                 >
                   Logout
                 </button>
               </div>
             ) : (
-              <button 
-                onClick={handleLoginClick}
-                className="bg-byd-red text-white py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
-              >
-                Login
-              </button>
+              <div className="flex items-center space-x-2">
+                <button 
+                  onClick={() => setCurrentPage('Login')}
+                  className="bg-byd-red text-white py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
+                >
+                  Login
+                </button>
+                 <button 
+                  onClick={() => setCurrentPage('Signup')}
+                  className="bg-transparent text-byd-red border border-byd-red py-2 px-6 rounded-full hover:bg-byd-red/10 transition-colors duration-300 font-semibold"
+                >
+                  Sign Up
+                </button>
+              </div>
+            )}
+             {isAdminLoggedIn && (
+                 <button 
+                  onClick={onAdminLogout}
+                  className="bg-gray-200 dark:bg-gray-700 text-black dark:text-white py-2 px-4 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 font-semibold text-sm"
+                >
+                  Admin Logout
+                </button>
             )}
              <ThemeToggle theme={theme} onToggle={toggleTheme} />
           </div>
@@ -112,34 +123,36 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isLoggedIn
               {link.name}
             </a>
           ))}
-           <button 
-              onClick={() => { setCurrentPage('Giveaway'); setIsOpen(false); }}
-              className="w-full bg-yellow-400 text-black mt-4 py-2 px-6 rounded-full hover:bg-yellow-500 transition-colors duration-300 font-semibold"
-            >
-             🎉 Apply for Giveaway
-            </button>
-            {isLoggedIn ? (
+            {currentUser ? (
                <div className="mt-4 space-y-3">
                  <button 
-                  onClick={() => { setCurrentPage('Admin'); setIsOpen(false); }}
+                  onClick={() => { setCurrentPage('Dashboard'); setIsOpen(false); }}
                   className="w-full bg-gray-700 text-white py-2 px-6 rounded-full hover:bg-gray-600 transition-colors duration-300 font-semibold"
                  >
-                   Admin
+                   Dashboard
                  </button>
                  <button 
-                  onClick={() => { onLogout(); setIsOpen(false); }}
+                  onClick={() => { onUserLogout(); setIsOpen(false); }}
                   className="w-full bg-byd-red text-white py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
                  >
                    Logout
                  </button>
                </div>
             ) : (
-               <button 
-                  onClick={() => { handleLoginClick(); setIsOpen(false); }}
-                  className="w-full bg-byd-red text-white mt-4 py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
-                >
-                  Login
-                </button>
+               <div className="mt-4 space-y-3">
+                 <button 
+                    onClick={() => { setCurrentPage('Login'); setIsOpen(false); }}
+                    className="w-full bg-byd-red text-white py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
+                  >
+                    Login
+                  </button>
+                   <button 
+                    onClick={() => { setCurrentPage('Signup'); setIsOpen(false); }}
+                    className="w-full bg-transparent text-byd-red border border-byd-red py-2 px-6 rounded-full hover:bg-byd-red/10 transition-colors duration-300 font-semibold"
+                  >
+                    Sign Up
+                  </button>
+               </div>
             )}
         </div>
       </div>

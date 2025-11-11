@@ -1,8 +1,7 @@
-
 import React from 'react';
 import Hero from '../components/Hero';
 import VehicleCard from '../components/VehicleCard';
-import { VEHICLES } from '../constants';
+import { getVehicles } from '../services/dbService';
 import { Page } from '../App';
 import { Vehicle } from '../types';
 
@@ -13,7 +12,7 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = ({ setCurrentPage, onSelectForInstallment, onSelectForPurchase }) => {
-  const featuredVehicles = VEHICLES.slice(0, 3);
+  const featuredVehicles = getVehicles().slice(0, 3);
 
   return (
     <div>
