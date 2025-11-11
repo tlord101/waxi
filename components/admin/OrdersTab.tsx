@@ -1,19 +1,31 @@
 
-import React, { useState } from 'react';
-import { getOrders, updateOrder } from '../../services/dbService';
+import React, { useState, useEffect } from 'react';
+import { fetchOrders, updateOrder } from '../../services/dbService';
 import { sendOrderConfirmation } from '../../services/emailService';
 import { Order } from '../../types';
 
 const OrdersTab: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>(getOrders());
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
+  const loadOrders = async () => {
+    setIsLoading(true);
+    const fetchedOrders = await fetchOrders();
+    setOrders(fetchedOrders);
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
   const handleVerifyPayment = async (order: Order) => {
     if (!order || !window.confirm(`Are you sure you want to verify payment for order ${order.id}?`)) {
         return;
     }
 
-    // 1. Update DB (simulated)
-    updateOrder(order.id, { payment_status: 'Paid', fulfillment_status: 'Processing' });
+    // 1. Update DB
+    await updateOrder(order.id, { payment_status: 'Paid', fulfillment_status: 'Processing' });
 
     // 2. Send final confirmation email to customer
     await sendOrderConfirmation(order.customer_email, {
@@ -25,7 +37,7 @@ const OrdersTab: React.FC = () => {
     alert(`Payment for order ${order.id} has been verified. The customer has been notified.`);
 
     // 3. Refresh UI
-    setOrders(getOrders());
+    await loadOrders();
   };
 
   const paymentStatusClasses = {
@@ -41,6 +53,10 @@ const OrdersTab: React.FC = () => {
     'Delivered': 'bg-green-100 dark:bg-green-200/20 text-green-800 dark:text-green-300',
     'Cancelled': 'bg-red-100 dark:bg-red-200/20 text-red-800 dark:text-red-300',
   };
+  
+  if (isLoading) {
+    return <div className="text-center p-8">Loading orders...</div>;
+  }
 
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md overflow-x-auto">

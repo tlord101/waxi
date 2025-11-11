@@ -1,13 +1,28 @@
-import React from 'react';
-import { getGiveawayEntries } from '../../services/dbService';
+import React, { useState, useEffect } from 'react';
+import { fetchGiveawayEntries } from '../../services/dbService';
+import { GiveawayEntry } from '../../types';
 
 const GiveawayTab: React.FC = () => {
-  const giveawayEntries = getGiveawayEntries();
+  const [giveawayEntries, setGiveawayEntries] = useState<GiveawayEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadEntries = async () => {
+      setIsLoading(true);
+      setGiveawayEntries(await fetchGiveawayEntries());
+      setIsLoading(false);
+    };
+    loadEntries();
+  }, []);
   
-  const handleMarkWinner = (id: number) => {
+  const handleMarkWinner = (id: string) => {
     // In a real app, you would update the state and database here.
     alert(`Marked entry #${id} as winner! (Simulated)`);
   };
+  
+  if (isLoading) {
+    return <div className="text-center p-8">Loading giveaway entries...</div>;
+  }
 
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md overflow-x-auto">

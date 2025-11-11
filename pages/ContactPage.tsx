@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const ContactPage: React.FC = () => {
@@ -46,17 +47,17 @@ const ContactPage: React.FC = () => {
                 <h2 className="text-3xl font-bold">Contact Information</h2>
                 <div className="space-y-4 text-lg text-gray-700 dark:text-gray-300">
                     <div className="flex items-start space-x-4">
-                        {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+                        {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
                         <ion-icon name="location-outline" className="text-byd-red text-2xl mt-1"></ion-icon>
                         <span>No. 888, BYD Avenue, Xishan District, Wuxi, Jiangsu, China</span>
                     </div>
                      <div className="flex items-center space-x-4">
-                        {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+                        {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
                         <ion-icon name="call-outline" className="text-byd-red text-2xl"></ion-icon>
                         <span>+86-510-1234-5678</span>
                     </div>
                      <div className="flex items-center space-x-4">
-                        {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+                        {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
                         <ion-icon name="mail-outline" className="text-byd-red text-2xl"></ion-icon>
                         <a href="mailto:sales@wuxibyd.com" className="hover:text-byd-red hover:underline transition-colors">sales@wuxibyd.com</a>
                     </div>

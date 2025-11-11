@@ -57,7 +57,7 @@ const InstallmentPage: React.FC<InstallmentPageProps> = ({ vehicle, setCurrentPa
     return (
       <div className="container mx-auto px-6 py-20 text-center">
         <div className="max-w-md mx-auto bg-gray-100 dark:bg-gray-900 p-8 rounded-xl shadow-lg">
-          {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+          {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
           <ion-icon name="car-sport-outline" className="text-byd-red text-6xl mb-4"></ion-icon>
           <h1 className="text-3xl font-bold mb-4">No Vehicle Selected</h1>
           <p className="text-gray-600 dark:text-gray-300 mb-6">Please choose a vehicle from our lineup to start your financing application.</p>
@@ -185,7 +185,7 @@ const InstallmentPage: React.FC<InstallmentPageProps> = ({ vehicle, setCurrentPa
         {/* Step 3: Success */}
         {step === 3 && (
             <div className="max-w-2xl mx-auto bg-gray-50 dark:bg-gray-900 p-8 rounded-xl shadow-lg text-center">
-                {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+                {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
                 <ion-icon name="checkmark-circle-outline" className="text-green-500 text-7xl mb-4"></ion-icon>
                 <h2 className="text-3xl font-bold mb-4">Congratulations, {fullName}!</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">

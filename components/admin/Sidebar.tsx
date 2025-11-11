@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { AdminTab } from '../../pages/AdminPage';
 
@@ -51,7 +52,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setI
                   : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-black dark:hover:text-white'
               }`}
             >
-              <ion-icon name={tab.icon} style={{ fontSize: '1.25rem' }}></ion-icon>
+              {/* FIX: Replaced class with className for ion-icon custom element */}
+              <ion-icon name={tab.icon} className="text-xl"></ion-icon>
               <span className="font-semibold">{tab.name}</span>
             </button>
           ))}

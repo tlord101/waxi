@@ -1,8 +1,23 @@
-import React from 'react';
-import { getInstallmentPlans } from '../../services/dbService';
+import React, { useState, useEffect } from 'react';
+import { fetchInstallmentPlans } from '../../services/dbService';
+import { InstallmentPlan } from '../../types';
 
 const InstallmentsTab: React.FC = () => {
-  const installmentPlans = getInstallmentPlans();
+  const [installmentPlans, setInstallmentPlans] = useState<InstallmentPlan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPlans = async () => {
+      setIsLoading(true);
+      setInstallmentPlans(await fetchInstallmentPlans());
+      setIsLoading(false);
+    };
+    loadPlans();
+  }, []);
+
+  if (isLoading) {
+    return <div className="text-center p-8">Loading installment plans...</div>;
+  }
 
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md overflow-x-auto">

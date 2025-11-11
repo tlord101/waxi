@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import VehicleCard from '../components/VehicleCard';
-import { getVehicles } from '../services/dbService';
 import { Page } from '../App';
 import { Vehicle } from '../types';
 import CompareBar from '../components/CompareBar';
@@ -9,19 +8,18 @@ import ComparisonView from '../components/ComparisonView';
 type VehicleType = 'All' | 'Sedan' | 'SUV' | 'Hatchback' | 'Commercial' | 'Special';
 
 interface VehiclesPageProps {
+  vehicles: Vehicle[];
   setCurrentPage: (page: Page) => void;
   onSelectForInstallment: (vehicle: Vehicle) => void;
   onSelectForPurchase: (vehicle: Vehicle) => void;
 }
 
-const VehiclesPage: React.FC<VehiclesPageProps> = ({ setCurrentPage, onSelectForInstallment, onSelectForPurchase }) => {
+const VehiclesPage: React.FC<VehiclesPageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase }) => {
   const [filter, setFilter] = useState<VehicleType>('All');
   
   // State for comparison feature
   const [compareList, setCompareList] = useState<Vehicle[]>([]);
   const [showCompareView, setShowCompareView] = useState(false);
-
-  const allVehicles = getVehicles();
 
   const handleToggleCompare = (vehicle: Vehicle) => {
     setCompareList(prev => {
@@ -39,7 +37,7 @@ const VehiclesPage: React.FC<VehiclesPageProps> = ({ setCurrentPage, onSelectFor
     });
   };
 
-  const handleRemoveFromCompare = (vehicleId: number) => {
+  const handleRemoveFromCompare = (vehicleId: string) => {
     setCompareList(prev => prev.filter(v => v.id !== vehicleId));
   };
   
@@ -47,7 +45,7 @@ const VehiclesPage: React.FC<VehiclesPageProps> = ({ setCurrentPage, onSelectFor
     setCompareList([]);
   };
 
-  const filteredVehicles = filter === 'All' ? allVehicles : allVehicles.filter(v => v.type === filter);
+  const filteredVehicles = filter === 'All' ? vehicles : vehicles.filter(v => v.type === filter);
   
   const vehicleTypes: VehicleType[] = ['All', 'Sedan', 'SUV', 'Hatchback', 'Commercial', 'Special'];
 

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Vehicle } from '../types';
 
@@ -45,7 +46,8 @@ const ComparisonView: React.FC<ComparisonViewProps> = ({ vehicles, onClose }) =>
           {/* Go Back Button */}
           <div className="justify-self-start">
             <button onClick={onClose} className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-byd-red dark:hover:text-byd-red transition-colors">
-              <ion-icon name="arrow-back-outline" style={{ fontSize: '1.5rem' }}></ion-icon>
+              {/* FIX: Replaced class with className for ion-icon custom element */}
+              <ion-icon name="arrow-back-outline" className="text-2xl"></ion-icon>
               <span className="font-semibold hidden sm:block">Back</span>
             </button>
           </div>
@@ -58,7 +60,8 @@ const ComparisonView: React.FC<ComparisonViewProps> = ({ vehicles, onClose }) =>
           {/* Close Button */}
           <div className="justify-self-end">
             <button onClick={onClose} className="text-gray-500 dark:text-gray-300 hover:text-byd-red dark:hover:text-byd-red">
-              <ion-icon name="close-outline" style={{ fontSize: '2rem' }}></ion-icon>
+              {/* FIX: Replaced class with className for ion-icon custom element */}
+              <ion-icon name="close-outline" className="text-3xl"></ion-icon>
             </button>
           </div>
         </div>

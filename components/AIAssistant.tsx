@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import { askBYDAssistant } from '../services/geminiService';
 
@@ -63,7 +64,8 @@ const AIAssistant: React.FC = () => {
           className="bg-byd-red text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:bg-byd-red-dark transition-colors"
           aria-label="Open AI Assistant"
         >
-            <ion-icon name="chatbubbles-outline" style={{ fontSize: '2rem' }}></ion-icon>
+            {/* FIX: Replaced class with className for ion-icon custom element */}
+            <ion-icon name="chatbubbles-outline" className="text-3xl"></ion-icon>
         </button>
       </div>
 
@@ -72,7 +74,8 @@ const AIAssistant: React.FC = () => {
         <div className="bg-white dark:bg-black text-black dark:text-white p-4 flex justify-between items-center rounded-t-lg sm:rounded-t-lg border-b border-gray-200 dark:border-gray-800">
           <h3 id="ai-assistant-header" className="font-bold text-lg">Ask BYD AI</h3>
           <button onClick={() => setIsOpen(false)} className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300" aria-label="Close chat">
-            <ion-icon name="close-outline" style={{ fontSize: '1.5rem' }}></ion-icon>
+            {/* FIX: Replaced class with className for ion-icon custom element */}
+            <ion-icon name="close-outline" className="text-2xl"></ion-icon>
           </button>
         </div>
 
@@ -118,7 +121,8 @@ const AIAssistant: React.FC = () => {
               className="bg-byd-red text-white py-2 px-5 rounded-r-full hover:bg-byd-red-dark disabled:bg-red-900/50 transition-all duration-300 hover:shadow-[0_0_12px_rgba(217,0,27,0.7)]"
               aria-label="Send message"
             >
-              <ion-icon name="send-outline" style={{ fontSize: '1.25rem' }}></ion-icon>
+              {/* FIX: Replaced class with className for ion-icon custom element */}
+              <ion-icon name="send-outline" className="text-xl"></ion-icon>
             </button>
           </div>
         </div>

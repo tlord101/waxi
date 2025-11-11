@@ -6,7 +6,7 @@ interface CompareBarProps {
   selectedVehicles: Vehicle[];
   onCompare: () => void;
   onClear: () => void;
-  onRemove: (vehicleId: number) => void;
+  onRemove: (vehicleId: string) => void;
 }
 
 const CompareBar: React.FC<CompareBarProps> = ({ selectedVehicles, onCompare, onClear, onRemove }) => {
@@ -20,7 +20,8 @@ const CompareBar: React.FC<CompareBarProps> = ({ selectedVehicles, onCompare, on
               <img src={v.imageUrl} alt={v.name} className="w-10 h-10 object-cover rounded"/>
               <span className="text-sm font-semibold text-black dark:text-white">{v.name}</span>
               <button onClick={() => onRemove(v.id)} className="text-gray-500 hover:text-red-500">
-                <ion-icon name="close-circle-outline"></ion-icon>
+                {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
+                <ion-icon name="close-circle-outline" className="text-lg"></ion-icon>
               </button>
             </div>
           ))}

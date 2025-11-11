@@ -109,7 +109,8 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
                                 </>
                             ) : (
                                <>
-                                  <ion-icon name="sparkles-outline"></ion-icon>
+                                  {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
+                                  <ion-icon name="sparkles-outline" className="text-sm"></ion-icon>
                                   <span>Auto-fill with AI</span>
                                </>
                             )}

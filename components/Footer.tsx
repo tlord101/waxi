@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Logo from './Logo';
 
@@ -57,14 +58,17 @@ const Footer: React.FC = () => {
             ©2025 Wuxi BYD Vehicle Co., Ltd. All Rights Reserved.
           </p>
           <div className="flex space-x-6">
+            {/* FIX: Replaced class with className for ion-icon custom element */}
             <a href="#" aria-label="LinkedIn" className="text-gray-400 hover:text-byd-red transition-colors">
-              <ion-icon name="logo-linkedin" style={{ fontSize: '1.5rem' }}></ion-icon>
+              <ion-icon name="logo-linkedin" className="text-2xl"></ion-icon>
             </a>
+            {/* FIX: Replaced class with className for ion-icon custom element */}
             <a href="#" aria-label="Instagram" className="text-gray-400 hover:text-byd-red transition-colors">
-              <ion-icon name="logo-instagram" style={{ fontSize: '1.5rem' }}></ion-icon>
+              <ion-icon name="logo-instagram" className="text-2xl"></ion-icon>
             </a>
+            {/* FIX: Replaced class with className for ion-icon custom element */}
             <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-byd-red transition-colors">
-              <ion-icon name="logo-facebook" style={{ fontSize: '1.5rem' }}></ion-icon>
+              <ion-icon name="logo-facebook" className="text-2xl"></ion-icon>
             </a>
           </div>
         </div>

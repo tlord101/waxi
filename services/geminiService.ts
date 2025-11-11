@@ -6,7 +6,7 @@ const model = 'gemini-2.5-flash';
 const getGenAIClient = () => {
     const API_KEY = process.env.API_KEY;
     if (!API_KEY) {
-        console.error("Gemini API key is not configured. Please set the API_KEY environment variable in your deployment settings.");
+        console.error("AI ASSISTANT OFFLINE: Gemini API key is not configured. Please set the API_KEY environment variable in your deployment settings. The AI assistant will not be functional.");
         return null;
     }
     return new GoogleGenAI({ apiKey: API_KEY });
@@ -103,7 +103,8 @@ export const getVehicleDetailsWithAI = async (vehicleName: string) => {
             },
         });
         
-        return response.text;
+        // FIX: Trim whitespace from the JSON string response before returning to ensure reliable parsing.
+        return response.text.trim();
 
     } catch (error) {
         console.error("Error calling Gemini API for vehicle details:", error);

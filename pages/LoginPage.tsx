@@ -3,22 +3,26 @@ import { Page } from '../App';
 import Logo from '../components/Logo';
 
 interface LoginPageProps {
-  onLogin: (email: string, password: string) => boolean;
+  onLogin: (email: string, password: string) => Promise<string>;
+  onGoogleSignIn: () => void;
   setCurrentPage: (page: Page) => void;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin, setCurrentPage }) => {
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onGoogleSignIn, setCurrentPage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleUserLogin = (e: React.FormEvent) => {
+  const handleUserLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    const success = onLogin(email, password);
-    if (!success) {
-      setError('Invalid email or password. Please try again.');
+    setIsLoading(true);
+    const result = await onLogin(email, password);
+    if (result !== 'success') {
+      setError(result);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -37,6 +41,26 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, setCurrentPage }) => {
               create a new account
             </button>
           </p>
+        </div>
+        <div className="space-y-6">
+          <button
+            onClick={onGoogleSignIn}
+            disabled={isLoading}
+            className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+          >
+            <svg className="w-5 h-5 mr-2" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 61.9l-72.2 68.7C305.8 97.4 278.2 82 248 82c-73.4 0-133.4 59.9-133.4 133.4s60 133.4 133.4 133.4c77.8 0 112.5-52.5 116.5-79.9H248v-65.7h239.5c1.4 11.2 2.5 22.8 2.5 34.6z"></path></svg>
+            Sign in with Google
+          </button>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white dark:bg-black text-gray-500 dark:text-gray-400">
+                Or continue with
+                </span>
+            </div>
+          </div>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleUserLogin}>
           {error && (
@@ -78,9 +102,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, setCurrentPage }) => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-byd-red hover:bg-byd-red-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-byd-red-dark"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-byd-red hover:bg-byd-red-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-byd-red-dark disabled:bg-byd-red/50"
             >
-              Sign in
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
         </form>

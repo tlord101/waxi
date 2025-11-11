@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 
 interface DashboardCardProps {
@@ -19,7 +20,8 @@ const DashboardCard: React.FC<DashboardCardProps> = ({ title, value, icon, color
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md flex items-center space-x-4">
       <div className={`p-3 rounded-full ${colorClasses[color]}`}>
-        <ion-icon name={icon} style={{ fontSize: '2rem' }}></ion-icon>
+        {/* FIX: Replaced class with className for ion-icon custom element */}
+        <ion-icon name={icon} className="text-3xl"></ion-icon>
       </div>
       <div>
         <p className="text-gray-500 dark:text-gray-400 text-sm">{title}</p>

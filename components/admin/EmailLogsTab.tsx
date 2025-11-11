@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getEmailLogs } from '../../services/dbService';
+import { fetchEmailLogs } from '../../services/dbService';
 import { EmailLog } from '../../types';
 
 const EmailViewerModal: React.FC<{ email: EmailLog | null; onClose: () => void }> = ({ email, onClose }) => {
@@ -42,21 +42,25 @@ const EmailViewerModal: React.FC<{ email: EmailLog | null; onClose: () => void }
 const EmailLogsTab: React.FC = () => {
   const [selectedEmail, setSelectedEmail] = useState<EmailLog | null>(null);
   const [logs, setLogs] = useState<EmailLog[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch logs on component mount and create an interval to check for new logs
   useEffect(() => {
-    setLogs(getEmailLogs());
-
-    const interval = setInterval(() => {
-        setLogs(getEmailLogs());
-    }, 1000); // Check for new emails every second
-
-    return () => clearInterval(interval);
+    const loadLogs = async () => {
+        setIsLoading(true);
+        const fetchedLogs = await fetchEmailLogs();
+        setLogs(fetchedLogs);
+        setIsLoading(false);
+    }
+    loadLogs();
   }, []);
 
   const handleViewEmail = (log: EmailLog) => {
     setSelectedEmail(log);
   };
+  
+  if (isLoading) {
+    return <div className="text-center p-8">Loading email logs...</div>;
+  }
 
   return (
     <>

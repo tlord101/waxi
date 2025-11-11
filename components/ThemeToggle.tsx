@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Theme } from '../App';
 
@@ -14,9 +15,11 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, onToggle }) => {
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
       {theme === 'light' ? (
-        <ion-icon name="moon-outline" style={{ fontSize: '1.5rem', display: 'block' }}></ion-icon>
+        // FIX: Replaced class with className for ion-icon custom element
+        <ion-icon name="moon-outline" className="text-2xl block"></ion-icon>
       ) : (
-        <ion-icon name="sunny-outline" style={{ fontSize: '1.5rem', display: 'block' }}></ion-icon>
+        // FIX: Replaced class with className for ion-icon custom element
+        <ion-icon name="sunny-outline" className="text-2xl block"></ion-icon>
       )}
     </button>
   );

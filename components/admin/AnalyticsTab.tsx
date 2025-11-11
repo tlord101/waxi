@@ -1,14 +1,25 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardCard from './DashboardCard';
 import BarChart from './BarChart';
-import { getOrders, getInstallmentPlans, getGiveawayEntries, getSalesOverTime } from '../../services/dbService';
+import { fetchOrders, fetchInstallmentPlans, fetchGiveawayEntries, getSalesOverTime } from '../../services/dbService';
+import { Order, InstallmentPlan, GiveawayEntry } from '../../types';
 
 const AnalyticsTab: React.FC = () => {
-  const orders = getOrders();
-  const installmentPlans = getInstallmentPlans();
-  const giveawayEntries = getGiveawayEntries();
-  const salesOverTime = getSalesOverTime();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [installmentPlans, setInstallmentPlans] = useState<InstallmentPlan[]>([]);
+  const [giveawayEntries, setGiveawayEntries] = useState<GiveawayEntry[]>([]);
+  const [salesData, setSalesData] = useState<{name: string, sales: number}[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setOrders(await fetchOrders());
+      setInstallmentPlans(await fetchInstallmentPlans());
+      setGiveawayEntries(await fetchGiveawayEntries());
+      setSalesData(await getSalesOverTime());
+    };
+    loadData();
+  }, []);
 
   const totalRevenue = orders.reduce((acc, order) => acc + order.total_price, 0);
   const totalOrders = orders.length;
@@ -49,7 +60,7 @@ const AnalyticsTab: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div className="lg:col-span-3 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
           <h3 className="text-xl font-bold mb-4 text-black dark:text-white">Sales Over Time</h3>
-          <BarChart data={salesOverTime} />
+          <BarChart data={salesData} />
         </div>
         <div className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
           <h3 className="text-xl font-bold mb-4 text-black dark:text-white">Recent Orders</h3>
@@ -62,7 +73,6 @@ const AnalyticsTab: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-gray-900 dark:text-white">¥{order.total_price.toLocaleString()}</p>
-                   {/* FIX: Property 'status' does not exist on type 'Order'. Use 'fulfillment_status' instead. */}
                    <span className={`text-xs px-2 py-1 rounded-full ${
                     order.fulfillment_status === 'Delivered' ? 'bg-green-100 dark:bg-green-200/20 text-green-800 dark:text-green-300' :
                     order.fulfillment_status === 'Processing' ? 'bg-yellow-100 dark:bg-yellow-200/20 text-yellow-800 dark:text-yellow-300' :

@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { User, Investment } from '../types';
+import { User, Investment, Order } from '../types';
 import { Page } from '../App';
 import { getInvestmentsForUser, addInvestment, updateUser } from '../services/dbService';
 
@@ -11,6 +12,8 @@ interface DashboardPageProps {
   onLogout: () => void;
   setCurrentPage: (page: Page) => void;
   setCurrentUser: (user: User) => void;
+  pendingOrder: Order | null;
+  onCompletePurchase: (order: Order) => void;
 }
 
 interface DashboardSidebarProps {
@@ -50,6 +53,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
         <div className="p-4 flex justify-between items-center md:hidden border-b border-gray-200 dark:border-gray-800">
            <h2 className="font-bold text-lg text-black dark:text-white">Menu</h2>
            <button onClick={() => setIsOpen(false)} className="text-2xl text-gray-500 dark:text-gray-400 hover:text-byd-red transition-colors">
+              {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
               <ion-icon name="close-outline"></ion-icon>
            </button>
         </div>
@@ -61,7 +65,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
                  onClick={() => handleTabClick(tab.name)}
                  className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 ${activeTab === tab.name ? 'bg-byd-red text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white'}`}
                >
-                 <ion-icon name={tab.icon} style={{ fontSize: '1.25rem' }}></ion-icon>
+                 {/* FIX: Replaced class with className for ion-icon custom element */}
+                 <ion-icon name={tab.icon} className="text-xl"></ion-icon>
                  <span className="font-semibold">{tab.name}</span>
                </button>
              ))}
@@ -84,13 +89,18 @@ const DashboardContent: React.FC<{
     const [investmentAmount, setInvestmentAmount] = useState('');
     const [investmentError, setInvestmentError] = useState('');
 
+    const fetchUserInvestments = async () => {
+        const userInvestments = await getInvestmentsForUser(user.id);
+        setInvestments(userInvestments);
+    };
+
     useEffect(() => {
         if (activeTab === 'Investments') {
-            setInvestments(getInvestmentsForUser(user.id));
+            fetchUserInvestments();
         }
     }, [activeTab, user.id]);
 
-    const handleInvestment = () => {
+    const handleInvestment = async () => {
         const amount = parseFloat(investmentAmount);
         setInvestmentError('');
 
@@ -104,17 +114,17 @@ const DashboardContent: React.FC<{
         }
 
         // 1. Update database
-        addInvestment({
+        await addInvestment({
             userId: user.id,
             amount,
             description: `User Investment #${Math.floor(Math.random() * 1000)}`
         });
         const newBalance = user.balance - amount;
-        updateUser(user.id, { balance: newBalance });
+        await updateUser(user.id, { balance: newBalance });
 
         // 2. Update local state
         setCurrentUser({ ...user, balance: newBalance });
-        setInvestments(getInvestmentsForUser(user.id)); // Refresh list
+        await fetchUserInvestments(); // Refresh list
         setInvestmentAmount('');
         alert(`Successfully invested ¥${amount.toLocaleString()}`);
     };
@@ -134,6 +144,7 @@ const DashboardContent: React.FC<{
                   className="mt-6 bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-6 rounded-full transition-colors duration-300 backdrop-blur-sm"
                 >
                   <span className="flex items-center gap-2">
+                    {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
                     <ion-icon name="add-circle-outline"></ion-icon>
                     <span>Deposit Funds</span>
                   </span>
@@ -242,8 +253,37 @@ const DashboardContent: React.FC<{
   );
 };
 
+const FloatingActionButton: React.FC<{ order: Order; onClick: () => void }> = ({ order, onClick }) => (
+    <button
+      onClick={onClick}
+      className="fixed bottom-8 right-8 z-20 bg-byd-red text-white py-3 px-5 rounded-full shadow-2xl flex items-center justify-center hover:bg-byd-red-dark transition-all duration-300 transform hover:scale-105 group"
+      aria-label={`Complete purchase for ${order.vehicle_name}`}
+    >
+        {/* FIX: Replaced class with className for ion-icon custom element */}
+        <ion-icon name="cloud-upload-outline" className="text-2xl"></ion-icon>
+        <span className="ml-2 font-semibold">Upload Receipt</span>
+    </button>
+);
 
-const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurrentPage, setCurrentUser }) => {
+const PendingPurchaseAlert: React.FC<{ order: Order; onClick: () => void }> = ({ order, onClick }) => (
+    <div className="mb-8 p-4 bg-yellow-400/10 border-l-4 border-yellow-500 text-yellow-700 dark:text-yellow-300 rounded-r-lg shadow-md animate-fade-in">
+        <div className="flex items-center justify-between">
+            <div>
+                <p className="font-bold">Action Required</p>
+                <p>You have a pending purchase for the <strong>{order.vehicle_name}</strong>. Please upload your payment receipt to complete the order.</p>
+            </div>
+            <button
+                onClick={onClick}
+                className="ml-4 flex-shrink-0 bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition-colors"
+            >
+                Complete Purchase
+            </button>
+        </div>
+    </div>
+);
+
+
+const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurrentPage, setCurrentUser, pendingOrder, onCompletePurchase }) => {
   const [activeTab, setActiveTab] = useState<DashboardTab>('Wallet');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -257,6 +297,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
               className="md:hidden text-2xl p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               aria-label="Open menu"
             >
+              {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
               <ion-icon name="menu-outline"></ion-icon>
             </button>
             <h1 className="text-4xl sm:text-5xl font-extrabold">My Dashboard</h1>
@@ -268,6 +309,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
             Logout
           </button>
         </div>
+        
+        {pendingOrder && (
+            <PendingPurchaseAlert order={pendingOrder} onClick={() => onCompletePurchase(pendingOrder)} />
+        )}
 
         <div className="flex flex-col md:flex-row gap-8">
           <DashboardSidebar 
@@ -287,6 +332,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
           </main>
         </div>
       </div>
+      {pendingOrder && (
+        <FloatingActionButton order={pendingOrder} onClick={() => onCompletePurchase(pendingOrder)} />
+      )}
     </div>
   );
 };

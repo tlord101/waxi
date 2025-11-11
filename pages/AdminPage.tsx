@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import Sidebar from '../components/admin/Sidebar';
 import AnalyticsTab from '../components/admin/AnalyticsTab';
@@ -49,7 +50,8 @@ const AdminPage: React.FC = () => {
             className="text-2xl text-black dark:text-white"
             aria-label="Open menu"
           >
-            <ion-icon name="menu-outline"></ion-icon>
+            {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
+            <ion-icon name="menu-outline" className="text-2xl"></ion-icon>
           </button>
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{activeTab}</h1>
         </header>

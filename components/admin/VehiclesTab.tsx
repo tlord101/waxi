@@ -1,42 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { Vehicle } from '../../types';
-import { getVehicles, addVehicle, updateVehicle, deleteVehicle } from '../../services/dbService';
+import { fetchVehicles, addVehicle, updateVehicle, deleteVehicle } from '../../services/dbService';
 import VehicleForm from './VehicleForm';
 
 const VehiclesTab: React.FC = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [view, setView] = useState<'list' | 'add' | 'edit'>('list');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const refreshVehicles = async () => {
+    setIsLoading(true);
+    const fetchedVehicles = await fetchVehicles();
+    setVehicles(fetchedVehicles);
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    setVehicles(getVehicles());
+    refreshVehicles();
   }, []);
-
-  const refreshVehicles = () => {
-    setVehicles(getVehicles());
-  };
 
   const handleEditClick = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
     setView('edit');
   };
 
-  const handleDeleteClick = (vehicleId: number) => {
+  const handleDeleteClick = async (vehicleId: string) => {
     if (window.confirm('Are you sure you want to delete this vehicle? This action cannot be undone.')) {
-      deleteVehicle(vehicleId);
-      refreshVehicles();
+      await deleteVehicle(vehicleId);
+      await refreshVehicles();
     }
   };
 
-  const handleFormSubmit = (vehicleData: Omit<Vehicle, 'id'> | Vehicle) => {
+  const handleFormSubmit = async (vehicleData: Omit<Vehicle, 'id'> | Vehicle) => {
     if ('id' in vehicleData) {
       // Editing existing vehicle
-      updateVehicle(vehicleData);
+      await updateVehicle(vehicleData);
     } else {
       // Adding new vehicle
-      addVehicle(vehicleData);
+      await addVehicle(vehicleData);
     }
-    refreshVehicles();
+    await refreshVehicles();
     setView('list');
     setSelectedVehicle(null);
   };
@@ -54,6 +58,10 @@ const VehiclesTab: React.FC = () => {
             onCancel={handleCancel}
         />
     );
+  }
+
+  if (isLoading) {
+    return <div className="text-center p-8">Loading vehicles...</div>;
   }
 
   return (

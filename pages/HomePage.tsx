@@ -1,18 +1,18 @@
 import React from 'react';
 import Hero from '../components/Hero';
 import VehicleCard from '../components/VehicleCard';
-import { getVehicles } from '../services/dbService';
 import { Page } from '../App';
 import { Vehicle } from '../types';
 
 interface HomePageProps {
+  vehicles: Vehicle[];
   setCurrentPage: (page: Page) => void;
   onSelectForInstallment: (vehicle: Vehicle) => void;
   onSelectForPurchase: (vehicle: Vehicle) => void;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ setCurrentPage, onSelectForInstallment, onSelectForPurchase }) => {
-  const featuredVehicles = getVehicles().slice(0, 3);
+const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase }) => {
+  const featuredVehicles = vehicles.slice(0, 3);
 
   return (
     <div>

@@ -1,10 +1,8 @@
-
-
 // Fix: Import React to make it available for the global JSX declaration below.
 import React from 'react';
 
 export interface Vehicle {
-  id: number;
+  id: string; // Use string for Firestore document IDs
   name: string;
   type: 'Sedan' | 'SUV' | 'Hatchback' | 'Commercial' | 'Special';
   price: number;
@@ -18,15 +16,14 @@ export interface Vehicle {
 }
 
 export interface User {
-  id: number;
+  id: string; // Firebase UID
   name: string;
   email: string;
-  password_hash: string; // In-memory "hash"
   balance: number;
 }
 
 export interface EmailLog {
-  id: number;
+  id: string;
   sent_at?: Date | string;
   email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'giveaway_winner' | 'payment_request_agent' | 'payment_receipt_agent';
   recipient: string;
@@ -37,11 +34,11 @@ export interface EmailLog {
 
 export interface Order {
     id: string;
-    userId?: number;
+    userId?: string;
     customer_name: string;
     customer_email: string;
     vehicle_name: string;
-    vehicle_id: number;
+    vehicle_id: string;
     total_price: number;
     order_date: string;
     payment_status: 'Pending' | 'Awaiting Receipt' | 'Verifying' | 'Paid' | 'Failed';
@@ -62,7 +59,7 @@ export interface InstallmentPlan {
 }
 
 export interface GiveawayEntry {
-    id: number;
+    id: string;
     name: string;
     email: string;
     country: string;
@@ -72,17 +69,19 @@ export interface GiveawayEntry {
 }
 
 export interface Investment {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
   amount: number;
   description: string;
   date: string;
 }
-// Fix: Add global declaration for ion-icon to be recognized by TypeScript in JSX.
+// Fix: Add global declaration for ion-icon. In React, JSX should use 'className' for CSS classes.
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      'ion-icon': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { name: string; }, HTMLElement>;
+      'ion-icon': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        name: string;
+      };
     }
   }
 }

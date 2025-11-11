@@ -1,314 +1,269 @@
 import { Order, InstallmentPlan, GiveawayEntry, EmailLog, User, Investment, Vehicle } from '../types';
+import { app, auth, db as firestoreDb } from './firebase';
 
-// This file simulates a real-time, in-memory database.
-// In a real application, these functions would make async calls to a service like Supabase.
+// --- GETTERS (Asynchronous Firestore queries) ---
 
-/**
- * Simulates a secure password hashing function.
- * In a real production environment, use a strong, salted hashing algorithm
- * like Argon2 or bcrypt on the server-side. This is for demonstration purposes only.
- */
-const hashPassword = (password: string): string => {
-  // This simple, non-secure transformation demonstrates the concept of hashing.
-  // It is not cryptographically secure and should not be used in production.
-  return `hashed_${password}_salted_v1`;
+export const fetchVehicles = async (): Promise<Vehicle[]> => {
+  try {
+    const snapshot = await firestoreDb.collection('vehicles').get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Vehicle));
+  } catch (error) {
+    console.error("Error fetching vehicles:", error);
+    return [];
+  }
+};
+
+export const fetchOrders = async (): Promise<Order[]> => {
+  try {
+    const snapshot = await firestoreDb.collection('orders').orderBy('order_date', 'desc').get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return [];
+  }
+};
+
+export const fetchInstallmentPlans = async (): Promise<InstallmentPlan[]> => {
+    try {
+        const snapshot = await firestoreDb.collection('installment_plans').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InstallmentPlan));
+    } catch (error) {
+        console.error("Error fetching installment plans:", error);
+        return [];
+    }
+};
+
+export const fetchGiveawayEntries = async (): Promise<GiveawayEntry[]> => {
+    try {
+        const snapshot = await firestoreDb.collection('giveaway_entries').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as GiveawayEntry));
+    } catch (error) {
+        console.error("Error fetching giveaway entries:", error);
+        return [];
+    }
 };
 
 
-const db = {
-  users: [
-    { id: 1, name: 'John Doe', email: 'john@example.com', password_hash: hashPassword('password123'), balance: 500000 },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', password_hash: hashPassword('securepass'), balance: 120000 },
-  ] as User[],
-  vehicles: [
-      {
-        id: 1,
-        name: 'BYD Seal',
-        type: 'Sedan',
-        price: 212800,
-        description: 'A sleek, high-performance electric sedan with Ocean Aesthetics design.',
-        imageUrl: 'https://picsum.photos/seed/bydseal/800/600',
-        specs: [
-          { icon: 'flash-outline', name: 'Range', value: '700km' },
-          { icon: 'rocket-outline', name: '0-100km/h', value: '3.8s' },
-          { icon: 'battery-charging-outline', name: 'Battery', value: '82.5 kWh' },
-          { icon: 'speedometer-outline', name: 'Top Speed', value: '180 km/h' },
-        ],
-      },
-      {
-        id: 2,
-        name: 'BYD Yuan Plus',
-        type: 'SUV',
-        price: 139800,
-        description: 'A dynamic and energetic compact SUV, formerly known as Atto 3.',
-        imageUrl: 'https://picsum.photos/seed/bydatto3/800/600',
-        specs: [
-          { icon: 'flash-outline', name: 'Range', value: '480km' },
-          { icon: 'rocket-outline', name: '0-100km/h', value: '7.3s' },
-          { icon: 'battery-charging-outline', name: 'Battery', value: '60.5 kWh' },
-          { icon: 'speedometer-outline', name: 'Top Speed', value: '160 km/h' },
-        ],
-      },
-      {
-        id: 3,
-        name: 'BYD Dolphin',
-        type: 'Hatchback',
-        price: 116800,
-        description: 'An agile and stylish city car, perfect for urban adventures.',
-        imageUrl: 'https://picsum.photos/seed/byddolphin/800/600',
-        specs: [
-          { icon: 'flash-outline', name: 'Range', value: '420km' },
-          { icon: 'rocket-outline', name: '0-100km/h', value: '7.9s' },
-          { icon: 'battery-charging-outline', name: 'Battery', value: '44.9 kWh' },
-          { icon: 'speedometer-outline', name: 'Top Speed', value: '150 km/h' },
-        ],
-      },
-      {
-        id: 4,
-        name: 'BYD Han EV',
-        type: 'Sedan',
-        price: 232800,
-        description: 'A flagship luxury sedan that redefines performance and comfort.',
-        imageUrl: 'https://picsum.photos/seed/bydhan/800/600',
-        specs: [
-          { icon: 'flash-outline', name: 'Range', value: '610km' },
-          { icon: 'rocket-outline', name: '0-100km/h', value: '3.9s' },
-          { icon: 'battery-charging-outline', name: 'Battery', value: '85.4 kWh' },
-          { icon: 'speedometer-outline', name: 'Top Speed', value: '185 km/h' },
-        ],
-      },
-      {
-        id: 5,
-        name: 'BYD Tang EV',
-        type: 'SUV',
-        price: 282800,
-        description: 'A powerful and spacious 7-seater SUV for the whole family.',
-        imageUrl: 'https://picsum.photos/seed/bydtang/800/600',
-        specs: [
-          { icon: 'flash-outline', name: 'Range', value: '505km' },
-          { icon: 'rocket-outline', name: '0-100km/h', value: '4.4s' },
-          { icon: 'battery-charging-outline', name: 'Battery', value: '86.4 kWh' },
-          { icon: 'people-outline', name: 'Seating', value: '7' },
-        ],
-      },
-      {
-        id: 6,
-        name: 'BYD Song Plus',
-        type: 'SUV',
-        price: 154800,
-        description: 'A best-selling compact SUV known for its efficiency and style.',
-        imageUrl: 'https://picsum.photos/seed/bydsong/800/600',
-        specs: [
-          { icon: 'flash-outline', name: 'Range', value: '505km' },
-          { icon: 'rocket-outline', name: '0-100km/h', value: '8.5s' },
-          { icon: 'battery-charging-outline', name: 'Battery', value: '71.7 kWh' },
-          { icon: 'speedometer-outline', name: 'Top Speed', value: '175 km/h' },
-        ],
-      },
-      {
-        id: 7,
-        name: 'BYD eBus',
-        type: 'Commercial',
-        price: 1800000,
-        description: 'A reliable and zero-emission solution for public transportation.',
-        imageUrl: 'https://picsum.photos/seed/bydebus/800/600',
-        specs: [
-          { icon: 'flash-outline', name: 'Range', value: '250km' },
-          { icon: 'people-outline', name: 'Capacity', value: '90 passengers' },
-          { icon: 'battery-charging-outline', name: 'Battery', value: '324 kWh' },
-          { icon: 'speedometer-outline', name: 'Top Speed', value: '70 km/h' },
-        ],
-      },
-      {
-        id: 8,
-        name: 'BYD eTruck',
-        type: 'Commercial',
-        price: 1200000,
-        description: 'A powerful and efficient electric truck for logistics and heavy-duty tasks.',
-        imageUrl: 'https://picsum.photos/seed/bydetruck/800/600',
-        specs: [
-          { icon: 'flash-outline', name: 'Range', value: '200km' },
-          { icon: 'layers-outline', name: 'Payload', value: '25 tons' },
-          { icon: 'battery-charging-outline', name: 'Battery', value: '177 kWh' },
-          { icon: 'speedometer-outline', name: 'Top Speed', value: '85 km/h' },
-        ],
-      },
-      {
-        id: 9,
-        name: 'Yangwang U8',
-        type: 'Special',
-        price: 1098000,
-        description: 'A luxury off-road SUV with advanced technology, including tank turns and float mode.',
-        imageUrl: 'https://picsum.photos/seed/bydu8/800/600',
-        specs: [
-          { icon: 'flash-outline', name: 'Range', value: '1000km' },
-          { icon: 'rocket-outline', name: '0-100km/h', value: '3.6s' },
-          { icon: 'power-outline', name: 'Horsepower', value: '1100 hp' },
-          { icon: 'water-outline', name: 'Special', value: 'Amphibious' },
-        ],
-      },
-    ] as Vehicle[],
-  orders: [
-    { id: 'ORD-001', userId: 1, customer_name: 'John Doe', customer_email: 'john@example.com', vehicle_name: 'BYD Seal', vehicle_id: 1, total_price: 212800, order_date: '2024-06-15', payment_status: 'Paid', fulfillment_status: 'Delivered', receipt_url: 'https://example.com/receipt1.pdf' },
-    { id: 'ORD-002', customer_name: 'Zhang Min', customer_email: 'zhang.min@example.com', vehicle_name: 'BYD Dolphin', vehicle_id: 3, total_price: 116800, order_date: '2024-06-20', payment_status: 'Paid', fulfillment_status: 'Processing', receipt_url: 'https://example.com/receipt2.pdf' },
-    { id: 'ORD-003', customer_name: 'Wang Hao', customer_email: 'wang.hao@example.com', vehicle_name: 'BYD Tang EV', vehicle_id: 5, total_price: 282800, order_date: '2024-06-22', payment_status: 'Paid', fulfillment_status: 'Delivered', receipt_url: 'https://example.com/receipt3.pdf' },
-    { id: 'ORD-004', userId: 2, customer_name: 'Jane Smith', customer_email: 'jane@example.com', vehicle_name: 'Yangwang U8', vehicle_id: 9, total_price: 1098000, order_date: '2024-06-25', payment_status: 'Verifying', fulfillment_status: 'Processing', receipt_url: 'https://example.com/receipt4.pdf' },
-  ] as Order[],
-  installment_plans: [
-    { id: 'INST-001', customer_name: 'Chen Jing', vehicle_name: 'BYD Yuan Plus', total_price: 139800, down_payment: 28000, monthly_payment: 3200, term_months: 36, start_date: '2024-05-01', status: 'Active' },
-    { id: 'INST-002', customer_name: 'Wu Yue', vehicle_name: 'BYD Han EV', total_price: 232800, down_payment: 50000, monthly_payment: 3900, term_months: 48, start_date: '2024-04-10', status: 'Active' },
-    { id: 'INST-003', customer_name: 'Zhao Feng', vehicle_name: 'BYD Song Plus', total_price: 154800, down_payment: 35000, monthly_payment: 2500, term_months: 48, start_date: '2023-01-15', status: 'Paid Off' },
-  ] as InstallmentPlan[],
-  giveaway_entries: [
-    { id: 1, name: 'Alice Smith', email: 'alice@example.com', country: 'United Kingdom', raffle_code: 'BYD2025-A1B2', payment_status: 'Paid', winner_status: 'No' },
-    { id: 2, name: 'Kenji Tanaka', email: 'kenji@example.com', country: 'Japan', raffle_code: 'BYD2025-C3D4', payment_status: 'Paid', winner_status: 'No' },
-    { id: 3, name: 'Maria Garcia', email: 'maria@example.com', country: 'France', raffle_code: 'BYD2025-E5F6', payment_status: 'Paid', winner_status: 'No' },
-    { id: 4, name: 'David Chen', email: 'david@example.com', country: 'Canada', raffle_code: 'BYD2025-G7H8', payment_status: 'Paid', winner_status: 'No' },
-  ] as GiveawayEntry[],
-  email_logs: [
-    { id: 1, email_type: 'order_confirmation', recipient: 'li.wei@example.com', subject: 'Your BYD Seal Order Confirmation', status: 'sent', sent_at: '2024-06-15T10:05:00Z', body: `<p>Dear Li Wei,</p><p>Thank you for your purchase! We've received your order for the <strong>BYD Seal</strong>.</p><p><strong>Total Amount:</strong> ¥212,800</p><p>Our team will contact you shortly to arrange the final details and delivery.</p>` },
-    { id: 2, email_type: 'installment_confirmation', recipient: 'chen.jing@example.com', subject: 'Your BYD Yuan Plus Financing Application is Approved!', status: 'sent', sent_at: '2024-05-01T14:20:00Z', body: `<p>Dear Chen Jing,</p><p>Congratulations! Your financing application for the <strong>BYD Yuan Plus</strong> has been successfully approved.</p><p>Your estimated monthly payment will be <strong>¥3,200.00</strong> for 36 months.</p>` },
-    { id: 3, email_type: 'giveaway_confirmation', recipient: 'alice@example.com', subject: 'Your BYD Dolphin Giveaway Entry is Confirmed!', status: 'sent', sent_at: '2024-06-18T09:00:00Z', body: `<p>Dear Alice Smith,</p><p>Thank you for entering our giveaway! Your entry is confirmed.</p><p>Your unique raffle code is: <strong>BYD2025-A1B2</strong></p><p>Good luck!</p>` },
-    { id: 4, email_type: 'order_confirmation', recipient: 'wang.hao@example.com', subject: 'Your BYD Tang EV Order Confirmation', status: 'sent', sent_at: '2024-06-22T11:30:00Z', body: `<p>Dear Wang Hao,</p><p>Thank you for your purchase! We've received your order for the <strong>BYD Tang EV</strong>.</p><p><strong>Total Amount:</strong> ¥282,800</p><p>Our team will contact you shortly to arrange the final details and delivery.</p>` },
-  ] as EmailLog[],
-  investments: [
-      { id: 1, userId: 1, amount: 25000, description: 'Renewable Energy Bond', date: '2024-03-10' },
-      { id: 2, userId: 1, amount: 10000, description: 'EV Battery Tech Stock', date: '2024-05-20' },
-  ] as Investment[],
+export const fetchEmailLogs = async (): Promise<EmailLog[]> => {
+  try {
+    const snapshot = await firestoreDb.collection('email_logs').orderBy('sent_at', 'desc').get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as EmailLog));
+  } catch (error) {
+    console.error("Error fetching email logs:", error);
+    return [];
+  }
 };
 
-// --- GETTERS ---
-export const getVehicles = (): Vehicle[] => [...db.vehicles];
-export const getOrders = (): Order[] => [...db.orders].sort((a, b) => new Date(b.order_date).getTime() - new Date(a.order_date).getTime());
-export const getInstallmentPlans = (): InstallmentPlan[] => db.installment_plans;
-export const getGiveawayEntries = (): GiveawayEntry[] => db.giveaway_entries;
-export const getEmailLogs = (): EmailLog[] => [...db.email_logs].sort((a, b) => new Date(b.sent_at as string).getTime() - new Date(a.sent_at as string).getTime());
-export const getSalesOverTime = () => [
-    { name: 'Jan', sales: 450000 },
-    { name: 'Feb', sales: 480000 },
-    { name: 'Mar', sales: 620000 },
-    { name: 'Apr', sales: 710000 },
-    { name: 'May', sales: 850000 },
-    { name: 'Jun', sales: 980000 },
-];
-export const getInvestmentsForUser = (userId: number): Investment[] => {
-    return [...db.investments.filter(inv => inv.userId === userId)].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+export const getSalesOverTime = async () => {
+    // This can be replaced with a real aggregation query in a production environment
+    // For now, returning static data for demonstration.
+    return [
+        { name: 'Jan', sales: 450000 },
+        { name: 'Feb', sales: 480000 },
+        { name: 'Mar', sales: 620000 },
+        { name: 'Apr', sales: 710000 },
+        { name: 'May', sales: 850000 },
+        { name: 'Jun', sales: 980000 },
+    ];
 };
 
-
-// --- USER ACTIONS ---
-export const findUserByEmail = (email: string): User | undefined => {
-  return db.users.find(user => user.email.toLowerCase() === email.toLowerCase());
+export const getInvestmentsForUser = async (userId: string): Promise<Investment[]> => {
+  try {
+    const snapshot = await firestoreDb.collection('investments')
+      .where('userId', '==', userId)
+      .orderBy('date', 'desc')
+      .get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Investment));
+  } catch (error) {
+    console.error("Error fetching investments for user:", error);
+    return [];
+  }
 };
 
-export const addUser = (name: string, email: string, password: string): User | null => {
-  if (findUserByEmail(email)) {
-    // User already exists
+export const getPendingOrderForUser = async (userId: string): Promise<Order | null> => {
+  try {
+    const snapshot = await firestoreDb.collection('orders')
+      .where('userId', '==', userId)
+      .where('payment_status', '==', 'Awaiting Receipt')
+      .limit(1)
+      .get();
+    if (snapshot.empty) {
+      return null;
+    }
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() } as Order;
+  } catch (error) {
+    console.error("Error fetching pending order:", error);
     return null;
   }
-  const newUser: User = {
-    id: Date.now(),
-    name,
-    email,
-    password_hash: hashPassword(password), // Store the hashed password
-    balance: 0, // Start with a zero balance
-  };
-  db.users.push(newUser);
-  console.log("New user added to DB:", newUser);
-  return newUser;
 };
 
-export const loginUser = (email: string, password: string): User | null => {
-  const user = findUserByEmail(email);
-  const providedPasswordHash = hashPassword(password);
 
-  // Compare the hashed version of the provided password with the stored hash
-  if (user && user.password_hash === providedPasswordHash) {
-    return user;
+// --- USER ACTIONS (Firebase Auth & Firestore) ---
+
+export const getUser = async (uid: string): Promise<User | null> => {
+  try {
+    const userDoc = await firestoreDb.collection('users').doc(uid).get();
+    if (userDoc.exists) {
+      return { id: userDoc.id, ...userDoc.data() } as User;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error getting user:", error);
+    return null;
   }
-  return null;
 };
 
-export const updateUser = (userId: number, updates: Partial<User>): User | undefined => {
-    const userIndex = db.users.findIndex(u => u.id === userId);
-    if (userIndex > -1) {
-        db.users[userIndex] = { ...db.users[userIndex], ...updates };
-        console.log("User updated in DB:", db.users[userIndex]);
-        return db.users[userIndex];
+export const signUpUser = async (name: string, email: string, password: string): Promise<{ success: boolean; user?: User; error?: string }> => {
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const firebaseUser = userCredential.user;
+        if (firebaseUser) {
+            // Create user profile in Firestore
+            const newUser: Omit<User, 'id'> = {
+                name,
+                email,
+                balance: 0,
+            };
+            await firestoreDb.collection('users').doc(firebaseUser.uid).set(newUser);
+            return { success: true, user: { id: firebaseUser.uid, ...newUser } };
+        }
+        return { success: false, error: 'User could not be created.' };
+    } catch (error: any) {
+        console.error("Signup error:", error);
+        return { success: false, error: error.message || 'An unexpected error occurred.' };
     }
-    return undefined;
 };
 
 
-// --- SETTERS / ACTIONS ---
-export const addEmailLog = (log: Omit<EmailLog, 'id' | 'sent_at'>): void => {
-    const newLog: EmailLog = {
-        ...log,
-        id: Date.now(),
-        sent_at: new Date().toISOString()
-    };
-    db.email_logs.push(newLog);
-    console.log("New email log added to DB:", newLog);
-};
-
-export const addOrder = (orderData: Omit<Order, 'id' | 'order_date'>): Order => {
-  const newOrder: Order = {
-    ...orderData,
-    id: `ORD-${String(Date.now()).slice(-4)}`,
-    order_date: new Date().toISOString().split('T')[0],
-  };
-  db.orders.unshift(newOrder); // Add to the top
-  console.log("New order added to DB:", newOrder);
-  return newOrder;
-};
-
-export const updateOrder = (orderId: string, updates: Partial<Order>): Order | undefined => {
-  const orderIndex = db.orders.findIndex(o => o.id === orderId);
-  if (orderIndex > -1) {
-    db.orders[orderIndex] = { ...db.orders[orderIndex], ...updates };
-    console.log("Order updated in DB:", db.orders[orderIndex]);
-    return db.orders[orderIndex];
+export const loginUser = async (email: string, password: string): Promise<User | null> => {
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    const firebaseUser = userCredential.user;
+    if (firebaseUser) {
+      return await getUser(firebaseUser.uid);
+    }
+    return null;
+  } catch (error) {
+    console.error("Login error:", error);
+    return null; // Or re-throw error to be handled in UI
   }
-  return undefined;
 };
 
-export const addInvestment = (investmentData: Omit<Investment, 'id' | 'date'>): Investment => {
-    const newInvestment: Investment = {
-        ...investmentData,
-        id: Date.now(),
-        date: new Date().toISOString().split('T')[0],
-    };
-    db.investments.push(newInvestment);
-    console.log("New investment added to DB:", newInvestment);
-    return newInvestment;
-};
+export const signInWithGoogle = async (): Promise<User | null> => {
+    try {
+        const provider = new (window as any).firebase.auth.GoogleAuthProvider();
+        const result = await auth.signInWithPopup(provider);
+        const firebaseUser = result.user;
 
-export const addVehicle = (vehicleData: Omit<Vehicle, 'id'>): Vehicle => {
-    const newVehicle: Vehicle = {
-        ...vehicleData,
-        id: Date.now(),
-    };
-    db.vehicles.push(newVehicle);
-    console.log("New vehicle added to DB:", newVehicle);
-    return newVehicle;
-};
-
-export const updateVehicle = (vehicleData: Vehicle): Vehicle | undefined => {
-    const vehicleIndex = db.vehicles.findIndex(v => v.id === vehicleData.id);
-    if (vehicleIndex > -1) {
-        db.vehicles[vehicleIndex] = vehicleData;
-        console.log("Vehicle updated in DB:", db.vehicles[vehicleIndex]);
-        return db.vehicles[vehicleIndex];
+        if (firebaseUser) {
+            // Check if user already exists in Firestore
+            const userDoc = await firestoreDb.collection('users').doc(firebaseUser.uid).get();
+            if (!userDoc.exists) {
+                // If new user, create a profile in Firestore
+                const newUser: Omit<User, 'id'> = {
+                    name: firebaseUser.displayName || 'Google User',
+                    email: firebaseUser.email!,
+                    balance: 0,
+                };
+                await firestoreDb.collection('users').doc(firebaseUser.uid).set(newUser);
+                return { id: firebaseUser.uid, ...newUser };
+            }
+            // If user exists, return their data
+            return { id: userDoc.id, ...userDoc.data() } as User;
+        }
+        return null;
+    } catch (error) {
+        console.error("Google Sign-In Error:", error);
+        throw error;
     }
-    return undefined;
 };
 
-export const deleteVehicle = (vehicleId: number): boolean => {
-    const initialLength = db.vehicles.length;
-    db.vehicles = db.vehicles.filter(v => v.id !== vehicleId);
-    const success = db.vehicles.length < initialLength;
-    if (success) {
-        console.log(`Vehicle with ID ${vehicleId} deleted from DB.`);
+export const logoutUser = async (): Promise<void> => {
+  try {
+    await auth.signOut();
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+};
+
+export const updateUser = async (userId: string, updates: Partial<User>): Promise<void> => {
+    try {
+        await firestoreDb.collection('users').doc(userId).update(updates);
+    } catch (error) {
+        console.error("Error updating user:", error);
     }
-    return success;
+};
+
+// --- SETTERS / ACTIONS (Firestore writes) ---
+export const addEmailLog = async (log: Omit<EmailLog, 'id' | 'sent_at'>): Promise<void> => {
+    try {
+        await firestoreDb.collection('email_logs').add({
+            ...log,
+            sent_at: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error("Error adding email log:", error);
+    }
+};
+
+export const addOrder = async (orderData: Omit<Order, 'id' | 'order_date'>): Promise<Order> => {
+  try {
+    const docRef = await firestoreDb.collection('orders').add({
+      ...orderData,
+      order_date: new Date().toISOString().split('T')[0],
+    });
+    return { ...orderData, id: docRef.id, order_date: new Date().toISOString().split('T')[0] };
+  } catch (error) {
+    console.error("Error adding order:", error);
+    throw error;
+  }
+};
+
+export const updateOrder = async (orderId: string, updates: Partial<Order>): Promise<void> => {
+  try {
+    await firestoreDb.collection('orders').doc(orderId).update(updates);
+  } catch (error) {
+    console.error("Error updating order:", error);
+  }
+};
+
+export const addInvestment = async (investmentData: Omit<Investment, 'id' | 'date'>): Promise<Investment> => {
+    try {
+        const docRef = await firestoreDb.collection('investments').add({
+            ...investmentData,
+            date: new Date().toISOString().split('T')[0],
+        });
+        return { ...investmentData, id: docRef.id, date: new Date().toISOString().split('T')[0] };
+    } catch (error) {
+        console.error("Error adding investment:", error);
+        throw error;
+    }
+};
+
+export const addVehicle = async (vehicleData: Omit<Vehicle, 'id'>): Promise<Vehicle> => {
+    try {
+        const docRef = await firestoreDb.collection('vehicles').add(vehicleData);
+        return { ...vehicleData, id: docRef.id };
+    } catch (error) {
+        console.error("Error adding vehicle:", error);
+        throw error;
+    }
+};
+
+export const updateVehicle = async (vehicleData: Vehicle): Promise<void> => {
+    try {
+        const { id, ...data } = vehicleData;
+        await firestoreDb.collection('vehicles').doc(id).update(data);
+    } catch (error) {
+        console.error("Error updating vehicle:", error);
+    }
+};
+
+export const deleteVehicle = async (vehicleId: string): Promise<void> => {
+    try {
+        await firestoreDb.collection('vehicles').doc(vehicleId).delete();
+    } catch (error) {
+        console.error("Error deleting vehicle:", error);
+    }
 };

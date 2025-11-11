@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Vehicle, Order, User } from '../types';
 import { Page } from '../App';
@@ -10,9 +11,10 @@ interface OrderPageProps {
   setCurrentPage: (page: Page) => void;
   currentUser: User | null;
   setCurrentUser: (user: User) => void;
+  pendingOrder: Order | null;
 }
 
-const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentUser, setCurrentUser }) => {
+const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentUser, setCurrentUser, pendingOrder }) => {
   const [step, setStep] = useState<'FORM' | 'AWAITING_PAYMENT_DETAILS' | 'UPLOAD_RECEIPT' | 'PENDING_CONFIRMATION' | 'CONFIRMED'>('FORM');
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -22,15 +24,24 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   useEffect(() => {
-    if (currentUser) {
+    // If there's a pending order for the user, and the currently selected vehicle matches it,
+    // then we are resuming this specific pending order.
+    if (pendingOrder && vehicle && pendingOrder.vehicle_id === vehicle.id) {
+        setFullName(pendingOrder.customer_name);
+        setEmail(pendingOrder.customer_email);
+        setCurrentOrder(pendingOrder);
+        setStep('UPLOAD_RECEIPT'); // Jump straight to upload step
+    } else if (currentUser) {
+        // This is a new order, just pre-fill user info from their profile.
         setFullName(currentUser.name);
         setEmail(currentUser.email);
+        setStep('FORM'); // Ensure we start at the form
+        setCurrentOrder(null); // Clear any previous order state
     }
-  }, [currentUser]);
+  }, [pendingOrder, vehicle, currentUser]);
 
 
-  const handleOpenPaymentModal = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleOpenPaymentModal = () => {
     if (!vehicle || !fullName || !email) return;
     setIsPaymentModalOpen(true);
   };
@@ -48,7 +59,8 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
     setCurrentUser({ ...currentUser, balance: newBalance });
 
     // 2. Create order in DB with 'Paid' status
-    const newOrder = addOrder({
+    // Fix: Await the promise returned by addOrder
+    const newOrder = await addOrder({
         userId: currentUser.id,
         customer_name: fullName,
         customer_email: email,
@@ -78,7 +90,8 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
     setIsProcessing(true);
 
     // 1. Create a new order record in the database
-    const newOrder = addOrder({
+    // Fix: Await the promise returned by addOrder
+    const newOrder = await addOrder({
         userId: currentUser?.id,
         customer_name: fullName,
         customer_email: email,
@@ -144,7 +157,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
     return (
       <div className="container mx-auto px-6 py-20 text-center">
         <div className="max-w-md mx-auto bg-gray-100 dark:bg-gray-900 p-8 rounded-xl shadow-lg">
-          {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+          {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
           <ion-icon name="car-sport-outline" className="text-byd-red text-6xl mb-4"></ion-icon>
           <h1 className="text-3xl font-bold mb-4">No Vehicle Selected for Purchase</h1>
           <p className="text-gray-600 dark:text-gray-300 mb-6">Please choose a vehicle from our lineup to begin the purchase process.</p>
@@ -159,13 +172,34 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
     );
   }
 
+  // Safeguard: User must be logged in to access the order page.
+  if (!currentUser) {
+    return (
+        <div className="container mx-auto px-6 py-20 text-center">
+            <div className="max-w-md mx-auto bg-gray-100 dark:bg-gray-900 p-8 rounded-xl shadow-lg">
+                {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
+                <ion-icon name="log-in-outline" className="text-byd-red text-6xl mb-4"></ion-icon>
+                <h1 className="text-3xl font-bold mb-4">Login Required</h1>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">You must be logged in to make a purchase.</p>
+                <button
+                    onClick={() => setCurrentPage('Login')}
+                    className="bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300"
+                >
+                    Go to Login
+                </button>
+            </div>
+        </div>
+    );
+  }
+
   const renderContent = () => {
     switch (step) {
       case 'FORM':
-        const canAfford = currentUser && currentUser.balance >= vehicle.price;
+        const canAfford = currentUser.balance >= vehicle.price;
         return (
-          <form onSubmit={handleOpenPaymentModal}>
+          <form onSubmit={(e) => e.preventDefault()}>
             <div className="max-w-4xl mx-auto bg-gray-50 dark:bg-gray-900 p-8 rounded-xl shadow-lg flex flex-col lg:flex-row gap-8">
+              {/* Vehicle Summary */}
               <div className="lg:w-1/2">
                 <h2 className="text-2xl font-bold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Order Summary</h2>
                 <img src={vehicle.imageUrl} alt={vehicle.name} className="w-full h-64 object-cover rounded-lg mb-4"/>
@@ -173,34 +207,48 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
                 <p className="text-gray-500 dark:text-gray-400 mb-4">{vehicle.type}</p>
                 <div className="text-4xl font-extrabold">¥{vehicle.price.toLocaleString()}</div>
               </div>
+              
+              {/* User Info & Payment */}
               <div className="lg:w-1/2 space-y-6 flex flex-col justify-center">
                 <h2 className="text-2xl font-bold border-b border-gray-200 dark:border-gray-700 pb-2">Your Information</h2>
                 <div>
                   <label htmlFor="fullName" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Full Name</label>
-                  <input type="text" id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} required disabled={!!currentUser} className="mt-1 block w-full p-3 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-byd-red focus:border-byd-red disabled:bg-gray-200 dark:disabled:bg-gray-800"/>
+                  <input type="text" id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} required disabled className="mt-1 block w-full p-3 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-byd-red focus:border-byd-red disabled:bg-gray-200 dark:disabled:bg-gray-800"/>
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-600 dark:text-gray-300">Email Address</label>
-                  <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required disabled={!!currentUser} className="mt-1 block w-full p-3 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-byd-red focus:border-byd-red disabled:bg-gray-200 dark:disabled:bg-gray-800"/>
+                  <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required disabled className="mt-1 block w-full p-3 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-byd-red focus:border-byd-red disabled:bg-gray-200 dark:disabled:bg-gray-800"/>
                 </div>
-                
-                {currentUser && (
-                    <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
-                        <p className="text-sm text-blue-700 dark:text-blue-300">Your current balance is <strong>¥{currentUser.balance.toLocaleString()}</strong></p>
+
+                <h2 className="text-2xl font-bold border-b border-gray-200 dark:border-gray-700 pb-2 pt-6">Payment Method</h2>
+                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
+                    <p className="text-sm text-blue-700 dark:text-blue-300">Your current wallet balance is <strong>¥{currentUser.balance.toLocaleString()}</strong></p>
+                </div>
+
+                {canAfford ? (
+                    <div className="space-y-3">
+                        <button type="button" onClick={handlePayWithWallet} disabled={isProcessing} className="w-full bg-green-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-green-700 transition-colors duration-300 disabled:bg-gray-500 flex items-center justify-center gap-2">
+                            <ion-icon name="wallet-outline"></ion-icon>
+                            {isProcessing ? 'Processing...' : `Pay ¥${vehicle.price.toLocaleString()} with Wallet`}
+                        </button>
+                        <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+                            <span>or, </span>
+                            <button type="button" onClick={handleOpenPaymentModal} className="font-medium text-byd-red hover:underline">
+                                use other payment methods.
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 rounded-lg text-center">
+                            <p className="font-bold">Insufficient Funds</p>
+                            <p className="text-sm">Your wallet balance is too low for this purchase.</p>
+                        </div>
+                        <button type="button" onClick={handleOpenPaymentModal} disabled={isProcessing} className="w-full bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300 disabled:bg-gray-500">
+                            {isProcessing ? 'Processing...' : 'Pay with Agent (Bank/Crypto)'}
+                        </button>
                     </div>
                 )}
-                
-                {canAfford ? (
-                    <button type="button" onClick={handlePayWithWallet} disabled={isProcessing} className="w-full bg-green-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-green-700 transition-colors duration-300 disabled:bg-gray-500">
-                        {isProcessing ? 'Processing...' : 'Pay with Wallet'}
-                    </button>
-                ) : (
-                    <p className="text-sm text-yellow-600 dark:text-yellow-400 text-center">{currentUser ? 'Insufficient balance for direct purchase.' : ''}</p>
-                )}
-
-                <button type="submit" disabled={isProcessing} className="w-full bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300 disabled:bg-gray-500">
-                  {isProcessing ? 'Processing...' : 'Pay with Agent'}
-                </button>
               </div>
             </div>
           </form>
@@ -209,7 +257,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
       case 'AWAITING_PAYMENT_DETAILS':
         return (
             <div className="max-w-2xl mx-auto bg-gray-100 dark:bg-gray-900 p-8 rounded-xl shadow-lg text-center">
-                {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+                {/* FIX: Replaced 'class' with 'className' to conform to React standards */}
                 <ion-icon name="mail-outline" className="text-blue-500 text-7xl mb-4"></ion-icon>
                 <h2 className="text-3xl font-bold mb-4">Check Your Email!</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">Our payment agent has been notified. They will send an email to <strong>{email}</strong> shortly with instructions on how to complete your payment.</p>
@@ -223,7 +271,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
       case 'UPLOAD_RECEIPT':
         return (
             <form onSubmit={handleSubmitReceipt} className="max-w-2xl mx-auto bg-gray-100 dark:bg-gray-900 p-8 rounded-xl shadow-lg text-center">
-                {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+                {/* FIX: Replaced 'class' with 'className' to conform to React standards */}
                 <ion-icon name="cloud-upload-outline" className="text-byd-red text-7xl mb-4"></ion-icon>
                 <h2 className="text-3xl font-bold mb-4">Upload Payment Receipt</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">Please upload a clear image or PDF of your payment receipt for order <strong>{currentOrder?.id}</strong> to confirm your purchase.</p>
@@ -246,7 +294,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
       case 'PENDING_CONFIRMATION':
         return (
             <div className="max-w-2xl mx-auto bg-gray-100 dark:bg-gray-900 p-8 rounded-xl shadow-lg text-center">
-                {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+                {/* FIX: Replaced 'class' with 'className' to conform to React standards */}
                 <ion-icon name="time-outline" className="text-yellow-500 text-7xl mb-4"></ion-icon>
                 <h2 className="text-3xl font-bold mb-4">Receipt Submitted!</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">Thank you! We have received your payment receipt. Our agent is now verifying the transaction.</p>
@@ -260,7 +308,7 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
       case 'CONFIRMED':
         return (
             <div className="max-w-2xl mx-auto bg-gray-100 dark:bg-gray-900 p-8 rounded-xl shadow-lg text-center">
-                {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+                {/* FIX: Replaced 'class' with 'className' to conform to React standards */}
                 <ion-icon name="checkmark-circle-outline" className="text-green-500 text-7xl mb-4"></ion-icon>
                 <h1 className="text-3xl font-bold mb-4">Thank You For Your Order, {fullName}!</h1>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">Your purchase of the {vehicle.name} is complete. A confirmation email has been sent to <strong>{email}</strong>.</p>

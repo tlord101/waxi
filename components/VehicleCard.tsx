@@ -32,7 +32,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallme
         <div className="grid grid-cols-2 gap-4 my-6 text-sm">
           {vehicle.specs.map(spec => (
             <div key={spec.name} className="flex items-center space-x-2">
-              {/* Fix: Replaced 'class' with 'className' for JSX compatibility. */}
+              {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element to align with React standards. */}
               <ion-icon name={spec.icon} className="text-byd-red text-xl"></ion-icon>
               <div>
                 <p className="text-gray-500 dark:text-gray-400">{spec.name}</p>
