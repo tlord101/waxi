@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 // FIX: Import Page from types.ts to break circular dependency.
 import { User, Investment, Order, Page, Deposit } from '../types';
-import { getInvestmentsForUser, addInvestment, updateUser, getPendingDepositForUser, addDeposit } from '../services/dbService';
-import { sendDepositRequestToAgent } from '../services/emailService';
+import { getInvestmentsForUser, addInvestment, updateUser, getPendingDepositForUser, addDeposit, updateDeposit } from '../services/dbService';
+import { sendDepositRequestToAgent, sendDepositReceiptToAgent } from '../services/emailService';
 import PaymentModal from '../components/PaymentModal';
 
 type DashboardTab = 'Wallet' | 'Investments' | 'Purchases' | 'Deposit Funds' | 'Actions';
@@ -94,6 +94,8 @@ const DashboardContent: React.FC<{
     const [depositError, setDepositError] = useState('');
     const [pendingDeposit, setPendingDeposit] = useState<Deposit | null>(null);
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [receiptFile, setReceiptFile] = useState<File | null>(null);
+    const [isSubmittingReceipt, setIsSubmittingReceipt] = useState(false);
 
 
     const fetchUserInvestments = async () => {
@@ -165,7 +167,6 @@ const DashboardContent: React.FC<{
             userEmail: user.email,
             amount: amount,
             method: method === 'crypto' ? 'Crypto' : 'Bank Deposit',
-            status: 'Pending',
         });
         setPendingDeposit(newDeposit);
 
@@ -178,6 +179,52 @@ const DashboardContent: React.FC<{
         });
 
         setDepositAmount(''); // Clear the input
+    };
+
+     const handleReceiptFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+        setReceiptFile(e.target.files[0]);
+        }
+    };
+
+    const handleSubmitDepositReceipt = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!receiptFile || !pendingDeposit) {
+            alert("Please select a receipt file to upload.");
+            return;
+        }
+        setIsSubmittingReceipt(true);
+        
+        try {
+            // 1. Simulate file upload and get a URL
+            const fakeReceiptUrl = `https://example.com/receipts/deposits/${pendingDeposit.id}/${receiptFile.name}`;
+
+            // 2. Update deposit status in the database
+            const updates: Partial<Deposit> = {
+                status: 'Verifying',
+                receipt_url: fakeReceiptUrl,
+            };
+            await updateDeposit(pendingDeposit.id, updates);
+
+            // 3. Notify agent that receipt has been submitted
+            await sendDepositReceiptToAgent({
+                userName: user.name,
+                userEmail: user.email,
+                depositId: pendingDeposit.id,
+                amount: pendingDeposit.amount,
+                receiptUrl: fakeReceiptUrl,
+            });
+
+            // 4. Update local state to reflect the change
+            setPendingDeposit({ ...pendingDeposit, ...updates });
+            setReceiptFile(null);
+
+        } catch (error) {
+            alert("An error occurred while submitting your receipt. Please try again.");
+            console.error("Receipt submission error:", error);
+        } finally {
+            setIsSubmittingReceipt(false);
+        }
     };
 
     const renderContent = () => {
@@ -261,14 +308,45 @@ const DashboardContent: React.FC<{
             <div className="animate-fade-in">
                 <h2 className="text-3xl font-bold mb-6">Make a Deposit</h2>
                 {pendingDeposit ? (
-                    <div className="bg-blue-500/10 border-l-4 border-blue-500 text-blue-700 dark:text-blue-300 p-6 rounded-r-lg text-center">
-                        <ion-icon name="mail-outline" className="text-5xl mb-2"></ion-icon>
-                        <h3 className="font-bold text-xl">Deposit in Progress</h3>
-                        <p className="mt-2">
-                            Your deposit request for <strong>¥{pendingDeposit.amount.toLocaleString()}</strong> has been submitted.
-                        </p>
-                        <p>Please check your email at <strong>{user.email}</strong> for payment instructions from our agent.</p>
-                    </div>
+                     <>
+                        {pendingDeposit.status === 'Awaiting Receipt' && (
+                            <div className="bg-blue-500/10 border-l-4 border-blue-500 text-blue-700 dark:text-blue-300 p-6 rounded-r-lg">
+                                <ion-icon name="mail-outline" className="text-5xl mb-2 mx-auto block"></ion-icon>
+                                <h3 className="font-bold text-xl text-center">Deposit Initiated</h3>
+                                <p className="mt-2 text-center">
+                                    Your deposit request for <strong>¥{pendingDeposit.amount.toLocaleString()}</strong> has been submitted.
+                                    Please check your email at <strong>{user.email}</strong> for payment instructions from our agent.
+                                </p>
+                                <form onSubmit={handleSubmitDepositReceipt} className="mt-6 p-4 bg-white/50 dark:bg-black/20 rounded-lg">
+                                    <h4 className="font-bold text-lg mb-2 text-center text-black dark:text-white">Upload Your Receipt</h4>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">After making the payment, upload the receipt here to complete the process.</p>
+                                    <div className="mb-4">
+                                        <label htmlFor="deposit-receipt-upload" className="block w-full cursor-pointer bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-byd-red dark:hover:border-byd-red">
+                                            {receiptFile ? (
+                                                <span className="text-green-500">{receiptFile.name}</span>
+                                            ) : (
+                                                <span className="text-gray-500 dark:text-gray-400">Click to select a file</span>
+                                            )}
+                                            <input id="deposit-receipt-upload" type="file" className="hidden" onChange={handleReceiptFileChange} accept="image/*,.pdf" required />
+                                        </label>
+                                    </div>
+                                    <button type="submit" disabled={isSubmittingReceipt || !receiptFile} className="w-full bg-byd-red text-white py-3 px-8 rounded-full font-semibold hover:bg-byd-red-dark transition-colors disabled:bg-gray-500">
+                                        {isSubmittingReceipt ? 'Submitting...' : 'Submit Receipt'}
+                                    </button>
+                                </form>
+                            </div>
+                        )}
+                        {pendingDeposit.status === 'Verifying' && (
+                            <div className="bg-yellow-500/10 border-l-4 border-yellow-500 text-yellow-700 dark:text-yellow-300 p-6 rounded-r-lg text-center">
+                                <ion-icon name="time-outline" className="text-5xl mb-2"></ion-icon>
+                                <h3 className="font-bold text-xl">Receipt Submitted for Verification</h3>
+                                <p className="mt-2">
+                                    We have received your receipt for the <strong>¥{pendingDeposit.amount.toLocaleString()}</strong> deposit.
+                                </p>
+                                <p>Our team is reviewing it and will credit your account shortly. This usually takes a few hours.</p>
+                            </div>
+                        )}
+                    </>
                 ) : (
                     <div className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg">
                         <p className="mb-4">Enter the amount you wish to deposit into your account.</p>

@@ -168,13 +168,13 @@ export const getPendingOrderForUser = async (userId: string): Promise<Order | nu
 export const getPendingDepositForUser = async (userId: string): Promise<Deposit | null> => {
     if (USE_MOCK_DATA) {
         console.log(`Using mock data for getPendingDepositForUser: ${userId}`);
-        const deposit = mockDeposits.find(d => d.userId === userId && d.status === 'Pending');
+        const deposit = mockDeposits.find(d => d.userId === userId && (d.status === 'Awaiting Receipt' || d.status === 'Verifying'));
         return Promise.resolve(deposit || null);
     }
     try {
         const snapshot = await firestoreDb.collection('deposits')
             .where('userId', '==', userId)
-            .where('status', '==', 'Pending')
+            .where('status', 'in', ['Awaiting Receipt', 'Verifying'])
             .limit(1)
             .get();
         if (snapshot.empty) {
@@ -448,13 +448,14 @@ export const addInvestment = async (investmentData: Omit<Investment, 'id' | 'dat
     }
 };
 
-export const addDeposit = async (depositData: Omit<Deposit, 'id' | 'request_date'>): Promise<Deposit> => {
+export const addDeposit = async (depositData: Omit<Deposit, 'id' | 'request_date' | 'status'>): Promise<Deposit> => {
     if (USE_MOCK_DATA) {
         console.log("Adding mock deposit.");
         const newDeposit: Deposit = {
-            ...depositData,
+            ...(depositData as any), // Cast to handle status property
             id: generateId(),
-            request_date: new Date().toISOString().split('T')[0]
+            request_date: new Date().toISOString().split('T')[0],
+            status: 'Awaiting Receipt'
         };
         mockDeposits.unshift(newDeposit);
         return Promise.resolve(newDeposit);
@@ -463,8 +464,10 @@ export const addDeposit = async (depositData: Omit<Deposit, 'id' | 'request_date
         const docRef = await firestoreDb.collection('deposits').add({
             ...depositData,
             request_date: new Date().toISOString().split('T')[0],
+            status: 'Awaiting Receipt',
         });
-        return { ...depositData, id: docRef.id, request_date: new Date().toISOString().split('T')[0] };
+        const finalData = { ...depositData, id: docRef.id, request_date: new Date().toISOString().split('T')[0], status: 'Awaiting Receipt' as const };
+        return finalData;
     } catch (error) {
         console.error("Error adding deposit:", error);
         throw error;

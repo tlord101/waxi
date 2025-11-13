@@ -13,6 +13,7 @@ import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
+import VehicleDetailPage from './pages/VehicleDetailPage';
 import { TranslationProvider } from './contexts/TranslationContext';
 // FIX: Import Page and Theme from types.ts to break circular dependency
 import { Vehicle, User, Order, Page, Theme } from './types';
@@ -40,6 +41,7 @@ const App: React.FC = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [selectedVehicleForInstallment, setSelectedVehicleForInstallment] = useState<Vehicle | null>(null);
   const [selectedVehicleForPurchase, setSelectedVehicleForPurchase] = useState<Vehicle | null>(null);
+  const [selectedVehicleForDetail, setSelectedVehicleForDetail] = useState<Vehicle | null>(null);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [pendingOrder, setPendingOrder] = useState<Order | null>(null);
@@ -154,6 +156,11 @@ const App: React.FC = () => {
     }
   };
 
+  const handleSelectForDetail = (vehicle: Vehicle) => {
+    setSelectedVehicleForDetail(vehicle);
+    setCurrentPage('VehicleDetail');
+  };
+
   const handleAdminLogout = async () => {
     await logoutUser();
     setIsAdminLoggedIn(false);
@@ -251,9 +258,9 @@ const App: React.FC = () => {
 
     switch (currentPage) {
       case 'Home':
-        return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} />;
+        return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} />;
       case 'Vehicles':
-        return <VehiclesPage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} />;
+        return <VehiclesPage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} />;
       case 'Installment':
         return <InstallmentPage vehicle={selectedVehicleForInstallment} setCurrentPage={setCurrentPage} />;
       case 'Giveaway':
@@ -272,28 +279,34 @@ const App: React.FC = () => {
         return <SignupPage onSignup={handleUserSignup} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
       case 'Dashboard':
         return <DashboardPage user={currentUser!} onLogout={handleUserLogout} setCurrentPage={setCurrentPage} setCurrentUser={setCurrentUser} pendingOrder={pendingOrder} onCompletePurchase={handleCompletePurchase} />;
+      case 'VehicleDetail':
+        return <VehicleDetailPage vehicle={selectedVehicleForDetail} setCurrentPage={setCurrentPage} onSelectForPurchase={handleSelectForPurchase} onSelectForInstallment={handleSelectForInstallment} />;
       default:
-        return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} />;
+        return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} />;
     }
   };
+
+  const shouldShowNavbarAndFooter = currentPage !== 'VehicleDetail';
 
   return (
     <TranslationProvider>
       <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
-        <Navbar 
-          currentPage={currentPage} 
-          setCurrentPage={setCurrentPage} 
-          isAdminLoggedIn={isAdminLoggedIn}
-          currentUser={currentUser}
-          onAdminLogout={handleAdminLogout}
-          onUserLogout={handleUserLogout}
-          theme={theme}
-          toggleTheme={toggleTheme}
-        />
+        {shouldShowNavbarAndFooter && (
+          <Navbar 
+            currentPage={currentPage} 
+            setCurrentPage={setCurrentPage} 
+            isAdminLoggedIn={isAdminLoggedIn}
+            currentUser={currentUser}
+            onAdminLogout={handleAdminLogout}
+            onUserLogout={handleUserLogout}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
+        )}
         <main className="flex-grow text-black dark:text-white">
           {renderPage()}
         </main>
-        <Footer />
+        {shouldShowNavbarAndFooter && <Footer />}
         <AIAssistant />
       </div>
     </TranslationProvider>

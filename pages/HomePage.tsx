@@ -10,22 +10,26 @@ interface HomePageProps {
   setCurrentPage: (page: Page) => void;
   onSelectForInstallment: (vehicle: Vehicle) => void;
   onSelectForPurchase: (vehicle: Vehicle) => void;
+  onSelectForDetail: (vehicle: Vehicle) => void;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase }) => {
+const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase, onSelectForDetail }) => {
   const featuredVehicles = vehicles.slice(0, 3);
   const { t } = useTranslation();
 
+  // Find a specific vehicle for the hero, or fall back to the first featured one.
+  const heroVehicle = vehicles.find(v => v.name === 'BYD Tang EV') || featuredVehicles[0];
+
   return (
     <div>
-      <Hero setCurrentPage={setCurrentPage} />
+      {heroVehicle && <Hero vehicle={heroVehicle} onExplore={() => onSelectForDetail(heroVehicle)} />}
       <section className="py-20 bg-white dark:bg-black">
         <div className="container mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-4">{t('featured_vehicles')}</h2>
           <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">{t('featured_vehicles_desc')}</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
             {featuredVehicles.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} onSelectForInstallment={onSelectForInstallment} onSelectForPurchase={onSelectForPurchase} />
+              <VehicleCard key={vehicle.id} vehicle={vehicle} onSelectForInstallment={onSelectForInstallment} onSelectForPurchase={onSelectForPurchase} onSelectForDetail={onSelectForDetail} />
             ))}
           </div>
           <div className="text-center mt-12">

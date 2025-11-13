@@ -18,6 +18,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Hero
     'hero_title': 'Future Starts Now',
+    'hero_explore_more': 'Explore More',
 
     // HomePage
     'featured_vehicles': 'Featured Vehicles',
@@ -32,6 +33,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'pay_in_installments': 'Pay in Installments',
     'compare': 'Compare',
     'selected_for_compare': '✓ Selected for Compare',
+    'explore': 'Explore',
   },
   zh: {
     // Navbar
@@ -50,6 +52,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Hero
     'hero_title': '未来 从现在开始',
+    'hero_explore_more': '了解更多',
 
     // HomePage
     'featured_vehicles': '精选车辆',
@@ -64,6 +67,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'pay_in_installments': '分期付款',
     'compare': '比较',
     'selected_for_compare': '✓ 已选择比较',
+    'explore': '探索',
   },
   es: {
     // Navbar
@@ -82,6 +86,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Hero
     'hero_title': 'El Futuro Comienza Ahora',
+    'hero_explore_more': 'Explorar Más',
 
     // HomePage
     'featured_vehicles': 'Vehículos Destacados',
@@ -96,5 +101,6 @@ export const translations: Record<Language, Record<string, string>> = {
     'pay_in_installments': 'Pagar a Plazos',
     'compare': 'Comparar',
     'selected_for_compare': '✓ Seleccionado para Comparar',
+    'explore': 'Explorar',
   },
 };

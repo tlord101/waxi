@@ -26,6 +26,32 @@ export const sendDepositRequestToAgent = async (data: {
   });
 };
 
+export const sendDepositReceiptToAgent = async (data: {
+  userName: string;
+  userEmail: string;
+  depositId: string;
+  amount: number;
+  receiptUrl: string;
+}) => {
+  const subject = `Deposit Receipt Submitted for Deposit ${data.depositId}`;
+  const bodyContent = `
+    <p>A deposit receipt has been submitted by <strong>${data.userName}</strong> (${data.userEmail}) for a deposit of <strong>¥${data.amount.toLocaleString()}</strong>.</p>
+    <p><strong>Deposit ID:</strong> ${data.depositId}</p>
+    <p>Please review the receipt at the following link: <a href="${data.receiptUrl}">View Receipt</a></p>
+    <p>After verifying the payment, please go to the Admin Panel under the 'Deposits' tab to confirm it and credit the user's account.</p>
+  `;
+  const emailHtml = `<div style="font-family: sans-serif; padding: 1rem;"><p>This is an automated notification for the payment agent.</p>${bodyContent}</div>`;
+
+  console.log(`--- Preparing email for API ---\nTo: ${AGENT_EMAIL}\nSubject: ${subject}\n-----------------------------`);
+
+  return await apiSendEmail({
+    email_type: 'deposit_receipt_agent',
+    recipient: AGENT_EMAIL,
+    subject: subject,
+    body: emailHtml,
+  });
+};
+
 
 export const sendPaymentRequestToAgent = async (data: {
   customerName: string;

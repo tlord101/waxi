@@ -12,9 +12,10 @@ interface VehiclesPageProps {
   setCurrentPage: (page: Page) => void;
   onSelectForInstallment: (vehicle: Vehicle) => void;
   onSelectForPurchase: (vehicle: Vehicle) => void;
+  onSelectForDetail: (vehicle: Vehicle) => void;
 }
 
-const VehiclesPage: React.FC<VehiclesPageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase }) => {
+const VehiclesPage: React.FC<VehiclesPageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase, onSelectForDetail }) => {
   const [filter, setFilter] = useState<VehicleType>('All');
   
   // State for comparison feature
@@ -71,13 +72,14 @@ const VehiclesPage: React.FC<VehiclesPageProps> = ({ vehicles, setCurrentPage, o
           </div>
         </div>
 
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ${compareList.length > 0 ? 'pb-28' : ''}`}>
+        <div className={`grid grid-cols-1 gap-8 max-w-3xl mx-auto ${compareList.length > 0 ? 'pb-28' : ''}`}>
           {filteredVehicles.map((vehicle) => (
             <VehicleCard 
               key={vehicle.id} 
               vehicle={vehicle} 
               onSelectForInstallment={onSelectForInstallment} 
               onSelectForPurchase={onSelectForPurchase}
+              onSelectForDetail={onSelectForDetail}
               onToggleCompare={handleToggleCompare}
               isSelectedForCompare={compareList.some(v => v.id === vehicle.id)}
             />

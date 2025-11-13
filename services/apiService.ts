@@ -10,7 +10,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const sendEmailFunctionUrl = `${SUPABASE_URL}/functions/v1/send-email`;
 
 interface SendEmailPayload {
-  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'payment_request_agent' | 'payment_receipt_agent' | 'deposit_request_agent';
+  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'payment_request_agent' | 'payment_receipt_agent' | 'deposit_request_agent' | 'deposit_receipt_agent';
   recipient: string;
   subject: string;
   body: string;

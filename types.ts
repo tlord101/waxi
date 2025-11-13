@@ -1,5 +1,5 @@
 // FIX: Moved Page and Theme types here to break circular dependency between App.tsx and other files.
-export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin' | 'Login' | 'Signup' | 'Dashboard';
+export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin' | 'Login' | 'Signup' | 'Dashboard' | 'VehicleDetail';
 export type Theme = 'dark' | 'light';
 export type Language = 'en' | 'zh' | 'es';
 
@@ -34,7 +34,7 @@ export interface User {
 export interface EmailLog {
   id: string;
   sent_at?: Date | string;
-  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'giveaway_winner' | 'payment_request_agent' | 'payment_receipt_agent' | 'deposit_request_agent';
+  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'giveaway_winner' | 'payment_request_agent' | 'payment_receipt_agent' | 'deposit_request_agent' | 'deposit_receipt_agent';
   recipient: string;
   subject: string;
   body: string;
@@ -92,6 +92,7 @@ export interface Deposit {
   userEmail: string;
   amount: number;
   method: 'Bank Deposit' | 'Crypto';
-  status: 'Pending' | 'Completed' | 'Failed';
+  status: 'Awaiting Receipt' | 'Verifying' | 'Completed' | 'Failed';
   request_date: string;
+  receipt_url?: string;
 }

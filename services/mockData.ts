@@ -235,7 +235,9 @@ export const mockDeposits: Deposit[] = [
     userEmail: 'test@example.com',
     amount: 50000,
     method: 'Bank Deposit',
-    status: 'Pending',
+    // FIX: Changed status from 'Pending' to 'Awaiting Receipt' to match the Deposit type definition.
+    // 'Pending' is not a valid status for Deposits.
+    status: 'Awaiting Receipt',
     request_date: '2025-07-02',
   },
   {

@@ -53,7 +53,8 @@ const DepositsTab: React.FC = () => {
   
   const statusClasses = {
     'Completed': 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300',
-    'Pending': 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-800 dark:text-yellow-300',
+    'Awaiting Receipt': 'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300',
+    'Verifying': 'bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300',
     'Failed': 'bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-300',
   };
 
@@ -85,18 +86,28 @@ const DepositsTab: React.FC = () => {
               <td className="px-6 py-4 font-bold text-black dark:text-white">¥{deposit.amount.toLocaleString()}</td>
               <td className="px-6 py-4">{deposit.method}</td>
               <td className="px-6 py-4">
-                <span className={`text-xs px-2 py-1 rounded-full ${statusClasses[deposit.status]}`}>
+                <span className={`text-xs px-2 py-1 rounded-full ${statusClasses[deposit.status] || 'bg-gray-100 text-gray-800'}`}>
                   {deposit.status}
                 </span>
               </td>
               <td className="px-6 py-4">
-                {deposit.status === 'Pending' ? (
-                  <button
-                    onClick={() => handleConfirmDeposit(deposit)}
-                    className="border border-byd-red text-byd-red px-3 py-1.5 rounded-md text-sm font-semibold hover:bg-byd-red/10 transition-colors w-28 text-center"
-                  >
-                    Confirm Deposit
-                  </button>
+                {deposit.status === 'Verifying' ? (
+                  <div className="flex items-center gap-4">
+                    <a 
+                        href={deposit.receipt_url || '#'} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className={`font-medium text-blue-500 dark:text-blue-400 hover:underline ${!deposit.receipt_url ? 'opacity-50 pointer-events-none' : ''}`}
+                    >
+                        View Receipt
+                    </a>
+                    <button
+                        onClick={() => handleConfirmDeposit(deposit)}
+                        className="border border-byd-red text-byd-red px-3 py-1.5 rounded-md text-sm font-semibold hover:bg-byd-red/10 transition-colors w-28 text-center"
+                    >
+                        Confirm Deposit
+                    </button>
+                  </div>
                 ) : (
                   <span className="text-gray-400 dark:text-gray-500">—</span>
                 )}
