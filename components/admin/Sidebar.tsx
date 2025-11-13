@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { AdminTab } from '../../pages/AdminPage';
 
@@ -14,6 +12,7 @@ const TABS: { name: AdminTab, icon: string }[] = [
   { name: 'Analytics', icon: 'stats-chart-outline' },
   { name: 'Vehicles', icon: 'car-sport-outline' },
   { name: 'Orders', icon: 'cart-outline' },
+  { name: 'Deposits', icon: 'cash-outline' },
   { name: 'Installments', icon: 'card-outline' },
   { name: 'Giveaway', icon: 'gift-outline' },
   { name: 'Email Logs', icon: 'mail-outline' },

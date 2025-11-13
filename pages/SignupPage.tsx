@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Page } from '../App';
+// FIX: Import Page from types.ts to break circular dependency.
+import { Page } from '../types';
 import Logo from '../components/Logo';
 
 interface SignupPageProps {

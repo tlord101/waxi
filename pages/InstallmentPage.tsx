@@ -1,8 +1,8 @@
 
 
 import React, { useState, useMemo } from 'react';
-import { Vehicle } from '../types';
-import { Page } from '../App';
+// FIX: Import Page from types.ts to break circular dependency.
+import { Vehicle, Page } from '../types';
 import { sendInstallmentConfirmation } from '../services/emailService';
 
 interface InstallmentPageProps {

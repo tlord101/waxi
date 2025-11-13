@@ -1,5 +1,14 @@
-// Fix: Import React to make it available for the global JSX declaration below.
-import React from 'react';
+// FIX: Moved Page and Theme types here to break circular dependency between App.tsx and other files.
+export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin' | 'Login' | 'Signup' | 'Dashboard';
+export type Theme = 'dark' | 'light';
+export type Language = 'en' | 'zh' | 'es';
+
+export const LANGUAGES: { code: Language; name: string }[] = [
+  { code: 'en', name: 'English' },
+  { code: 'zh', name: '中文 (Chinese)' },
+  { code: 'es', name: 'Español (Spanish)' },
+];
+
 
 export interface Vehicle {
   id: string; // Use string for Firestore document IDs
@@ -25,7 +34,7 @@ export interface User {
 export interface EmailLog {
   id: string;
   sent_at?: Date | string;
-  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'giveaway_winner' | 'payment_request_agent' | 'payment_receipt_agent';
+  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'giveaway_winner' | 'payment_request_agent' | 'payment_receipt_agent' | 'deposit_request_agent';
   recipient: string;
   subject: string;
   body: string;
@@ -75,13 +84,14 @@ export interface Investment {
   description: string;
   date: string;
 }
-// Fix: Add global declaration for ion-icon. In React, JSX should use 'className' for CSS classes.
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'ion-icon': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
-        name: string;
-      };
-    }
-  }
+
+export interface Deposit {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  amount: number;
+  method: 'Bank Deposit' | 'Crypto';
+  status: 'Pending' | 'Completed' | 'Failed';
+  request_date: string;
 }

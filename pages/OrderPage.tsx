@@ -1,7 +1,8 @@
 
+
 import React, { useState, useEffect } from 'react';
-import { Vehicle, Order, User } from '../types';
-import { Page } from '../App';
+// FIX: Import Page from types.ts to break circular dependency.
+import { Vehicle, Order, User, Page } from '../types';
 import { sendOrderConfirmation, sendPaymentRequestToAgent, sendReceiptSubmissionToAgent } from '../services/emailService';
 import { addOrder, updateOrder, updateUser } from '../services/dbService';
 import PaymentModal from '../components/PaymentModal';

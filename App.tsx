@@ -13,7 +13,9 @@ import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
-import { Vehicle, User, Order } from './types';
+import { TranslationProvider } from './contexts/TranslationContext';
+// FIX: Import Page and Theme from types.ts to break circular dependency
+import { Vehicle, User, Order, Page, Theme } from './types';
 import { auth } from './services/firebase'; // Import Firebase auth instance
 import { 
   fetchVehicles, 
@@ -22,12 +24,16 @@ import {
   signInWithGoogle,
   signUpUser,
   loginUser,
-  logoutUser
+  logoutUser,
+  ensureAdminUserExists
 } from './services/dbService';
 
+// FIX: The global declaration for ion-icon was moved to index.tsx.
+// This resolves an issue where it was overriding all other JSX intrinsic elements
+// by ensuring it is loaded at the application's root.
 
-export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin' | 'Login' | 'Signup' | 'Dashboard';
-export type Theme = 'dark' | 'light';
+
+// FIX: Moved Page and Theme types to types.ts to break a circular dependency.
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('Home');
@@ -38,6 +44,7 @@ const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [pendingOrder, setPendingOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [appError, setAppError] = useState<string | null>(null);
 
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined' && localStorage.getItem('byd-theme-mode')) {
@@ -50,31 +57,52 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    // Fetch vehicles on initial load
-    const loadVehicles = async () => {
-      const fetchedVehicles = await fetchVehicles();
-      setVehicles(fetchedVehicles);
+    const initializeApp = async () => {
+      // Ensure the admin user is created on first load if it doesn't exist.
+      await ensureAdminUserExists();
+
+      try {
+        const fetchedVehicles = await fetchVehicles();
+        setVehicles(fetchedVehicles);
+      } catch (error: any) {
+        console.error("Critical error fetching initial data:", error);
+        let friendlyMessage = "Failed to load application data. Please check your internet connection and try again.";
+        // Check for the specific Firestore "database not found" error
+        if (error.code === 'not-found' || (error.message && error.message.includes('does not exist for project'))) {
+            friendlyMessage = "Connection to the database failed. The Firestore database has not been created for this project. Please contact the administrator to set it up in the Firebase console.";
+        }
+        setAppError(friendlyMessage);
+      }
     };
-    loadVehicles();
+    
+    initializeApp();
 
     // Firebase Auth state listener
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-      if (firebaseUser) {
-        // User is signed in.
-        const userDoc = await getUser(firebaseUser.uid);
-        if (userDoc) {
-          setCurrentUser(userDoc);
-          // Check for admin
-          if (userDoc.email.toLowerCase() === 'admin@waxibyd.com') {
-             setIsAdminLoggedIn(true);
+      try {
+        if (firebaseUser) {
+          // User is signed in.
+          const userDoc = await getUser(firebaseUser.uid);
+          if (userDoc) {
+            setCurrentUser(userDoc);
+            // Check for admin
+            if (userDoc.email.toLowerCase() === 'admin@waxibyd.com') {
+               setIsAdminLoggedIn(true);
+            }
           }
+        } else {
+          // User is signed out.
+          setCurrentUser(null);
+          setIsAdminLoggedIn(false);
         }
-      } else {
-        // User is signed out.
-        setCurrentUser(null);
-        setIsAdminLoggedIn(false);
+      } catch (error) {
+          console.error("Error fetching user data on auth change:", error);
+          if (!appError) { // Only set if no primary error is set
+            setAppError("Failed to load user profile. Please try refreshing the page.");
+          }
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     });
 
     return () => unsubscribe(); // Cleanup subscription on unmount
@@ -94,8 +122,12 @@ const App: React.FC = () => {
   useEffect(() => {
     const checkPendingOrder = async () => {
         if (currentUser) {
-            const order = await getPendingOrderForUser(currentUser.id);
-            setPendingOrder(order);
+            try {
+                const order = await getPendingOrderForUser(currentUser.id);
+                setPendingOrder(order);
+            } catch (error) {
+                console.error("Could not check for pending orders:", error);
+            }
         } else {
             setPendingOrder(null);
         }
@@ -186,6 +218,20 @@ const App: React.FC = () => {
     }
   };
 
+  if (appError) {
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black p-4">
+            <div className="max-w-2xl text-center">
+                <div className="text-5xl mb-4" role="img" aria-label="worried face emoji">😟</div>
+                <h1 className="text-2xl font-bold text-byd-red mb-4">Application Error</h1>
+                <p className="text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20 p-4 rounded-md border border-red-500/30">
+                    {appError}
+                </p>
+            </div>
+        </div>
+    );
+  }
+
   if (isLoading) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
@@ -232,23 +278,25 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
-      <Navbar 
-        currentPage={currentPage} 
-        setCurrentPage={setCurrentPage} 
-        isAdminLoggedIn={isAdminLoggedIn}
-        currentUser={currentUser}
-        onAdminLogout={handleAdminLogout}
-        onUserLogout={handleUserLogout}
-        theme={theme}
-        toggleTheme={toggleTheme}
-      />
-      <main className="flex-grow text-black dark:text-white">
-        {renderPage()}
-      </main>
-      <Footer />
-      <AIAssistant />
-    </div>
+    <TranslationProvider>
+      <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
+        <Navbar 
+          currentPage={currentPage} 
+          setCurrentPage={setCurrentPage} 
+          isAdminLoggedIn={isAdminLoggedIn}
+          currentUser={currentUser}
+          onAdminLogout={handleAdminLogout}
+          onUserLogout={handleUserLogout}
+          theme={theme}
+          toggleTheme={toggleTheme}
+        />
+        <main className="flex-grow text-black dark:text-white">
+          {renderPage()}
+        </main>
+        <Footer />
+        <AIAssistant />
+      </div>
+    </TranslationProvider>
   );
 };
 

@@ -1,8 +1,9 @@
 import React from 'react';
 import Hero from '../components/Hero';
+// FIX: Import Page from types.ts to break circular dependency.
+import { Page, Vehicle } from '../types';
+import { useTranslation } from '../contexts/TranslationContext';
 import VehicleCard from '../components/VehicleCard';
-import { Page } from '../App';
-import { Vehicle } from '../types';
 
 interface HomePageProps {
   vehicles: Vehicle[];
@@ -13,14 +14,15 @@ interface HomePageProps {
 
 const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase }) => {
   const featuredVehicles = vehicles.slice(0, 3);
+  const { t } = useTranslation();
 
   return (
     <div>
-      <Hero />
+      <Hero setCurrentPage={setCurrentPage} />
       <section className="py-20 bg-white dark:bg-black">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-4">Featured Vehicles</h2>
-          <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">Discover our most popular models, combining cutting-edge technology with stunning design.</p>
+          <h2 className="text-4xl font-bold text-center mb-4">{t('featured_vehicles')}</h2>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">{t('featured_vehicles_desc')}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredVehicles.map((vehicle) => (
               <VehicleCard key={vehicle.id} vehicle={vehicle} onSelectForInstallment={onSelectForInstallment} onSelectForPurchase={onSelectForPurchase} />
@@ -31,7 +33,7 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
               onClick={() => setCurrentPage('Vehicles')}
               className="bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300"
             >
-              Explore All Models
+              {t('explore_all_models')}
             </button>
           </div>
         </div>
@@ -41,15 +43,15 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
         <img src="https://picsum.photos/seed/byd-giveaway-bg/1920/1080" alt="Giveaway Background" className="absolute inset-0 w-full h-full object-cover opacity-10 dark:opacity-20"/>
         <div className="relative container mx-auto px-6 text-center">
           <div className="mb-4 text-5xl">🎉</div>
-          <h2 className="text-4xl font-extrabold mb-4">Win a BYD Dolphin!</h2>
+          <h2 className="text-4xl font-extrabold mb-4">{t('win_a_byd_dolphin')}</h2>
           <p className="text-lg text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-            Participate in our exclusive giveaway for a chance to own the future of city driving. A $1,000 entry fee is required to secure your spot.
+            {t('giveaway_desc')}
           </p>
           <button
             onClick={() => setCurrentPage('Giveaway')}
             className="bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-transform transform hover:scale-105 duration-300 shadow-lg"
           >
-            Enter the Giveaway
+            {t('enter_the_giveaway')}
           </button>
         </div>
       </section>

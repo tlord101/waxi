@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import Sidebar from '../components/admin/Sidebar';
 import AnalyticsTab from '../components/admin/AnalyticsTab';
@@ -8,8 +6,9 @@ import OrdersTab from '../components/admin/OrdersTab';
 import InstallmentsTab from '../components/admin/InstallmentsTab';
 import GiveawayTab from '../components/admin/GiveawayTab';
 import EmailLogsTab from '../components/admin/EmailLogsTab';
+import DepositsTab from '../components/admin/DepositsTab';
 
-export type AdminTab = 'Analytics' | 'Vehicles' | 'Orders' | 'Installments' | 'Giveaway' | 'Email Logs';
+export type AdminTab = 'Analytics' | 'Vehicles' | 'Orders' | 'Deposits' | 'Installments' | 'Giveaway' | 'Email Logs';
 
 const AdminPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('Analytics');
@@ -23,6 +22,8 @@ const AdminPage: React.FC = () => {
         return <VehiclesTab />;
       case 'Orders':
         return <OrdersTab />;
+      case 'Deposits':
+        return <DepositsTab />;
       case 'Installments':
         return <InstallmentsTab />;
       case 'Giveaway':

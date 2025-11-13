@@ -45,6 +45,37 @@ export const askBYDAssistant = async (history: { role: 'user' | 'model'; parts: 
   }
 };
 
+export const translateText = async (text: string, targetLanguage: string): Promise<string> => {
+  const ai = getGenAIClient();
+  if (!ai) {
+    console.warn("AI client not available for translation. Returning original text.");
+    return text;
+  }
+  
+  const targetLangName = targetLanguage === 'zh' ? 'Chinese' : targetLanguage === 'es' ? 'Spanish' : 'English';
+
+  try {
+    const response = await ai.models.generateContent({
+      model: model, // 'gemini-2.5-flash'
+      contents: `Translate the following English text to ${targetLangName}. Respond with only the translated text, no extra formatting or explanations.\n\nText: "${text}"`,
+      config: {
+        temperature: 0.2, // Lower temperature for more deterministic translation
+      },
+    });
+
+    // Clean up potential markdown or quotes from the response
+    let translated = response.text.trim();
+    if (translated.startsWith('"') && translated.endsWith('"')) {
+        translated = translated.substring(1, translated.length - 1);
+    }
+    return translated;
+
+  } catch (error) {
+    console.error(`Error translating text to ${targetLanguage}:`, error);
+    return text; // Fallback to original text on error
+  }
+};
+
 export const getVehicleDetailsWithAI = async (vehicleName: string) => {
     const ai = getGenAIClient();
     if (!ai) {

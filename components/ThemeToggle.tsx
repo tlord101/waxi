@@ -1,6 +1,8 @@
 
+
 import React from 'react';
-import { Theme } from '../App';
+// FIX: Import Theme from types.ts to break circular dependency.
+import { Theme } from '../types';
 
 interface ThemeToggleProps {
   theme: Theme;

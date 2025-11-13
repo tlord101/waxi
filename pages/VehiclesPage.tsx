@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import VehicleCard from '../components/VehicleCard';
-import { Page } from '../App';
-import { Vehicle } from '../types';
+// FIX: Import Page from types.ts to break circular dependency.
+import { Page, Vehicle } from '../types';
 import CompareBar from '../components/CompareBar';
 import ComparisonView from '../components/ComparisonView';
 

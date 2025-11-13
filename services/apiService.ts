@@ -1,4 +1,3 @@
-
 // This service is now configured for a real backend API layer.
 // These functions make a `fetch` request to a Supabase Edge Function.
 // That Edge Function is responsible for securely using an email provider's API
@@ -11,7 +10,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const sendEmailFunctionUrl = `${SUPABASE_URL}/functions/v1/send-email`;
 
 interface SendEmailPayload {
-  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'payment_request_agent' | 'payment_receipt_agent';
+  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'payment_request_agent' | 'payment_receipt_agent' | 'deposit_request_agent';
   recipient: string;
   subject: string;
   body: string;

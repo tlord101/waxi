@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Page, Theme } from '../App';
+// FIX: Import Page and Theme from types.ts to break circular dependency.
+import { Page, Theme } from '../types';
 import { NAV_LINKS } from '../constants';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from '../contexts/TranslationContext';
 import { User } from '../types';
 
 interface NavbarProps {
@@ -18,6 +21,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLoggedIn, currentUser, onAdminLogout, onUserLogout, theme, toggleTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <nav className="bg-white dark:bg-black text-black dark:text-white sticky top-0 z-50 shadow-lg dark:shadow-black/20 transition-colors duration-300">
@@ -38,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                 onClick={(e) => { e.preventDefault(); setCurrentPage(link.name); }}
                 className={`transition-colors duration-300 hover:text-byd-red hover:underline ${currentPage === link.name ? 'text-byd-red font-semibold' : 'text-gray-700 dark:text-gray-200'}`}
               >
-                {link.name}
+                {t(`nav_${link.name.toLowerCase()}`)}
               </a>
             ))}
              {isAdminLoggedIn && (
@@ -47,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                 onClick={(e) => { e.preventDefault(); setCurrentPage('Admin'); }}
                 className={`transition-colors duration-300 hover:text-byd-red hover:underline ${currentPage === 'Admin' ? 'text-byd-red font-semibold' : 'text-gray-700 dark:text-gray-200'}`}
               >
-                Admin
+                {t('nav_admin')}
               </a>
             )}
           </div>
@@ -59,13 +63,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                   onClick={() => setCurrentPage('Dashboard')}
                   className="bg-gray-700 text-white py-2 px-6 rounded-full hover:bg-gray-600 transition-colors duration-300 font-semibold"
                 >
-                  Dashboard
+                  {t('nav_dashboard')}
                 </button>
                 <button 
                   onClick={onUserLogout}
                   className="bg-byd-red text-white py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
                 >
-                  Logout
+                  {t('nav_logout')}
                 </button>
               </div>
             ) : (
@@ -74,13 +78,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                   onClick={() => setCurrentPage('Login')}
                   className="bg-byd-red text-white py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
                 >
-                  Login
+                  {t('nav_login')}
                 </button>
                  <button 
                   onClick={() => setCurrentPage('Signup')}
                   className="bg-transparent text-byd-red border border-byd-red py-2 px-6 rounded-full hover:bg-byd-red/10 transition-colors duration-300 font-semibold"
                 >
-                  Sign Up
+                  {t('nav_signup')}
                 </button>
               </div>
             )}
@@ -93,17 +97,19 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                 </button>
             )}
              <ThemeToggle theme={theme} onToggle={toggleTheme} />
+             <LanguageSwitcher />
           </div>
 
-          <div className="lg:hidden flex items-center gap-4">
+          <div className="lg:hidden flex items-center gap-2">
              <ThemeToggle theme={theme} onToggle={toggleTheme} />
+             <LanguageSwitcher />
             <button onClick={() => setIsOpen(!isOpen)} className="font-bold tracking-widest text-lg">
               {isOpen ? (
                  <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                  </svg>
               ) : (
-                'MENU'
+                t('nav_menu')
               )}
             </button>
           </div>
@@ -120,7 +126,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
               onClick={(e) => { e.preventDefault(); setCurrentPage(link.name); setIsOpen(false); }}
               className={`block text-center py-2 rounded transition-colors duration-300 hover:bg-byd-red hover:text-white ${currentPage === link.name ? 'text-byd-red font-bold' : 'text-gray-800 dark:text-gray-200'}`}
             >
-              {link.name}
+              {t(`nav_${link.name.toLowerCase()}`)}
             </a>
           ))}
             {currentUser ? (
@@ -129,13 +135,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                   onClick={() => { setCurrentPage('Dashboard'); setIsOpen(false); }}
                   className="w-full bg-gray-700 text-white py-2 px-6 rounded-full hover:bg-gray-600 transition-colors duration-300 font-semibold"
                  >
-                   Dashboard
+                   {t('nav_dashboard')}
                  </button>
                  <button 
                   onClick={() => { onUserLogout(); setIsOpen(false); }}
                   className="w-full bg-byd-red text-white py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
                  >
-                   Logout
+                   {t('nav_logout')}
                  </button>
                </div>
             ) : (
@@ -144,13 +150,13 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                     onClick={() => { setCurrentPage('Login'); setIsOpen(false); }}
                     className="w-full bg-byd-red text-white py-2 px-6 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold"
                   >
-                    Login
+                    {t('nav_login')}
                   </button>
                    <button 
                     onClick={() => { setCurrentPage('Signup'); setIsOpen(false); }}
                     className="w-full bg-transparent text-byd-red border border-byd-red py-2 px-6 rounded-full hover:bg-byd-red/10 transition-colors duration-300 font-semibold"
                   >
-                    Sign Up
+                    {t('nav_signup')}
                   </button>
                </div>
             )}

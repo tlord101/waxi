@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
-import { User, Investment, Order } from '../types';
-import { Page } from '../App';
-import { getInvestmentsForUser, addInvestment, updateUser } from '../services/dbService';
-
+// FIX: Import Page from types.ts to break circular dependency.
+import { User, Investment, Order, Page, Deposit } from '../types';
+import { getInvestmentsForUser, addInvestment, updateUser, getPendingDepositForUser, addDeposit } from '../services/dbService';
+import { sendDepositRequestToAgent } from '../services/emailService';
+import PaymentModal from '../components/PaymentModal';
 
 type DashboardTab = 'Wallet' | 'Investments' | 'Purchases' | 'Deposit Funds' | 'Actions';
 
@@ -88,15 +88,30 @@ const DashboardContent: React.FC<{
     const [investments, setInvestments] = useState<Investment[]>([]);
     const [investmentAmount, setInvestmentAmount] = useState('');
     const [investmentError, setInvestmentError] = useState('');
+    
+    // State for Deposit tab
+    const [depositAmount, setDepositAmount] = useState('');
+    const [depositError, setDepositError] = useState('');
+    const [pendingDeposit, setPendingDeposit] = useState<Deposit | null>(null);
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+
 
     const fetchUserInvestments = async () => {
         const userInvestments = await getInvestmentsForUser(user.id);
         setInvestments(userInvestments);
     };
 
+    const checkPendingDeposit = async () => {
+        const deposit = await getPendingDepositForUser(user.id);
+        setPendingDeposit(deposit);
+    }
+
     useEffect(() => {
         if (activeTab === 'Investments') {
             fetchUserInvestments();
+        }
+        if (activeTab === 'Deposit Funds') {
+            checkPendingDeposit();
         }
     }, [activeTab, user.id]);
 
@@ -127,6 +142,42 @@ const DashboardContent: React.FC<{
         await fetchUserInvestments(); // Refresh list
         setInvestmentAmount('');
         alert(`Successfully invested ¥${amount.toLocaleString()}`);
+    };
+
+     const handleProceedToDeposit = () => {
+        const amount = parseFloat(depositAmount);
+        setDepositError('');
+        if (isNaN(amount) || amount <= 0) {
+            setDepositError('Please enter a valid amount to deposit.');
+            return;
+        }
+        setIsPaymentModalOpen(true);
+    };
+
+    const handleSelectDepositMethod = async (method: 'crypto' | 'bank') => {
+        const amount = parseFloat(depositAmount);
+        setIsPaymentModalOpen(false);
+
+        // 1. Create a new deposit record in the database
+        const newDeposit = await addDeposit({
+            userId: user.id,
+            userName: user.name,
+            userEmail: user.email,
+            amount: amount,
+            method: method === 'crypto' ? 'Crypto' : 'Bank Deposit',
+            status: 'Pending',
+        });
+        setPendingDeposit(newDeposit);
+
+        // 2. Notify agent to send payment details to the customer
+        await sendDepositRequestToAgent({
+            userName: user.name,
+            userEmail: user.email,
+            amount: amount,
+            method: method === 'crypto' ? 'Crypto' : 'Bank Deposit',
+        });
+
+        setDepositAmount(''); // Clear the input
     };
 
     const renderContent = () => {
@@ -209,13 +260,39 @@ const DashboardContent: React.FC<{
         return (
             <div className="animate-fade-in">
                 <h2 className="text-3xl font-bold mb-6">Make a Deposit</h2>
-                <div className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg">
-                    <p className="mb-4">Enter the amount you wish to deposit into your account.</p>
-                    <input type="number" placeholder="¥0.00" className="w-full p-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-byd-red focus:border-byd-red" />
-                    <button className="mt-4 w-full bg-byd-red text-white py-3 px-8 rounded-full font-semibold hover:bg-byd-red-dark transition-colors">
-                        Proceed to Payment
-                    </button>
-                </div>
+                {pendingDeposit ? (
+                    <div className="bg-blue-500/10 border-l-4 border-blue-500 text-blue-700 dark:text-blue-300 p-6 rounded-r-lg text-center">
+                        <ion-icon name="mail-outline" className="text-5xl mb-2"></ion-icon>
+                        <h3 className="font-bold text-xl">Deposit in Progress</h3>
+                        <p className="mt-2">
+                            Your deposit request for <strong>¥{pendingDeposit.amount.toLocaleString()}</strong> has been submitted.
+                        </p>
+                        <p>Please check your email at <strong>{user.email}</strong> for payment instructions from our agent.</p>
+                    </div>
+                ) : (
+                    <div className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg">
+                        <p className="mb-4">Enter the amount you wish to deposit into your account.</p>
+                        {depositError && <p className="text-red-500 text-sm mb-2">{depositError}</p>}
+                        <input 
+                          type="number" 
+                          placeholder="¥0.00" 
+                          value={depositAmount}
+                          onChange={(e) => setDepositAmount(e.target.value)}
+                          className="w-full p-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-byd-red focus:border-byd-red" 
+                        />
+                        <button 
+                          onClick={handleProceedToDeposit}
+                          className="mt-4 w-full bg-byd-red text-white py-3 px-8 rounded-full font-semibold hover:bg-byd-red-dark transition-colors"
+                        >
+                            Proceed to Payment
+                        </button>
+                    </div>
+                )}
+                 <PaymentModal
+                    isOpen={isPaymentModalOpen}
+                    onClose={() => setIsPaymentModalOpen(false)}
+                    onSelectPayment={handleSelectDepositMethod}
+                />
             </div>
         );
       case 'Actions':

@@ -1,7 +1,31 @@
-
 import { apiSendEmail } from './apiService';
 
 const AGENT_EMAIL = 'agent@wuxibyd.com';
+
+export const sendDepositRequestToAgent = async (data: {
+  userName: string;
+  userEmail: string;
+  amount: number;
+  method: 'Crypto' | 'Bank Deposit';
+}) => {
+  const subject = `Deposit Request — ${data.method} from ${data.userName}`;
+  const bodyContent = `
+    <p><strong>${data.userName}</strong> (${data.userEmail}) has requested to deposit <strong>¥${data.amount.toLocaleString()}</strong> via ${data.method}.</p>
+    <p>Please send them the necessary payment details to complete the transaction.</p>
+    <p>Once the payment is received, please go to the Admin Panel under the 'Deposits' tab to confirm it and credit their account.</p>
+  `;
+  const emailHtml = `<div style="font-family: sans-serif; padding: 1rem;"><p>This is an automated notification for the payment agent.</p>${bodyContent}</div>`;
+  
+  console.log(`--- Preparing email for API ---\nTo: ${AGENT_EMAIL}\nSubject: ${subject}\n-----------------------------`);
+
+  return await apiSendEmail({
+    email_type: 'deposit_request_agent',
+    recipient: AGENT_EMAIL,
+    subject: subject,
+    body: emailHtml,
+  });
+};
+
 
 export const sendPaymentRequestToAgent = async (data: {
   customerName: string;
