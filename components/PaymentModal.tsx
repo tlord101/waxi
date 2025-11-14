@@ -43,7 +43,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSelectPa
                         onClick={() => onSelectPayment('bank')}
                         className="w-full flex items-center gap-3 text-left p-4 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
                     >
-                        <span className="text-2xl">💰</span>
+                        <i className="bi bi-bank text-2xl text-green-400"></i>
                         <span>Pay with Bank Deposit</span>
                     </button>
                 </li>
@@ -52,7 +52,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onSelectPa
                         onClick={() => onSelectPayment('crypto')}
                         className="w-full flex items-center gap-3 text-left p-4 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
                     >
-                        <span className="text-2xl">💎</span>
+                        <i className="bi bi-gem text-2xl text-blue-400"></i>
                         <span>Pay with Crypto <span className="text-gray-400 text-xs">(We Accept Crypto Payments)</span></span>
                     </button>
                 </li>

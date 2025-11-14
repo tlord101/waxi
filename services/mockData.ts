@@ -1,4 +1,4 @@
-import { Vehicle, Order, InstallmentPlan, GiveawayEntry, EmailLog, Investment, User, Deposit } from '../types';
+import { Vehicle, Order, InstallmentPlan, GiveawayEntry, EmailLog, Investment, User, Deposit, SiteContent } from '../types';
 
 export const mockVehicles: Vehicle[] = [
   {
@@ -21,7 +21,7 @@ export const mockVehicles: Vehicle[] = [
     type: 'SUV',
     price: 289800,
     description: 'A spacious and powerful 7-seater electric SUV, perfect for families and adventures.',
-    imageUrl: 'https://picsum.photos/seed/byd-tang/800/600',
+    imageUrl: 'https://i.ibb.co/x7P3zM4/tang-road.jpg',
     specs: [
       { icon: 'flash-outline', name: 'Range', value: '505 km' },
       { icon: 'rocket-outline', name: '0-100km/h', value: '4.4s' },
@@ -45,11 +45,11 @@ export const mockVehicles: Vehicle[] = [
   },
   {
     id: 'han-01',
-    name: 'BYD Han EV',
+    name: 'BYD HAN EV',
     type: 'Sedan',
     price: 239800,
     description: 'A luxurious flagship sedan that combines breathtaking performance with sophisticated design.',
-    imageUrl: 'https://picsum.photos/seed/byd-han/800/600',
+    imageUrl: 'https://i.ibb.co/vvRThLL/han.jpg',
     specs: [
       { icon: 'flash-outline', name: 'Range', value: '605 km' },
       { icon: 'rocket-outline', name: '0-100km/h', value: '3.9s' },
@@ -155,6 +155,7 @@ export const mockInstallmentPlans: InstallmentPlan[] = [
 export const mockGiveawayEntries: GiveawayEntry[] = [
     {
         id: 'give-01',
+        userId: 'mock-user-1',
         name: 'Carlos Ray',
         email: 'carlos@example.com',
         country: 'United States',
@@ -164,11 +165,12 @@ export const mockGiveawayEntries: GiveawayEntry[] = [
     },
     {
         id: 'give-02',
+        userId: 'mock-user-2',
         name: 'Yuki Tanaka',
         email: 'yuki@example.com',
         country: 'Japan',
         raffle_code: 'BYD2025-EFGH',
-        payment_status: 'Paid',
+        payment_status: 'Awaiting Receipt',
         winner_status: 'No',
     }
 ];
@@ -244,10 +246,82 @@ export const mockDeposits: Deposit[] = [
     id: 'dep-002',
     userId: 'admin-user-id-placeholder',
     userName: 'Admin User',
-    userEmail: 'admin@waxibyd.com',
+    userEmail: 'admin@wuxibyd.com',
     amount: 100000,
     method: 'Crypto',
     status: 'Completed',
     request_date: '2025-07-01',
   }
 ];
+
+export const mockSiteContent: SiteContent = {
+  homepage: {
+    giveaway_bg_image_url: 'https://picsum.photos/seed/byd-giveaway-bg/1920/1080',
+    giveaway_title: 'Win a BYD Dolphin!',
+    giveaway_description: 'Participate in our exclusive giveaway for a chance to own the future of city driving. A $1,000 entry fee is required to secure your spot.',
+    giveaway_button_text: 'Enter the Giveaway',
+    about_image_url: 'https://picsum.photos/seed/byd-dealership/800/600',
+    about_title: 'Welcome to Wuxi BYD',
+    about_text: 'At Wuxi BYD Vehicles Co., Ltd, we are committed to providing innovative and sustainable transportation solutions. As an authorized dealer in the heart of Wuxi, we bring you the latest in electric vehicle technology, backed by unparalleled customer service.',
+    about_button_link_text: 'Learn More About Us →',
+  },
+  footer: {
+    privacy_link_text: 'Privacy & Legal',
+    cookie_link_text: 'Cookie Policy',
+    contact_link_text: 'Contact',
+    follow_us_text: 'FOLLOW US',
+    facebook_url: '#',
+    twitter_url: '#',
+    instagram_url: '#',
+    tiktok_url: '#',
+    youtube_url: '#',
+    copyright_text: `©${new Date().getFullYear()} Wuxi BYD Vehicle Co., Ltd. All Rights Reserved.`,
+  },
+  aboutpage: {
+    banner_image_url: 'https://picsum.photos/seed/wuxi-factory/1920/600',
+    banner_title: 'WUXI BYD',
+    banner_subtitle: 'Official BYD Export Office',
+    main_title: 'Wuxi BYD Vehicle Co., Ltd — Company Profile',
+    main_content: `What It Is:
+A subsidiary of the BYD Group dedicated to the export sales of BYD vehicles.
+
+Location:
+Based in Wuxi, Jiangsu Province, China.
+
+Core Business / Role:
+- Handles global distribution of BYD new-energy vehicles (EVs, hybrids) to overseas markets.
+- Manages the logistics chain from production → customs → overseas delivery.
+- Provides after-sales support for international customers, including parts warehousing, multi-language technical help, and OTA diagnostics.
+
+Scale & Reach:
+- Operates in 30+ countries, delivering BYD vehicles globally.
+- Serves 100,000+ customers via its export network.
+
+Value Proposition:
+- Offers factory-direct pricing to overseas importers, reducing costs.
+- Emphasizes “pre-certified homologation” — meaning vehicles are pre-approved for export markets to minimize compliance delays.
+
+Recognition / Credibility:
+- Recognized as an “official BYD Export Office,” not a third-party trader.
+- Integral to BYD’s global strategy, leveraging BYD’s brand and manufacturing capacity.`,
+    contact_title: 'Contact Our Export Office',
+    contact_address: 'No. 985 Fengxiang Road, Liangxi District, Wuxi, China',
+    contact_email: 'info@bydvehicles.com',
+    contact_phone: '+86-173-6171-1305',
+  },
+  paymentSettings: {
+    car_purchase: {
+      wallet_enabled: true,
+      agent_enabled: true,
+    },
+    giveaway: {
+      wallet_enabled: true,
+      agent_enabled: true,
+      fee_cny: 7000, // Approx $1000 USD
+    },
+    investment: {
+      wallet_enabled: true,
+      agent_enabled: true,
+    },
+  },
+};

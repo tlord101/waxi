@@ -7,9 +7,9 @@ interface LogoProps {
   logoHeight?: string;
 }
 
-// This string represents the "uploaded" BYD logo image file.
-// The SVG paths have been replaced with a <text> element to ensure "BYD" is displayed correctly and legibly.
-const bydLogoSvgString = '<svg viewBox="0 0 130 60" xmlns="http://www.w3.org/2000/svg"><ellipse cx="65" cy="30" rx="63" ry="28" stroke="#d9001b" stroke-width="4" fill="none" /><text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" font-family="Poppins, sans-serif" font-size="32" font-weight="700" fill="#d9001b" letter-spacing="2">BYD</text></svg>';
+// FIX: Replaced the original BYD text logo with a custom SVG that matches the design from the user's screenshot,
+// featuring a red arc and line combination for a more sophisticated and custom brand identity.
+const bydLogoSvgString = `<svg height="20" viewBox="0 0 34 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 11.0001C5.66667 4.33345 16.3333 -0.333218 22.5 4.00011" stroke="#D9001B" stroke-width="3" stroke-linecap="round"/><path d="M10.5 15.5C14.1667 13.5 20.1667 13.5 23.8333 15.5" stroke="#D9001B" stroke-width="3" stroke-linecap="round"/></svg>`;
 const bydLogoDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(bydLogoSvgString)}`;
 
 
@@ -17,7 +17,7 @@ const Logo: React.FC<LogoProps> = ({
   theme = 'dark',
   className = '',
   wuxiSize = 'text-xl',
-  logoHeight = 'h-8'
+  logoHeight = 'h-6' // Adjusted height for new logo
 }) => {
   const wuxiTextColor = theme === 'dark' ? 'text-white' : 'text-black';
   
@@ -26,11 +26,11 @@ const Logo: React.FC<LogoProps> = ({
     : 'hover:drop-shadow-[0_0_10px_#d9001b]';
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={`flex items-center gap-3 ${className}`}>
       <img 
         src={bydLogoDataUri}
-        alt="BYD Logo"
-        className={`${logoHeight} w-auto transition-all duration-300 ease-in-out drop-shadow-[0_0_5px_rgba(217,0,27,0.7)] ${hoverGlowClass}`}
+        alt="Wuxi Logo"
+        className={`${logoHeight} w-auto transition-all duration-300 ease-in-out ${hoverGlowClass}`}
       />
 
       <span className={`${wuxiSize} font-semibold ${wuxiTextColor} tracking-wider transition-colors duration-300`}>

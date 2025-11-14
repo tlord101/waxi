@@ -94,19 +94,21 @@ const VehiclesTab: React.FC = () => {
                 <td className="px-6 py-4 font-medium text-black dark:text-white whitespace-nowrap">{vehicle.name}</td>
                 <td className="px-6 py-4">{vehicle.type}</td>
                 <td className="px-6 py-4">¥{vehicle.price.toLocaleString()}</td>
-                <td className="px-6 py-4 space-x-4">
-                  <button 
-                    onClick={() => handleEditClick(vehicle)}
-                    className="font-medium text-blue-500 dark:text-blue-400 hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => handleDeleteClick(vehicle.id)}
-                    className="font-medium text-red-500 dark:text-red-400 hover:underline"
-                  >
-                    Delete
-                  </button>
+                <td className="px-6 py-4">
+                  <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-4">
+                    <button 
+                      onClick={() => handleEditClick(vehicle)}
+                      className="font-medium text-blue-500 dark:text-blue-400 hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteClick(vehicle.id)}
+                      className="font-medium text-red-500 dark:text-red-400 hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

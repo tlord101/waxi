@@ -15,6 +15,7 @@ import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import VehicleDetailPage from './pages/VehicleDetailPage';
 import { TranslationProvider } from './contexts/TranslationContext';
+import { SiteContentProvider } from './contexts/SiteContentContext';
 // FIX: Import Page and Theme from types.ts to break circular dependency
 import { Vehicle, User, Order, Page, Theme } from './types';
 import { auth } from './services/firebase'; // Import Firebase auth instance
@@ -26,7 +27,8 @@ import {
   signUpUser,
   loginUser,
   logoutUser,
-  ensureAdminUserExists
+  ensureAdminUserExists,
+  seedSiteContent,
 } from './services/dbService';
 
 // FIX: The global declaration for ion-icon was moved to index.tsx.
@@ -60,8 +62,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const initializeApp = async () => {
-      // Ensure the admin user is created on first load if it doesn't exist.
+      // Ensure the admin user and initial site content are created if they don't exist.
       await ensureAdminUserExists();
+      await seedSiteContent();
 
       try {
         const fetchedVehicles = await fetchVehicles();
@@ -229,7 +232,9 @@ const App: React.FC = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black p-4">
             <div className="max-w-2xl text-center">
-                <div className="text-5xl mb-4" role="img" aria-label="worried face emoji">😟</div>
+                <div className="text-5xl mb-4 text-red-500" role="img" aria-label="error icon">
+                    <i className="bi bi-exclamation-triangle-fill"></i>
+                </div>
                 <h1 className="text-2xl font-bold text-byd-red mb-4">Application Error</h1>
                 <p className="text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20 p-4 rounded-md border border-red-500/30">
                     {appError}
@@ -264,7 +269,7 @@ const App: React.FC = () => {
       case 'Installment':
         return <InstallmentPage vehicle={selectedVehicleForInstallment} setCurrentPage={setCurrentPage} />;
       case 'Giveaway':
-        return <GiveawayPage />;
+        return <GiveawayPage currentUser={currentUser} setCurrentUser={setCurrentUser} setCurrentPage={setCurrentPage} />;
       case 'About':
         return <AboutPage />;
       case 'Contact':
@@ -290,25 +295,27 @@ const App: React.FC = () => {
 
   return (
     <TranslationProvider>
-      <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
-        {shouldShowNavbarAndFooter && (
-          <Navbar 
-            currentPage={currentPage} 
-            setCurrentPage={setCurrentPage} 
-            isAdminLoggedIn={isAdminLoggedIn}
-            currentUser={currentUser}
-            onAdminLogout={handleAdminLogout}
-            onUserLogout={handleUserLogout}
-            theme={theme}
-            toggleTheme={toggleTheme}
-          />
-        )}
-        <main className="flex-grow text-black dark:text-white">
-          {renderPage()}
-        </main>
-        {shouldShowNavbarAndFooter && <Footer />}
-        <AIAssistant />
-      </div>
+      <SiteContentProvider>
+        <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
+          {shouldShowNavbarAndFooter && (
+            <Navbar 
+              currentPage={currentPage} 
+              setCurrentPage={setCurrentPage} 
+              isAdminLoggedIn={isAdminLoggedIn}
+              currentUser={currentUser}
+              onAdminLogout={handleAdminLogout}
+              onUserLogout={handleUserLogout}
+              theme={theme}
+              toggleTheme={toggleTheme}
+            />
+          )}
+          <main className="flex-grow text-black dark:text-white">
+            {renderPage()}
+          </main>
+          {shouldShowNavbarAndFooter && <Footer />}
+          <AIAssistant />
+        </div>
+      </SiteContentProvider>
     </TranslationProvider>
   );
 };

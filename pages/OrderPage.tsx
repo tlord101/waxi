@@ -1,11 +1,10 @@
-
-
 import React, { useState, useEffect } from 'react';
 // FIX: Import Page from types.ts to break circular dependency.
 import { Vehicle, Order, User, Page } from '../types';
 import { sendOrderConfirmation, sendPaymentRequestToAgent, sendReceiptSubmissionToAgent } from '../services/emailService';
 import { addOrder, updateOrder, updateUser } from '../services/dbService';
 import PaymentModal from '../components/PaymentModal';
+import { useSiteContent } from '../contexts/SiteContentContext';
 
 interface OrderPageProps {
   vehicle: Vehicle | null;
@@ -16,6 +15,9 @@ interface OrderPageProps {
 }
 
 const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentUser, setCurrentUser, pendingOrder }) => {
+  const { content } = useSiteContent();
+  const paymentSettings = content?.paymentSettings?.car_purchase;
+
   const [step, setStep] = useState<'FORM' | 'AWAITING_PAYMENT_DETAILS' | 'UPLOAD_RECEIPT' | 'PENDING_CONFIRMATION' | 'CONFIRMED'>('FORM');
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -197,6 +199,9 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
     switch (step) {
       case 'FORM':
         const canAfford = currentUser.balance >= vehicle.price;
+        const walletEnabled = paymentSettings?.wallet_enabled ?? false;
+        const agentEnabled = paymentSettings?.agent_enabled ?? false;
+
         return (
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="max-w-4xl mx-auto bg-gray-50 dark:bg-gray-900 p-8 rounded-xl shadow-lg flex flex-col lg:flex-row gap-8">
@@ -222,34 +227,45 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
                 </div>
 
                 <h2 className="text-2xl font-bold border-b border-gray-200 dark:border-gray-700 pb-2 pt-6">Payment Method</h2>
-                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
-                    <p className="text-sm text-blue-700 dark:text-blue-300">Your current wallet balance is <strong>¥{currentUser.balance.toLocaleString()}</strong></p>
+                
+                {walletEnabled && (
+                  <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
+                      <p className="text-sm text-blue-700 dark:text-blue-300">Your current wallet balance is <strong>¥{currentUser.balance.toLocaleString()}</strong></p>
+                  </div>
+                )}
+                
+                <div className="space-y-3">
+                  {walletEnabled && canAfford && (
+                    <button type="button" onClick={handlePayWithWallet} disabled={isProcessing} className="w-full bg-green-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-green-700 transition-colors duration-300 disabled:bg-gray-500 flex items-center justify-center gap-2">
+                      <ion-icon name="wallet-outline"></ion-icon>
+                      {isProcessing ? 'Processing...' : `Pay ¥${vehicle.price.toLocaleString()} with Wallet`}
+                    </button>
+                  )}
+
+                  {walletEnabled && !canAfford && (
+                     <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 rounded-lg text-center">
+                        <p className="font-bold">Insufficient Funds</p>
+                        <p className="text-sm">Your wallet balance is too low for this purchase.</p>
+                    </div>
+                  )}
+
+                  {agentEnabled && (
+                    <div className={walletEnabled && canAfford ? "text-center text-sm text-gray-500 dark:text-gray-400" : ""}>
+                      {walletEnabled && canAfford && <span>or, </span>}
+                      <button type="button" onClick={handleOpenPaymentModal} className={walletEnabled && canAfford ? "font-medium text-byd-red hover:underline" : "w-full bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300 disabled:bg-gray-500"}>
+                          {isProcessing ? 'Processing...' : 'Pay with Agent (Bank/Crypto)'}
+                      </button>
+                    </div>
+                  )}
+
+                  {!walletEnabled && !agentEnabled && (
+                    <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 rounded-lg text-center">
+                      <p className="font-bold">Payments Disabled</p>
+                      <p className="text-sm">Online payments are currently unavailable. Please contact support.</p>
+                    </div>
+                  )}
                 </div>
 
-                {canAfford ? (
-                    <div className="space-y-3">
-                        <button type="button" onClick={handlePayWithWallet} disabled={isProcessing} className="w-full bg-green-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-green-700 transition-colors duration-300 disabled:bg-gray-500 flex items-center justify-center gap-2">
-                            <ion-icon name="wallet-outline"></ion-icon>
-                            {isProcessing ? 'Processing...' : `Pay ¥${vehicle.price.toLocaleString()} with Wallet`}
-                        </button>
-                        <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-                            <span>or, </span>
-                            <button type="button" onClick={handleOpenPaymentModal} className="font-medium text-byd-red hover:underline">
-                                use other payment methods.
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="space-y-4">
-                        <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 rounded-lg text-center">
-                            <p className="font-bold">Insufficient Funds</p>
-                            <p className="text-sm">Your wallet balance is too low for this purchase.</p>
-                        </div>
-                        <button type="button" onClick={handleOpenPaymentModal} disabled={isProcessing} className="w-full bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300 disabled:bg-gray-500">
-                            {isProcessing ? 'Processing...' : 'Pay with Agent (Bank/Crypto)'}
-                        </button>
-                    </div>
-                )}
               </div>
             </div>
           </form>
@@ -286,8 +302,8 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
                         <input id="receipt-upload" type="file" className="hidden" onChange={handleReceiptFileChange} accept="image/*,.pdf" required />
                     </label>
                 </div>
-                <button type="submit" disabled={isProcessing || !receiptFile} className="w-full bg-byd-red text-white py-3 px-8 rounded-full font-semibold hover:bg-byd-red-dark transition-colors disabled:bg-gray-500">
-                    {isProcessing ? 'Submitting...' : 'Submit Receipt for Verification'}
+                <button type="submit" disabled={isProcessing} className="w-full bg-byd-red text-white py-3 px-8 rounded-full font-semibold hover:bg-byd-red-dark transition-colors disabled:bg-gray-500">
+                    {isProcessing ? 'Submitting...' : 'Submit Receipt'}
                 </button>
             </form>
         );
@@ -295,45 +311,45 @@ const OrderPage: React.FC<OrderPageProps> = ({ vehicle, setCurrentPage, currentU
       case 'PENDING_CONFIRMATION':
         return (
             <div className="max-w-2xl mx-auto bg-gray-100 dark:bg-gray-900 p-8 rounded-xl shadow-lg text-center">
-                {/* FIX: Replaced 'class' with 'className' to conform to React standards */}
                 <ion-icon name="time-outline" className="text-yellow-500 text-7xl mb-4"></ion-icon>
-                <h2 className="text-3xl font-bold mb-4">Receipt Submitted!</h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">Thank you! We have received your payment receipt. Our agent is now verifying the transaction.</p>
-                <p className="mb-8">You will receive a final order confirmation email at <strong>{email}</strong> once the payment is approved. This usually takes a few hours.</p>
-                 <button onClick={() => setCurrentPage('Home')} className="bg-gray-600 text-white py-3 px-8 rounded-full font-semibold hover:bg-gray-500 transition-colors">
-                    Back to Homepage
-                </button>
+                <h2 className="text-3xl font-bold mb-4">Verification in Progress</h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">Thank you! Your receipt for order <strong>{currentOrder?.id}</strong> has been submitted for verification.</p>
+                <p>You will receive a final confirmation email once our team approves the payment. This usually takes a few hours.</p>
             </div>
         );
 
       case 'CONFIRMED':
         return (
             <div className="max-w-2xl mx-auto bg-gray-100 dark:bg-gray-900 p-8 rounded-xl shadow-lg text-center">
-                {/* FIX: Replaced 'class' with 'className' to conform to React standards */}
                 <ion-icon name="checkmark-circle-outline" className="text-green-500 text-7xl mb-4"></ion-icon>
-                <h1 className="text-3xl font-bold mb-4">Thank You For Your Order, {fullName}!</h1>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">Your purchase of the {vehicle.name} is complete. A confirmation email has been sent to <strong>{email}</strong>.</p>
-                <p className="mb-8">Our sales team will contact you within 24 hours to arrange for delivery and final paperwork. Welcome to the BYD family!</p>
-                <button onClick={() => setCurrentPage('Home')} className="bg-byd-red text-white py-3 px-8 rounded-full font-semibold hover:bg-byd-red-dark transition-colors">
+                <h2 className="text-3xl font-bold mb-4">Congratulations, {fullName}!</h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">Your purchase of the <strong>{vehicle.name}</strong> is complete!</p>
+                <p className="mb-8">A confirmation email with your order details has been sent to <strong>{email}</strong>. Our team will be in touch shortly to arrange delivery.</p>
+                <button
+                    onClick={() => setCurrentPage('Home')}
+                    className="bg-byd-red text-white py-3 px-8 rounded-full font-semibold hover:bg-byd-red-dark transition-colors"
+                >
                     Back to Homepage
                 </button>
             </div>
         );
+      default:
+        return null;
     }
   };
 
   return (
     <div className="py-16">
       <div className="container mx-auto px-6">
-        <div className="max-w-4xl mx-auto text-center mb-12">
-            <h1 className="text-5xl font-extrabold mb-4">Complete Your Purchase</h1>
-            <p className="text-gray-600 dark:text-gray-300">
-              You're just a few steps away from owning the incredible {vehicle.name}.
+        <div className="max-w-4xl mx-auto">
+            <h1 className="text-5xl font-extrabold text-center mb-4">Complete Your Purchase</h1>
+            <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
+                You're just a few steps away from owning your new {vehicle.name}.
             </p>
         </div>
         {renderContent()}
       </div>
-      <PaymentModal
+      <PaymentModal 
         isOpen={isPaymentModalOpen}
         onClose={() => setIsPaymentModalOpen(false)}
         onSelectPayment={handleSelectPaymentMethod}

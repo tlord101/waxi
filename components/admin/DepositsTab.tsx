@@ -92,18 +92,18 @@ const DepositsTab: React.FC = () => {
               </td>
               <td className="px-6 py-4">
                 {deposit.status === 'Verifying' ? (
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
                     <a 
                         href={deposit.receipt_url || '#'} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className={`font-medium text-blue-500 dark:text-blue-400 hover:underline ${!deposit.receipt_url ? 'opacity-50 pointer-events-none' : ''}`}
+                        className={`font-medium text-blue-500 dark:text-blue-400 hover:underline whitespace-nowrap ${!deposit.receipt_url ? 'opacity-50 pointer-events-none' : ''}`}
                     >
                         View Receipt
                     </a>
                     <button
                         onClick={() => handleConfirmDeposit(deposit)}
-                        className="border border-byd-red text-byd-red px-3 py-1.5 rounded-md text-sm font-semibold hover:bg-byd-red/10 transition-colors w-28 text-center"
+                        className="border border-byd-red text-byd-red px-3 py-1.5 rounded-md text-sm font-semibold hover:bg-byd-red/10 transition-colors w-full sm:w-32 text-center"
                     >
                         Confirm Deposit
                     </button>

@@ -1,6 +1,4 @@
-
-
-import { Order, InstallmentPlan, GiveawayEntry, EmailLog, User, Investment, Vehicle, Deposit } from '../types';
+import { Order, InstallmentPlan, GiveawayEntry, EmailLog, User, Investment, Vehicle, Deposit, SiteContent } from '../types';
 import { app, auth, db as firestoreDb } from './firebase';
 import * as mockData from './mockData';
 
@@ -20,6 +18,8 @@ let mockEmailLogs = [...mockData.mockEmailLogs];
 let mockInvestments = [...mockData.mockInvestments];
 let mockUsers = [...mockData.mockUsers];
 let mockDeposits = [...mockData.mockDeposits];
+let mockSiteContent = {...mockData.mockSiteContent};
+
 
 // Helper for generating random IDs
 const generateId = () => Math.random().toString(36).substring(2, 15);
@@ -531,5 +531,122 @@ export const deleteVehicle = async (vehicleId: string): Promise<void> => {
         await firestoreDb.collection('vehicles').doc(vehicleId).delete();
     } catch (error) {
         console.error("Error deleting vehicle:", error);
+    }
+};
+
+export const addGiveawayEntry = async (entryData: Omit<GiveawayEntry, 'id' | 'raffle_code'>): Promise<GiveawayEntry> => {
+    const raffle_code = `BYD${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    if (USE_MOCK_DATA) {
+        console.log("Adding mock giveaway entry.");
+        const newEntry: GiveawayEntry = {
+            ...(entryData as any),
+            id: generateId(),
+            raffle_code,
+        };
+        mockGiveawayEntries.unshift(newEntry);
+        return Promise.resolve(newEntry);
+    }
+    try {
+        const docRef = await firestoreDb.collection('giveaway_entries').add({ ...entryData, raffle_code });
+        return { ...(entryData as any), id: docRef.id, raffle_code };
+    } catch (error) {
+        console.error("Error adding giveaway entry:", error);
+        throw error;
+    }
+};
+
+export const updateGiveawayEntry = async (entryId: string, updates: Partial<GiveawayEntry>): Promise<void> => {
+    if (USE_MOCK_DATA) {
+        console.log(`Updating mock giveaway entry: ${entryId}`, updates);
+        mockGiveawayEntries = mockGiveawayEntries.map(e => e.id === entryId ? { ...e, ...updates } : e);
+        return Promise.resolve();
+    }
+    try {
+        await firestoreDb.collection('giveaway_entries').doc(entryId).update(updates);
+    } catch (error) {
+        console.error("Error updating giveaway entry:", error);
+    }
+};
+
+
+// --- SITE CONTENT MANAGEMENT ---
+
+export const getSiteContent = async (): Promise<SiteContent | null> => {
+    if (USE_MOCK_DATA) {
+        return Promise.resolve(mockSiteContent);
+    }
+    try {
+        const content: Partial<SiteContent> = {};
+        const collectionRef = firestoreDb.collection('site_content');
+        
+        const homepageDoc = await collectionRef.doc('homepage').get();
+        if (homepageDoc.exists) content.homepage = homepageDoc.data() as SiteContent['homepage'];
+        
+        const footerDoc = await collectionRef.doc('footer').get();
+        if (footerDoc.exists) content.footer = footerDoc.data() as SiteContent['footer'];
+
+        const aboutpageDoc = await collectionRef.doc('aboutpage').get();
+        if (aboutpageDoc.exists) content.aboutpage = aboutpageDoc.data() as SiteContent['aboutpage'];
+        
+        const paymentSettingsDoc = await collectionRef.doc('paymentSettings').get();
+        if (paymentSettingsDoc.exists) content.paymentSettings = paymentSettingsDoc.data() as SiteContent['paymentSettings'];
+
+        return content as SiteContent;
+    } catch (error) {
+        console.error("Error fetching site content:", error);
+        return null;
+    }
+};
+
+export const updateSiteContent = async (docId: keyof SiteContent | 'paymentSettings', data: any): Promise<void> => {
+    if (USE_MOCK_DATA) {
+        console.log(`Updating mock site content for: ${docId}`);
+        (mockSiteContent as any)[docId] = { ...(mockSiteContent as any)[docId], ...data };
+        return Promise.resolve();
+    }
+    try {
+        await firestoreDb.collection('site_content').doc(docId).set(data, { merge: true });
+    } catch (error) {
+        console.error(`Error updating site content for ${docId}:`, error);
+        throw error;
+    }
+};
+
+export const seedSiteContent = async (): Promise<void> => {
+    if (USE_MOCK_DATA) {
+        console.log("Mock data mode: Site content seeding skipped.");
+        return;
+    }
+    try {
+        const homepageRef = firestoreDb.collection('site_content').doc('homepage');
+        const homepageDoc = await homepageRef.get();
+        if (!homepageDoc.exists) {
+            console.log("Seeding initial homepage content...");
+            await homepageRef.set(mockData.mockSiteContent.homepage);
+        }
+
+        const footerRef = firestoreDb.collection('site_content').doc('footer');
+        const footerDoc = await footerRef.get();
+        if (!footerDoc.exists) {
+            console.log("Seeding initial footer content...");
+            await footerRef.set(mockData.mockSiteContent.footer);
+        }
+
+        const aboutpageRef = firestoreDb.collection('site_content').doc('aboutpage');
+        const aboutpageDoc = await aboutpageRef.get();
+        if (!aboutpageDoc.exists) {
+            console.log("Seeding initial about page content...");
+            await aboutpageRef.set(mockData.mockSiteContent.aboutpage);
+        }
+        
+        const paymentSettingsRef = firestoreDb.collection('site_content').doc('paymentSettings');
+        const paymentSettingsDoc = await paymentSettingsRef.get();
+        if (!paymentSettingsDoc.exists) {
+            console.log("Seeding initial payment settings...");
+            await paymentSettingsRef.set(mockData.mockSiteContent.paymentSettings);
+        }
+
+    } catch (error) {
+        console.error("Error seeding site content:", error);
     }
 };

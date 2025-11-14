@@ -34,7 +34,7 @@ export interface User {
 export interface EmailLog {
   id: string;
   sent_at?: Date | string;
-  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'giveaway_winner' | 'payment_request_agent' | 'payment_receipt_agent' | 'deposit_request_agent' | 'deposit_receipt_agent';
+  email_type: 'order_confirmation' | 'installment_confirmation' | 'giveaway_confirmation' | 'giveaway_winner' | 'payment_request_agent' | 'payment_receipt_agent' | 'deposit_request_agent' | 'deposit_receipt_agent' | 'giveaway_payment_request_agent' | 'giveaway_payment_receipt_agent';
   recipient: string;
   subject: string;
   body: string;
@@ -69,12 +69,14 @@ export interface InstallmentPlan {
 
 export interface GiveawayEntry {
     id: string;
+    userId?: string;
     name: string;
     email: string;
     country: string;
     raffle_code: string;
-    payment_status: 'Paid';
+    payment_status: 'Paid' | 'Awaiting Receipt' | 'Verifying' | 'Pending';
     winner_status: 'No' | 'Yes';
+    receipt_url?: string;
 }
 
 export interface Investment {
@@ -95,4 +97,65 @@ export interface Deposit {
   status: 'Awaiting Receipt' | 'Verifying' | 'Completed' | 'Failed';
   request_date: string;
   receipt_url?: string;
+}
+
+// --- Site Content Management Types ---
+
+export interface HomePageContent {
+  giveaway_bg_image_url: string;
+  giveaway_title: string;
+  giveaway_description: string;
+  giveaway_button_text: string;
+  about_image_url: string;
+  about_title: string;
+  about_text: string;
+  about_button_link_text: string;
+}
+
+export interface FooterContent {
+  privacy_link_text: string;
+  cookie_link_text: string;
+  contact_link_text: string;
+  follow_us_text: string;
+  facebook_url: string;
+  twitter_url: string;
+  instagram_url: string;
+  tiktok_url: string;
+  youtube_url: string;
+  copyright_text: string;
+}
+
+export interface AboutPageContent {
+  banner_image_url: string;
+  banner_title: string;
+  banner_subtitle: string;
+  main_title: string;
+  main_content: string; // Using a single string for simplicity, can be formatted with newlines.
+  contact_title: string;
+  contact_address: string;
+  contact_email: string;
+  contact_phone: string;
+}
+
+export interface PaymentSettings {
+  car_purchase: {
+    wallet_enabled: boolean;
+    agent_enabled: boolean;
+  };
+  giveaway: {
+    wallet_enabled: boolean;
+    agent_enabled: boolean;
+    fee_cny: number;
+  };
+  investment: {
+    wallet_enabled: boolean;
+    agent_enabled: boolean;
+  };
+}
+
+export interface SiteContent {
+  homepage: HomePageContent;
+  footer: FooterContent;
+  aboutpage: AboutPageContent;
+  paymentSettings: PaymentSettings;
 }

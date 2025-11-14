@@ -114,6 +114,49 @@ export const sendReceiptSubmissionToAgent = async (data: {
   });
 };
 
+export const sendGiveawayPaymentRequestToAgent = async (data: {
+  customerName: string;
+  customerEmail: string;
+  fee: number;
+}) => {
+  const subject = `Giveaway Entry Payment Request from ${data.customerName}`;
+  const bodyContent = `
+    <p><strong>${data.customerName}</strong> (${data.customerEmail}) wants to pay the giveaway entry fee of <strong>¥${data.fee.toLocaleString()}</strong>.</p>
+    <p>Please send them the necessary bank or crypto details to complete the payment.</p>
+  `;
+  const emailHtml = `<div style="font-family: sans-serif; padding: 1rem;"><p>This is an automated notification for the payment agent.</p>${bodyContent}</div>`;
+
+  return await apiSendEmail({
+    email_type: 'giveaway_payment_request_agent',
+    recipient: AGENT_EMAIL,
+    subject: subject,
+    body: emailHtml,
+  });
+};
+
+export const sendGiveawayReceiptToAgent = async (data: {
+  customerName: string;
+  customerEmail: string;
+  entryId: string;
+  receiptUrl: string;
+}) => {
+  const subject = `Giveaway Receipt Submitted for Entry ${data.entryId}`;
+  const bodyContent = `
+    <p>A receipt has been submitted by <strong>${data.customerName}</strong> (${data.customerEmail}) for their giveaway entry.</p>
+    <p><strong>Entry ID:</strong> ${data.entryId}</p>
+    <p>Please review the receipt: <a href="${data.receiptUrl}">View Receipt</a></p>
+    <p>After verifying, go to the Admin Panel -> Giveaway tab to confirm the payment.</p>
+  `;
+  const emailHtml = `<div style="font-family: sans-serif; padding: 1rem;"><p>This is an automated notification for the payment agent.</p>${bodyContent}</div>`;
+
+  return await apiSendEmail({
+    email_type: 'giveaway_payment_receipt_agent',
+    recipient: AGENT_EMAIL,
+    subject: subject,
+    body: emailHtml,
+  });
+};
+
 
 const createEmailTemplate = (title: string, content: string) => `
   <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">

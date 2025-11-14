@@ -7,8 +7,10 @@ import InstallmentsTab from '../components/admin/InstallmentsTab';
 import GiveawayTab from '../components/admin/GiveawayTab';
 import EmailLogsTab from '../components/admin/EmailLogsTab';
 import DepositsTab from '../components/admin/DepositsTab';
+import ContentTab from '../components/admin/ContentTab';
+import PaymentSettingsTab from '../components/admin/PaymentSettingsTab';
 
-export type AdminTab = 'Analytics' | 'Vehicles' | 'Orders' | 'Deposits' | 'Installments' | 'Giveaway' | 'Email Logs';
+export type AdminTab = 'Analytics' | 'Vehicles' | 'Orders' | 'Deposits' | 'Installments' | 'Giveaway' | 'Email Logs' | 'Content' | 'Payment Settings';
 
 const AdminPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('Analytics');
@@ -30,6 +32,10 @@ const AdminPage: React.FC = () => {
         return <GiveawayTab />;
       case 'Email Logs':
         return <EmailLogsTab />;
+      case 'Content':
+        return <ContentTab />;
+      case 'Payment Settings':
+        return <PaymentSettingsTab />;
       default:
         return <AnalyticsTab />;
     }

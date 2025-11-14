@@ -14,14 +14,14 @@ const Hero: React.FC<HeroProps> = ({ vehicle, onExplore }) => {
       className="relative w-full h-screen bg-cover bg-center text-white" 
       style={{ backgroundImage: `url(${vehicle.imageUrl.replace('/800/600', '/1920/1080')})` }}
     >
-      <div className="absolute inset-0 bg-black/50"></div>
-      <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center">
-        <h1 className="text-5xl md:text-7xl font-bold tracking-wider uppercase drop-shadow-lg animate-fade-in-down">
+      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+        <h1 className="text-6xl md:text-8xl font-black tracking-widest uppercase drop-shadow-lg mb-12">
           {vehicle.name}
         </h1>
         <button
           onClick={onExplore}
-          className="px-10 py-3 mt-8 font-semibold text-white uppercase transition-all duration-300 bg-transparent border-2 border-white rounded-md hover:bg-white hover:text-black hover:scale-105 animate-fade-in-up"
+          className="px-12 py-3 font-semibold text-white tracking-wider transition-colors duration-300 bg-transparent border border-white/80 hover:bg-white/10"
         >
           {t('hero_explore_more')}
         </button>

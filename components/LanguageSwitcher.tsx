@@ -26,12 +26,12 @@ const LanguageSwitcher: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+        className="flex items-center gap-2 p-2 rounded-full hover:bg-white/20 transition-colors"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        <ion-icon name="globe-outline" className="text-2xl text-black dark:text-white"></ion-icon>
-        <span className="font-semibold text-sm text-black dark:text-white hidden sm:block">{language.toUpperCase()}</span>
+        <i className="bi bi-globe text-xl text-white"></i>
+        <span className="font-semibold text-sm text-white">{language.toUpperCase()}</span>
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-black rounded-lg shadow-xl z-50 border border-gray-200 dark:border-gray-800 animate-fade-in-up">

@@ -1,64 +1,153 @@
+import React, { useState, useEffect } from 'react';
+import { useSiteContent } from '../contexts/SiteContentContext';
+import { User, Page, GiveawayEntry } from '../types';
+import { addGiveawayEntry, updateGiveawayEntry, updateUser } from '../services/dbService';
+import { sendGiveawayConfirmation, sendGiveawayPaymentRequestToAgent, sendGiveawayReceiptToAgent } from '../services/emailService';
 
-import React, { useState } from 'react';
-import { sendGiveawayConfirmation } from '../services/emailService';
+interface GiveawayPageProps {
+  currentUser: User | null;
+  setCurrentUser: (user: User) => void;
+  setCurrentPage: (page: Page) => void;
+}
 
 const COUNTRIES = ["China", "United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Japan", "Other"];
 
-const GiveawayPage: React.FC = () => {
-  const [step, setStep] = useState(1); // 1: Form, 2: Payment, 3: Success
+const GiveawayPage: React.FC<GiveawayPageProps> = ({ currentUser, setCurrentUser, setCurrentPage }) => {
+  const { content, isLoading } = useSiteContent();
+  const paymentSettings = content?.paymentSettings?.giveaway;
+
+  const [step, setStep] = useState<'FORM' | 'PAYMENT' | 'AWAITING_RECEIPT' | 'SUCCESS'>('FORM');
+  const [currentEntry, setCurrentEntry] = useState<GiveawayEntry | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
     country: 'China',
   });
-  const [raffleCode, setRaffleCode] = useState('');
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      setFormData(prev => ({ ...prev, name: currentUser.name, email: currentUser.email }));
+    }
+  }, [currentUser]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmitInfo = (e: React.FormEvent) => {
+  const handleProceedToPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStep(2);
-  };
-
-  const handlePayment = () => {
     setIsProcessing(true);
-    // Simulate payment processing
-    setTimeout(async () => {
-      // Generate raffle code
-      const code = `BYD2025-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-      setRaffleCode(code);
+    try {
+      // FIX: Conditionally build the entry payload to avoid sending 'userId: undefined' to Firestore
+      // when the user is not logged in.
+      const entryPayload: Omit<GiveawayEntry, 'id' | 'raffle_code' | 'receipt_url'> = {
+        name: formData.name,
+        email: formData.email,
+        country: formData.country,
+        payment_status: 'Pending',
+        winner_status: 'No',
+      };
 
-      // Send confirmation email
-      await sendGiveawayConfirmation(formData.email, { name: formData.name, raffleCode: code });
-      
+      if (currentUser) {
+        entryPayload.userId = currentUser.id;
+      }
+
+      const newEntry = await addGiveawayEntry(entryPayload);
+      setCurrentEntry(newEntry);
+      setStep('PAYMENT');
+    } catch (error) {
+      console.error("Failed to create giveaway entry record:", error);
+      alert("An error occurred. Please try again.");
+    } finally {
       setIsProcessing(false);
-      setStep(3);
-    }, 2000);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return renderFormStep();
-      case 2:
-        return renderPaymentStep();
-      case 3:
-        return renderSuccessStep();
-      default:
-        return renderFormStep();
     }
   };
+
+  const handlePayWithWallet = async () => {
+    if (!currentUser || !paymentSettings || currentUser.balance < paymentSettings.fee_cny || !currentEntry) {
+      alert("Insufficient funds or error.");
+      return;
+    }
+    setIsProcessing(true);
+    try {
+      const newBalance = currentUser.balance - paymentSettings.fee_cny;
+      await updateUser(currentUser.id, { balance: newBalance });
+      setCurrentUser({ ...currentUser, balance: newBalance });
+
+      await updateGiveawayEntry(currentEntry.id, { payment_status: 'Paid' });
+      await sendGiveawayConfirmation(formData.email, { name: formData.name, raffleCode: currentEntry.raffle_code });
+
+      setCurrentEntry(prev => prev ? { ...prev, payment_status: 'Paid' } : null);
+      setStep('SUCCESS');
+    } catch (error) {
+      console.error("Wallet payment failed:", error);
+      alert("An error occurred during payment.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePayWithAgent = async () => {
+    if (!paymentSettings || !currentEntry) return;
+    setIsProcessing(true);
+    try {
+      await updateGiveawayEntry(currentEntry.id, { payment_status: 'Awaiting Receipt' });
+      await sendGiveawayPaymentRequestToAgent({
+        customerName: formData.name,
+        customerEmail: formData.email,
+        fee: paymentSettings.fee_cny,
+      });
+      setCurrentEntry(prev => prev ? { ...prev, payment_status: 'Awaiting Receipt' } : null);
+      setStep('AWAITING_RECEIPT');
+    } catch (error) {
+      console.error("Agent payment request failed:", error);
+      alert("An error occurred.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+  
+  const handleReceiptFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setReceiptFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmitReceipt = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!receiptFile || !currentEntry) return;
+    setIsProcessing(true);
+    try {
+      // In a real app, you would upload to a storage service
+      const fakeReceiptUrl = `https://example.com/receipts/giveaway/${currentEntry.id}/${receiptFile.name}`;
+      await updateGiveawayEntry(currentEntry.id, {
+        payment_status: 'Verifying',
+        receipt_url: fakeReceiptUrl,
+      });
+      await sendGiveawayReceiptToAgent({
+        customerName: formData.name,
+        customerEmail: formData.email,
+        entryId: currentEntry.id,
+        receiptUrl: fakeReceiptUrl,
+      });
+      setCurrentEntry(prev => prev ? { ...prev, payment_status: 'Verifying' } : null);
+    } catch (error) {
+       console.error("Receipt submission failed:", error);
+       alert("An error occurred.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
 
   const renderFormStep = () => (
     <div className="max-w-lg mx-auto bg-white/20 dark:bg-black/20 backdrop-blur-sm p-8 rounded-xl shadow-lg">
       <h2 className="text-3xl font-bold mb-2 text-center">Enter the Giveaway</h2>
-      <p className="text-center text-gray-800 dark:text-gray-300 mb-6">Fill in your details to proceed to payment. Entry fee: $1,000 USD.</p>
-      <form onSubmit={handleSubmitInfo} className="space-y-6">
+      <p className="text-center text-gray-800 dark:text-gray-300 mb-6">{content?.homepage?.giveaway_description}</p>
+      <form onSubmit={handleProceedToPayment} className="space-y-6">
         <div>
           <input
             type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleInputChange} required
@@ -72,12 +161,6 @@ const GiveawayPage: React.FC = () => {
           />
         </div>
         <div>
-          <input
-            type="tel" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleInputChange} required
-            className="w-full bg-white/50 dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-lg py-3 px-4 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-byd-red focus:border-byd-red"
-          />
-        </div>
-        <div>
           <select
             name="country" value={formData.country} onChange={handleInputChange} required
             className="w-full bg-white/50 dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-lg py-3 px-4 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-byd-red focus:border-byd-red appearance-none"
@@ -87,66 +170,159 @@ const GiveawayPage: React.FC = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300"
+          disabled={isProcessing}
+          className="w-full bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300 disabled:bg-gray-500"
         >
-          Proceed to Payment
+          {isProcessing ? 'Processing...' : 'Proceed to Payment'}
         </button>
       </form>
     </div>
   );
 
-  const renderPaymentStep = () => (
-    <div className="max-w-lg mx-auto bg-white/20 dark:bg-black/20 backdrop-blur-sm p-8 rounded-xl shadow-lg text-center">
-      <h2 className="text-3xl font-bold mb-4">Confirm Your Entry</h2>
-      <p className="text-gray-800 dark:text-gray-300 mb-6">You are about to make a non-refundable payment of $1,000 USD to enter the BYD Dolphin giveaway.</p>
-      <div className="text-left bg-black/50 p-4 rounded-lg mb-6 space-y-2 text-white">
-        <p><strong>Name:</strong> {formData.name}</p>
-        <p><strong>Email:</strong> {formData.email}</p>
-        <p><strong>Country:</strong> {formData.country}</p>
-      </div>
-      <button
-        onClick={handlePayment}
-        disabled={isProcessing}
-        className="w-full bg-green-500 text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-green-600 transition-colors duration-300 disabled:bg-gray-500 flex items-center justify-center"
-      >
-        {isProcessing ? (
-          <>
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Processing...
-          </>
-        ) : (
-          'Pay $1,000 Now'
-        )}
-      </button>
-       <button onClick={() => setStep(1)} className="mt-4 text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white hover:underline">
-          Go back and edit
-      </button>
-    </div>
-  );
+  const renderPaymentStep = () => {
+    const canAfford = currentUser && paymentSettings && currentUser.balance >= paymentSettings.fee_cny;
+    return (
+        <div className="max-w-lg mx-auto bg-white/20 dark:bg-black/20 backdrop-blur-sm p-8 rounded-xl shadow-lg text-center">
+            <h2 className="text-3xl font-bold mb-4">Confirm Your Entry</h2>
+            <p className="text-gray-800 dark:text-gray-300 mb-6">
+                Please complete the non-refundable entry fee of <strong>¥{paymentSettings?.fee_cny.toLocaleString()}</strong> to enter the giveaway.
+            </p>
+            <div className="space-y-4">
+                {paymentSettings?.wallet_enabled && currentUser && (
+                    canAfford ? (
+                        <button onClick={handlePayWithWallet} disabled={isProcessing} className="w-full bg-green-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-500">
+                            {isProcessing ? 'Processing...' : `Pay with Wallet (Balance: ¥${currentUser.balance.toLocaleString()})`}
+                        </button>
+                    ) : (
+                         <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 rounded-lg text-center">
+                            <p className="font-bold">Insufficient Funds in Wallet</p>
+                        </div>
+                    )
+                )}
+                {paymentSettings?.agent_enabled && (
+                     <button onClick={handlePayWithAgent} disabled={isProcessing} className="w-full bg-blue-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-500">
+                        {isProcessing ? 'Processing...' : 'Pay with Agent (Bank/Crypto)'}
+                    </button>
+                )}
+                 {!paymentSettings?.wallet_enabled && !paymentSettings?.agent_enabled && (
+                     <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 rounded-lg text-center">
+                        <p className="font-bold">Payments Disabled</p>
+                        <p className="text-sm">Giveaway entries are currently unavailable. Please contact support.</p>
+                    </div>
+                 )}
+            </div>
+            <button onClick={() => setStep('FORM')} className="mt-4 text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white hover:underline">
+              Go back
+            </button>
+        </div>
+    );
+  };
+  
+  const renderAwaitingReceiptStep = () => {
+    if (currentEntry?.payment_status === 'Verifying') {
+        return (
+            <div className="max-w-lg mx-auto bg-white/20 dark:bg-black/20 backdrop-blur-sm p-8 rounded-xl shadow-lg text-center">
+                <ion-icon name="time-outline" className="text-yellow-400 text-7xl mb-4"></ion-icon>
+                <h2 className="text-3xl font-bold mb-4">Receipt Submitted!</h2>
+                <p className="text-gray-800 dark:text-gray-300">Your receipt is now being verified by our team. You will receive a confirmation email with your raffle code once approved. This usually takes a few hours.</p>
+            </div>
+        );
+    }
+    
+    return (
+        <div className="max-w-lg mx-auto bg-white/20 dark:bg-black/20 backdrop-blur-sm p-8 rounded-xl shadow-lg text-center">
+            <ion-icon name="mail-outline" className="text-blue-400 text-7xl mb-4"></ion-icon>
+            <h2 className="text-3xl font-bold mb-4">Check Your Email</h2>
+            <p className="text-gray-800 dark:text-gray-300 mb-6">Our payment agent will send instructions to <strong>{formData.email}</strong>. After paying, upload your receipt below.</p>
+            <form onSubmit={handleSubmitReceipt} className="mt-6 p-4 bg-white/50 dark:bg-black/20 rounded-lg">
+                <h4 className="font-bold text-lg mb-4 text-center text-black dark:text-white">Upload Your Receipt</h4>
+                <div className="mb-4">
+                    <label htmlFor="receipt-upload" className="block w-full cursor-pointer bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-byd-red dark:hover:border-byd-red">
+                        {receiptFile ? (
+                            <span className="text-green-500">{receiptFile.name}</span>
+                        ) : (
+                            <span className="text-gray-500 dark:text-gray-400">Click to select a file</span>
+                        )}
+                        <input id="receipt-upload" type="file" className="hidden" onChange={handleReceiptFileChange} accept="image/*,.pdf" required />
+                    </label>
+                </div>
+                <button type="submit" disabled={isProcessing || !receiptFile} className="w-full bg-byd-red text-white py-3 px-8 rounded-full font-semibold hover:bg-byd-red-dark transition-colors disabled:bg-gray-500">
+                    {isProcessing ? 'Submitting...' : 'Submit Receipt'}
+                </button>
+            </form>
+        </div>
+    );
+  };
+
 
   const renderSuccessStep = () => (
     <div className="max-w-lg mx-auto bg-white/20 dark:bg-black/20 backdrop-blur-sm p-8 rounded-xl shadow-lg text-center">
-      <div className="text-6xl mb-4">🎊</div>
+      <div className="text-6xl mb-4 text-byd-red"><i className="bi bi-trophy-fill"></i></div>
       <h2 className="text-3xl font-bold text-byd-red mb-4">Entry Confirmed!</h2>
-      <p className="text-lg text-gray-800 dark:text-gray-200 mb-6">Thank you for participating! Your payment was successful. Here is your unique raffle code. Keep this safe!</p>
+      <p className="text-lg text-gray-800 dark:text-gray-200 mb-6">Thank you for participating! Here is your unique raffle code. Keep this safe!</p>
       <div className="bg-black/50 border-2 border-dashed border-byd-red py-4 px-6 rounded-lg mb-6">
         <p className="text-lg text-gray-300">Your raffle code:</p>
-        <p className="text-3xl font-bold tracking-widest text-white">{raffleCode}</p>
+        <p className="text-3xl font-bold tracking-widest text-white">{currentEntry?.raffle_code}</p>
       </div>
-      <p className="text-sm text-gray-700 dark:text-gray-400">A confirmation email with your code has been sent to {formData.email}. We will announce the winner after the giveaway period ends.</p>
+      <p className="text-sm text-gray-700 dark:text-gray-400">A confirmation email has been sent to {formData.email}.</p>
     </div>
   );
 
+  const renderContent = () => {
+    switch (step) {
+      case 'FORM': return renderFormStep();
+      case 'PAYMENT': return renderPaymentStep();
+      case 'AWAITING_RECEIPT': return renderAwaitingReceiptStep();
+      case 'SUCCESS': return renderSuccessStep();
+      default: return renderFormStep();
+    }
+  };
+
+
+  if (isLoading || !content?.homepage) {
+    return (
+        <div className="min-h-[80vh] flex items-center justify-center">
+            <div className="text-byd-red text-2xl">Loading Giveaway...</div>
+        </div>
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="relative py-20 overflow-hidden min-h-[80vh] flex items-center">
+        <img src={content.homepage.giveaway_bg_image_url} alt="Giveaway Background" className="absolute inset-0 w-full h-full object-cover opacity-30 dark:opacity-30"/>
+        <div className="relative container mx-auto px-6">
+          <div className="max-w-lg mx-auto bg-white/20 dark:bg-black/20 backdrop-blur-sm p-8 rounded-xl shadow-lg text-center">
+            <div className="text-6xl mb-4 text-byd-red"><i className="bi bi-person-lock"></i></div>
+            <h2 className="text-3xl font-bold text-byd-red mb-4">Login Required</h2>
+            <p className="text-lg text-gray-800 dark:text-gray-200 mb-6">You must be logged in to your account to enter the giveaway.</p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => setCurrentPage('Login')}
+                className="w-full bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setCurrentPage('Signup')}
+                className="w-full bg-transparent border border-byd-red text-byd-red dark:text-white dark:border-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red/10 dark:hover:bg-white/10 transition-colors duration-300"
+              >
+                Sign Up
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative py-20 overflow-hidden min-h-[80vh] flex items-center">
-      <img src="https://picsum.photos/seed/byddolphin-giveaway/1920/1080" alt="BYD Dolphin" className="absolute inset-0 w-full h-full object-cover opacity-30 dark:opacity-30"/>
+      <img src={content.homepage.giveaway_bg_image_url} alt="Giveaway Background" className="absolute inset-0 w-full h-full object-cover opacity-30 dark:opacity-30"/>
       <div className="relative container mx-auto px-6">
-        {step === 1 && <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-center">Win a Brand New BYD Dolphin!</h1>}
+        {step === 'FORM' && <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-center">{content.homepage.giveaway_title}</h1>}
         <div className="mt-12">
-          {renderStep()}
+          {renderContent()}
         </div>
       </div>
     </div>

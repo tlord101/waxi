@@ -4,6 +4,7 @@ import { User, Investment, Order, Page, Deposit } from '../types';
 import { getInvestmentsForUser, addInvestment, updateUser, getPendingDepositForUser, addDeposit, updateDeposit } from '../services/dbService';
 import { sendDepositRequestToAgent, sendDepositReceiptToAgent } from '../services/emailService';
 import PaymentModal from '../components/PaymentModal';
+import { useSiteContent } from '../contexts/SiteContentContext';
 
 type DashboardTab = 'Wallet' | 'Investments' | 'Purchases' | 'Deposit Funds' | 'Actions';
 
@@ -88,6 +89,8 @@ const DashboardContent: React.FC<{
     const [investments, setInvestments] = useState<Investment[]>([]);
     const [investmentAmount, setInvestmentAmount] = useState('');
     const [investmentError, setInvestmentError] = useState('');
+    const { content } = useSiteContent();
+    const paymentSettings = content?.paymentSettings;
     
     // State for Deposit tab
     const [depositAmount, setDepositAmount] = useState('');
@@ -254,22 +257,28 @@ const DashboardContent: React.FC<{
         return (
             <div className="animate-fade-in space-y-8">
                 <div>
-                    <h2 className="text-3xl font-bold mb-6">Make an Investment</h2>
-                     <div className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg">
-                        {investmentError && <p className="text-red-500 text-sm mb-2">{investmentError}</p>}
-                        <div className="flex flex-col sm:flex-row gap-2">
-                            <input 
-                                type="number" 
-                                placeholder={`Amount (Balance: ¥${user.balance.toLocaleString()})`} 
-                                value={investmentAmount}
-                                onChange={e => setInvestmentAmount(e.target.value)}
-                                className="flex-grow p-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-byd-red focus:border-byd-red" 
-                            />
-                            <button onClick={handleInvestment} className="bg-byd-red text-white py-3 px-8 rounded-md font-semibold hover:bg-byd-red-dark transition-colors">
-                                Invest Now
-                            </button>
+                    <h2 className="text-3xl font-bold mb-6">Make an Investment from Wallet</h2>
+                    {paymentSettings?.investment?.wallet_enabled ? (
+                        <div className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg">
+                            {investmentError && <p className="text-red-500 text-sm mb-2">{investmentError}</p>}
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <input 
+                                    type="number" 
+                                    placeholder={`Amount (Balance: ¥${user.balance.toLocaleString()})`} 
+                                    value={investmentAmount}
+                                    onChange={e => setInvestmentAmount(e.target.value)}
+                                    className="flex-grow p-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-byd-red focus:border-byd-red" 
+                                />
+                                <button onClick={handleInvestment} className="bg-byd-red text-white py-3 px-8 rounded-md font-semibold hover:bg-byd-red-dark transition-colors">
+                                    Invest Now
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className="bg-yellow-100 dark:bg-yellow-800/50 p-6 rounded-lg text-center text-yellow-800 dark:text-yellow-300">
+                            <p>Wallet-based investments are currently disabled by the administrator.</p>
+                        </div>
+                    )}
                 </div>
 
                 <div>
@@ -337,13 +346,13 @@ const DashboardContent: React.FC<{
                             </div>
                         )}
                         {pendingDeposit.status === 'Verifying' && (
-                            <div className="bg-yellow-500/10 border-l-4 border-yellow-500 text-yellow-700 dark:text-yellow-300 p-6 rounded-r-lg text-center">
-                                <ion-icon name="time-outline" className="text-5xl mb-2"></ion-icon>
-                                <h3 className="font-bold text-xl">Receipt Submitted for Verification</h3>
-                                <p className="mt-2">
-                                    We have received your receipt for the <strong>¥{pendingDeposit.amount.toLocaleString()}</strong> deposit.
+                            <div className="bg-amber-100/50 dark:bg-stone-900 border-l-4 border-amber-500 dark:border-amber-600 p-6 rounded-lg text-center">
+                                <ion-icon name="time-outline" className="text-5xl mb-2 text-amber-600 dark:text-amber-500"></ion-icon>
+                                <h3 className="font-bold text-xl text-amber-800 dark:text-amber-500">Receipt Submitted for Verification</h3>
+                                <p className="mt-4 text-gray-700 dark:text-gray-300">
+                                    We have received your receipt for the <strong className="font-bold text-amber-700 dark:text-amber-500">¥{pendingDeposit.amount.toLocaleString()}</strong> deposit.
                                 </p>
-                                <p>Our team is reviewing it and will credit your account shortly. This usually takes a few hours.</p>
+                                <p className="mt-1 text-gray-700 dark:text-gray-300">Our team is reviewing it and will credit your account shortly. This usually takes a few hours.</p>
                             </div>
                         )}
                     </>

@@ -1,5 +1,3 @@
-
-
 import React, { useState, useRef, useEffect } from 'react';
 import { askBYDAssistant } from '../services/geminiService';
 
@@ -10,6 +8,7 @@ type Message = {
 
 const AIAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCalloutVisible, setIsCalloutVisible] = useState(true); // New state for the label
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -58,14 +57,27 @@ const AIAssistant: React.FC = () => {
 
   return (
     <>
-      <div className={`fixed bottom-8 right-8 z-50 transition-all duration-300 ${isOpen ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}>
+      {/* Floating Action Button and Callout */}
+      <div className={`fixed bottom-8 right-8 z-50 transition-all duration-300 ${isOpen ? 'opacity-0 scale-90 pointer-events-none' : 'opacity-100 scale-100'} flex items-end gap-3`}>
+        {/* Black label/callout */}
+        {isCalloutVisible && (
+          <div className="bg-black text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-4 animate-fade-in-up">
+            <span className="font-semibold whitespace-nowrap">Ask BYD AI</span>
+            <button onClick={() => setIsCalloutVisible(false)} className="text-gray-400 hover:text-white" aria-label="Dismiss AI suggestion">
+              <i className="bi bi-x"></i>
+            </button>
+          </div>
+        )}
+        {/* Red button */}
         <button
-          onClick={() => setIsOpen(true)}
-          className="bg-byd-red text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:bg-byd-red-dark transition-colors"
+          onClick={() => {
+            setIsOpen(true);
+            setIsCalloutVisible(false); // Hide callout when chat opens
+          }}
+          className="bg-byd-red text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:bg-byd-red-dark transition-colors shrink-0"
           aria-label="Open AI Assistant"
         >
-            {/* FIX: Replaced class with className for ion-icon custom element */}
-            <ion-icon name="chatbubbles-outline" className="text-3xl"></ion-icon>
+          <i className="bi bi-chat-quote-fill text-2xl"></i>
         </button>
       </div>
 
@@ -74,8 +86,7 @@ const AIAssistant: React.FC = () => {
         <div className="bg-white dark:bg-black text-black dark:text-white p-4 flex justify-between items-center rounded-t-lg sm:rounded-t-lg border-b border-gray-200 dark:border-gray-800">
           <h3 id="ai-assistant-header" className="font-bold text-lg">Ask BYD AI</h3>
           <button onClick={() => setIsOpen(false)} className="text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-300" aria-label="Close chat">
-            {/* FIX: Replaced class with className for ion-icon custom element */}
-            <ion-icon name="close-outline" className="text-2xl"></ion-icon>
+            <i className="bi bi-x-lg text-2xl"></i>
           </button>
         </div>
 
@@ -121,8 +132,7 @@ const AIAssistant: React.FC = () => {
               className="bg-byd-red text-white py-2 px-5 rounded-r-full hover:bg-byd-red-dark disabled:bg-red-900/50 transition-all duration-300 hover:shadow-[0_0_12px_rgba(217,0,27,0.7)]"
               aria-label="Send message"
             >
-              {/* FIX: Replaced class with className for ion-icon custom element */}
-              <ion-icon name="send-outline" className="text-xl"></ion-icon>
+              <i className="bi bi-send-fill text-xl"></i>
             </button>
           </div>
         </div>

@@ -15,6 +15,8 @@ const TABS: { name: AdminTab, icon: string }[] = [
   { name: 'Deposits', icon: 'cash-outline' },
   { name: 'Installments', icon: 'card-outline' },
   { name: 'Giveaway', icon: 'gift-outline' },
+  { name: 'Content', icon: 'create-outline' },
+  { name: 'Payment Settings', icon: 'settings-outline' },
   { name: 'Email Logs', icon: 'mail-outline' },
 ];
 
