@@ -50,21 +50,22 @@ const AdminPage: React.FC = () => {
         setIsOpen={setIsMenuOpen}
       />
       <div className="flex-1 flex flex-col">
-        {/* Mobile Header */}
-        <header className="md:hidden sticky top-0 bg-white/80 dark:bg-black/80 backdrop-blur-sm z-20 p-4 border-b border-gray-200 dark:border-gray-800 flex items-center gap-4">
-          <button 
-            onClick={() => setIsMenuOpen(true)} 
-            className="text-2xl text-black dark:text-white"
-            aria-label="Open menu"
-          >
-            {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
-            <ion-icon name="menu-outline" className="text-2xl"></ion-icon>
-          </button>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{activeTab}</h1>
-        </header>
-
         <main className="flex-1 p-4 sm:p-6 lg:p-10">
+          {/* Mobile Header elements, now inside main */}
+          <div className="md:hidden flex items-center gap-4 mb-6">
+              <button 
+                  onClick={() => setIsMenuOpen(true)} 
+                  className="text-2xl text-black dark:text-white"
+                  aria-label="Open menu"
+              >
+                  <ion-icon name="menu-outline" className="text-2xl"></ion-icon>
+              </button>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{activeTab}</h1>
+          </div>
+          
+          {/* Desktop Header */}
           <h1 className="hidden md:block text-3xl sm:text-4xl font-bold mb-6 text-gray-900 dark:text-gray-100">{activeTab}</h1>
+          
           <div className="w-full">
             {renderContent()}
           </div>
