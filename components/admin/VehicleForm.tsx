@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Vehicle } from '../../types';
 import { getVehicleDetailsWithAI } from '../../services/geminiService';
+import { uploadImage } from '../../services/imageUploadService';
 
 interface VehicleFormProps {
   initialVehicle: Vehicle | null;
@@ -20,6 +21,9 @@ const defaultVehicle: Omit<Vehicle, 'id'> = {
 const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onCancel }) => {
   const [vehicle, setVehicle] = useState(initialVehicle || defaultVehicle);
   const [isAutofilling, setIsAutofilling] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(initialVehicle?.imageUrl || defaultVehicle.imageUrl);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -30,6 +34,15 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
     const newSpecs = [...vehicle.specs];
     newSpecs[index] = { ...newSpecs[index], [field]: value };
     setVehicle(prev => ({ ...prev, specs: newSpecs }));
+  };
+  
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
   };
 
   const addSpec = () => {
@@ -77,9 +90,27 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(vehicle);
+    if (isSaving) return;
+    setIsSaving(true);
+    
+    try {
+      let finalImageUrl = vehicle.imageUrl;
+      if (imageFile) {
+        finalImageUrl = await uploadImage(imageFile);
+      }
+      
+      onSubmit({
+        ...vehicle,
+        imageUrl: finalImageUrl,
+      });
+
+    } catch (error) {
+        console.error("Error saving vehicle:", error);
+        alert(`Error saving vehicle: ${error instanceof Error ? error.message : "An unknown error occurred."}`);
+        setIsSaving(false);
+    }
   };
   
   const vehicleTypes: Vehicle['type'][] = ['Sedan', 'SUV', 'Hatchback', 'Commercial', 'Special'];
@@ -96,7 +127,7 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
                         <button 
                             type="button" 
                             onClick={handleAutofill} 
-                            disabled={!vehicle.name || isAutofilling}
+                            disabled={!vehicle.name || isAutofilling || isSaving}
                             className="flex items-center gap-1 text-xs font-semibold bg-blue-500 text-white py-1 px-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                         >
                             {isAutofilling ? (
@@ -130,10 +161,16 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
                     <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Price (¥)</label>
                     <input type="number" name="price" id="price" value={vehicle.price} onChange={handleChange} required className="mt-1 block w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-byd-red focus:border-byd-red"/>
                 </div>
-                {/* Image URL */}
+                {/* Image Upload */}
                 <div>
-                    <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Image URL</label>
-                    <input type="text" name="imageUrl" id="imageUrl" value={vehicle.imageUrl} onChange={handleChange} required className="mt-1 block w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-byd-red focus:border-byd-red"/>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Vehicle Image</label>
+                    <div className="mt-1 flex items-center space-x-4">
+                        <img src={imagePreview} alt="Vehicle Preview" className="w-24 h-16 object-cover rounded-md bg-gray-200 dark:bg-gray-700"/>
+                        <label htmlFor="image-upload" className="cursor-pointer bg-white dark:bg-gray-700 py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                            <span>Upload Image</span>
+                            <input id="image-upload" type="file" className="sr-only" accept="image/*" onChange={handleImageFileChange}/>
+                        </label>
+                    </div>
                 </div>
             </div>
              {/* Description */}
@@ -160,8 +197,10 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button type="button" onClick={onCancel} className="bg-gray-200 dark:bg-gray-600 text-black dark:text-white font-semibold py-2 px-6 rounded-lg shadow-sm hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors">Cancel</button>
-                <button type="submit" className="bg-byd-red text-white font-semibold py-2 px-6 rounded-lg shadow-sm hover:bg-byd-red-dark transition-colors">{initialVehicle ? 'Save Changes' : 'Add Vehicle'}</button>
+                <button type="button" onClick={onCancel} disabled={isSaving} className="bg-gray-200 dark:bg-gray-600 text-black dark:text-white font-semibold py-2 px-6 rounded-lg shadow-sm hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors disabled:opacity-50">Cancel</button>
+                <button type="submit" disabled={isSaving} className="bg-byd-red text-white font-semibold py-2 px-6 rounded-lg shadow-sm hover:bg-byd-red-dark transition-colors disabled:bg-byd-red/50">
+                    {isSaving ? 'Saving...' : (initialVehicle ? 'Save Changes' : 'Add Vehicle')}
+                </button>
             </div>
         </form>
     </div>

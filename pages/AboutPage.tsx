@@ -68,8 +68,7 @@ const AboutPage: React.FC = () => {
       <div className="container mx-auto px-6 py-20">
         <div className="max-w-4xl mx-auto space-y-12">
             <FadeInSection>
-                <h2 className="text-4xl font-bold mb-4 text-center flex items-center justify-center gap-3">
-                    <i className="bi bi-book-fill text-gray-500 dark:text-gray-400"></i>
+                <h2 className="text-4xl font-bold mb-4 text-center">
                     <span>{aboutpage.main_title}</span>
                 </h2>
             </FadeInSection>

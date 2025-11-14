@@ -265,7 +265,8 @@ const App: React.FC = () => {
       case 'Home':
         return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} />;
       case 'Vehicles':
-        return <VehiclesPage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} />;
+        // The "Vehicles" page now renders the enhanced HomePage component which contains the full list.
+        return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} />;
       case 'Installment':
         return <InstallmentPage vehicle={selectedVehicleForInstallment} setCurrentPage={setCurrentPage} />;
       case 'Giveaway':

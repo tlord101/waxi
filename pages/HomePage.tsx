@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Hero from '../components/Hero';
 // FIX: Import Page from types.ts to break circular dependency.
 import { Page, Vehicle } from '../types';
 import { useTranslation } from '../contexts/TranslationContext';
 import VehicleCard from '../components/VehicleCard';
 import { useSiteContent } from '../contexts/SiteContentContext';
+import CompareBar from '../components/CompareBar';
+import ComparisonView from '../components/ComparisonView';
 
 interface HomePageProps {
   vehicles: Vehicle[];
@@ -15,38 +17,71 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase, onSelectForDetail }) => {
-  const featuredVehicles = vehicles.slice(0, 3);
   const { t } = useTranslation();
-  const { content, isLoading } = useSiteContent();
-
-  // Find a specific vehicle for the hero, or fall back to the first featured one.
-  const heroVehicle = vehicles.find(v => v.name === 'BYD HAN EV') || featuredVehicles[0];
-
+  const { content } = useSiteContent();
   const homepageContent = content?.homepage;
+
+  // State from VehiclesPage
+  const [compareList, setCompareList] = useState<Vehicle[]>([]);
+  const [showCompareView, setShowCompareView] = useState(false);
+
+  // Handlers from VehiclesPage
+  const handleToggleCompare = (vehicle: Vehicle) => {
+    setCompareList(prev => {
+      const isSelected = prev.some(v => v.id === vehicle.id);
+      if (isSelected) {
+        return prev.filter(v => v.id !== vehicle.id);
+      } else {
+        if (prev.length < 4) {
+          return [...prev, vehicle];
+        }
+        alert("You can compare a maximum of 4 vehicles.");
+        return prev;
+      }
+    });
+  };
+
+  const handleRemoveFromCompare = (vehicleId: string) => {
+    setCompareList(prev => prev.filter(v => v.id !== vehicleId));
+  };
+  
+  const handleClearCompare = () => {
+    setCompareList([]);
+  };
+
+  // Find a specific vehicle for the hero, or fall back to the first one.
+  const heroVehicle = vehicles.find(v => v.name === 'BYD HAN EV') || vehicles[0];
 
   return (
     <div>
       {heroVehicle && <Hero vehicle={heroVehicle} onExplore={() => onSelectForDetail(heroVehicle)} />}
+      
+      {/* --- Main Vehicle Listing Section (Merged from VehiclesPage) --- */}
       <section className="py-20 bg-white dark:bg-black">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-4">{t('featured_vehicles')}</h2>
-          <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">{t('featured_vehicles_desc')}</p>
-          <div className="grid grid-cols-1 gap-8 max-w-3xl mx-auto">
-            {featuredVehicles.map((vehicle) => (
-              <VehicleCard key={vehicle.id} vehicle={vehicle} onSelectForInstallment={onSelectForInstallment} onSelectForPurchase={onSelectForPurchase} onSelectForDetail={onSelectForDetail} />
+          <h2 className="text-4xl font-bold text-center mb-4">Our Vehicle Lineup</h2>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
+            From sleek sedans to versatile SUVs and commercial solutions, explore the full range of BYD's innovative electric vehicles. Find the perfect model that fits your lifestyle.
+          </p>
+
+          {/* Vehicle Grid - now shows all filtered vehicles */}
+          <div className={`grid grid-cols-1 gap-8 max-w-3xl mx-auto ${compareList.length > 0 ? 'pb-28' : ''}`}>
+            {vehicles.map((vehicle) => (
+              <VehicleCard 
+                key={vehicle.id} 
+                vehicle={vehicle} 
+                onSelectForInstallment={onSelectForInstallment} 
+                onSelectForPurchase={onSelectForPurchase}
+                onSelectForDetail={onSelectForDetail}
+                onToggleCompare={handleToggleCompare}
+                isSelectedForCompare={compareList.some(v => v.id === vehicle.id)}
+              />
             ))}
-          </div>
-          <div className="text-center mt-12">
-            <button 
-              onClick={() => setCurrentPage('Vehicles')}
-              className="bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300"
-            >
-              {t('explore_all_models')}
-            </button>
           </div>
         </div>
       </section>
 
+      {/* --- Rest of HomePage content (Giveaway, About) --- */}
       {homepageContent && (
         <>
             <section className="relative py-20 bg-gray-100 dark:bg-gray-900 text-black dark:text-white">
@@ -83,6 +118,23 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
                 </div>
             </section>
         </>
+      )}
+
+      {/* --- Comparison Components (from VehiclesPage) --- */}
+      {compareList.length > 0 && (
+        <CompareBar 
+          selectedVehicles={compareList}
+          onCompare={() => setShowCompareView(true)}
+          onClear={handleClearCompare}
+          onRemove={handleRemoveFromCompare}
+        />
+      )}
+
+      {showCompareView && (
+        <ComparisonView 
+          vehicles={compareList}
+          onClose={() => setShowCompareView(false)}
+        />
       )}
     </div>
   );

@@ -6,7 +6,7 @@ import { sendDepositRequestToAgent, sendDepositReceiptToAgent } from '../service
 import PaymentModal from '../components/PaymentModal';
 import { useSiteContent } from '../contexts/SiteContentContext';
 
-type DashboardTab = 'Wallet' | 'Investments' | 'Purchases' | 'Deposit Funds' | 'Actions';
+type DashboardTab = 'Wallet' | 'Investments' | 'Purchases' | 'Deposit Funds';
 
 interface DashboardPageProps {
   user: User;
@@ -30,7 +30,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
     { name: 'Investments', icon: 'analytics-outline' },
     { name: 'Purchases', icon: 'receipt-outline' },
     { name: 'Deposit Funds', icon: 'add-circle-outline' },
-    { name: 'Actions', icon: 'flash-outline' },
   ];
 
   const handleTabClick = (tab: DashboardTab) => {
@@ -234,22 +233,45 @@ const DashboardContent: React.FC<{
     switch (activeTab) {
       case 'Wallet':
         return (
-          <div className="animate-fade-in">
-            <h2 className="text-3xl font-bold mb-2">Welcome back, {user.name}!</h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-8">Here's a summary of your account wallet.</p>
-            <div className="bg-gradient-to-br from-byd-red to-byd-red-dark text-white p-8 rounded-xl shadow-lg flex flex-col items-center text-center">
-                <p className="text-lg opacity-80">Current Balance</p>
-                <p className="text-5xl font-extrabold tracking-tight my-2">¥{user.balance.toLocaleString()}</p>
-                <button 
-                  onClick={() => setActiveTab('Deposit Funds')}
-                  className="mt-6 bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-6 rounded-full transition-colors duration-300 backdrop-blur-sm"
-                >
-                  <span className="flex items-center gap-2">
-                    {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
-                    <ion-icon name="add-circle-outline"></ion-icon>
-                    <span>Deposit Funds</span>
-                  </span>
-                </button>
+          <div className="animate-fade-in space-y-8">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">Welcome back, {user.name}!</h2>
+              <p className="text-gray-500 dark:text-gray-400 mb-8">Here's a summary of your account wallet.</p>
+              <div className="bg-gradient-to-br from-byd-red to-byd-red-dark text-white p-8 rounded-xl shadow-lg flex flex-col items-center text-center">
+                  <p className="text-lg opacity-80">Current Balance</p>
+                  <p className="text-5xl font-extrabold tracking-tight my-2">¥{user.balance.toLocaleString()}</p>
+                  <button 
+                    onClick={() => setActiveTab('Deposit Funds')}
+                    className="mt-6 bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-6 rounded-full transition-colors duration-300 backdrop-blur-sm"
+                  >
+                    <span className="flex items-center gap-2">
+                      {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
+                      <ion-icon name="add-circle-outline"></ion-icon>
+                      <span>Deposit Funds</span>
+                    </span>
+                  </button>
+              </div>
+            </div>
+            <div>
+                <h2 className="text-3xl font-bold mb-6">Quick Actions</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button onClick={() => setCurrentPage('Vehicles')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
+                        <h3 className="font-bold text-lg text-black dark:text-white">Buy a Car</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Use your balance for a new vehicle purchase.</p>
+                    </button>
+                     <button onClick={() => setActiveTab('Investments')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
+                        <h3 className="font-bold text-lg text-black dark:text-white">Invest</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Explore investment opportunities.</p>
+                    </button>
+                    <button onClick={() => setCurrentPage('Giveaway')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
+                        <h3 className="font-bold text-lg text-black dark:text-white">Apply for Giveaway</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Enter the current giveaway event.</p>
+                    </button>
+                    <button onClick={() => setCurrentPage('Installment')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
+                        <h3 className="font-bold text-lg text-black dark:text-white">Settle Installments</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Manage and pay your active installment plans.</p>
+                    </button>
+                </div>
             </div>
           </div>
         );
@@ -380,30 +402,6 @@ const DashboardContent: React.FC<{
                     onClose={() => setIsPaymentModalOpen(false)}
                     onSelectPayment={handleSelectDepositMethod}
                 />
-            </div>
-        );
-      case 'Actions':
-        return (
-            <div className="animate-fade-in">
-                <h2 className="text-3xl font-bold mb-6">Quick Actions</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button onClick={() => setCurrentPage('Vehicles')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
-                        <h3 className="font-bold text-lg">Buy a Car</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Use your balance for a new vehicle purchase.</p>
-                    </button>
-                     <button onClick={() => setActiveTab('Investments')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
-                        <h3 className="font-bold text-lg">Invest</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Explore investment opportunities.</p>
-                    </button>
-                    <button onClick={() => setCurrentPage('Giveaway')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
-                        <h3 className="font-bold text-lg">Apply for Giveaway</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Enter the current giveaway event.</p>
-                    </button>
-                    <button onClick={() => setCurrentPage('Installment')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
-                        <h3 className="font-bold text-lg">Settle Installments</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Manage and pay your active installment plans.</p>
-                    </button>
-                </div>
             </div>
         );
       default:
