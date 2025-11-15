@@ -7,7 +7,7 @@ import * as mockData from './mockData';
 // This is useful for development when the backend is not available or for demo purposes.
 // The current app is failing because the Firestore database has not been created for this project.
 // Using mock data will allow the application to run without backend errors.
-const USE_MOCK_DATA = false;
+const USE_MOCK_DATA = true;
 
 // --- MOCK DATA STORE (for write operations) ---
 let mockVehicles = [...mockData.mockVehicles];

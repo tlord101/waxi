@@ -4,7 +4,11 @@ const model = 'gemini-2.5-flash';
 
 // This function safely creates the GenAI client only when needed.
 const getGenAIClient = () => {
-    const API_KEY = process.env.API_KEY;
+    // FIX: Add a check for `process` and `process.env` to prevent ReferenceError
+    // in client-side environments like Vite where `process` is not defined by default.
+    // The app will gracefully disable AI features if the API key is not available.
+    const API_KEY = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : undefined;
+    
     if (!API_KEY) {
         console.error("AI ASSISTANT OFFLINE: Gemini API key is not configured. Please set the API_KEY environment variable in your deployment settings. The AI assistant will not be functional.");
         return null;
