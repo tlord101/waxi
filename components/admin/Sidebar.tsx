@@ -1,11 +1,14 @@
 import React from 'react';
 import { AdminTab } from '../../pages/AdminPage';
+import { Page } from '../../types';
 
 interface SidebarProps {
   activeTab: AdminTab;
   setActiveTab: (tab: AdminTab) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  onLogout: () => void;
+  setCurrentPage: (page: Page) => void;
 }
 
 const TABS: { name: AdminTab, icon: string }[] = [
@@ -20,11 +23,21 @@ const TABS: { name: AdminTab, icon: string }[] = [
   { name: 'Email Logs', icon: 'mail-outline' },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, onLogout, setCurrentPage }) => {
   const handleTabClick = (tab: AdminTab) => {
     setActiveTab(tab);
     setIsOpen(false); // Close menu on selection
   };
+
+  const handleViewSite = () => {
+    setCurrentPage('Home');
+    setIsOpen(false);
+  }
+
+  const handleLogout = () => {
+    onLogout();
+    setIsOpen(false);
+  }
 
   return (
     <>
@@ -59,6 +72,22 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setI
             </button>
           ))}
         </nav>
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+          <button
+            onClick={handleViewSite}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-black dark:hover:text-white`}
+          >
+            <ion-icon name="eye-outline" className="text-xl"></ion-icon>
+            <span className="font-semibold">View Site</span>
+          </button>
+          <button
+            onClick={handleLogout}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-black dark:hover:text-white`}
+          >
+            <ion-icon name="log-out-outline" className="text-xl"></ion-icon>
+            <span className="font-semibold">Logout</span>
+          </button>
+        </div>
       </div>
     </>
   );

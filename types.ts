@@ -1,12 +1,22 @@
 // FIX: Moved Page and Theme types here to break circular dependency between App.tsx and other files.
 export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin' | 'Login' | 'Signup' | 'Dashboard' | 'VehicleDetail';
 export type Theme = 'dark' | 'light';
-export type Language = 'en' | 'zh' | 'es';
+// FIX: Added new languages requested by the user for auto-translation.
+export type Language = 'en' | 'zh' | 'es' | 'pt' | 'hu' | 'th' | 'id' | 'ms' | 'hi' | 'ur' | 'ar';
 
+// FIX: Expanded the list of supported languages for the language switcher and auto-detection.
 export const LANGUAGES: { code: Language; name: string }[] = [
   { code: 'en', name: 'English' },
   { code: 'zh', name: '中文 (Chinese)' },
   { code: 'es', name: 'Español (Spanish)' },
+  { code: 'pt', name: 'Português (Portuguese)' },
+  { code: 'hu', name: 'Magyar (Hungarian)' },
+  { code: 'th', name: 'ไทย (Thai)' },
+  { code: 'id', name: 'Bahasa Indonesia (Indonesian)' },
+  { code: 'ms', name: 'Bahasa Melayu (Malay)' },
+  { code: 'hi', name: 'हिन्दी (Hindi)' },
+  { code: 'ur', name: 'اردو (Urdu)' },
+  { code: 'ar', name: 'العربية (Arabic)' },
 ];
 
 

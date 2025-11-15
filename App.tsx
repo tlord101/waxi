@@ -278,7 +278,7 @@ const App: React.FC = () => {
       case 'Order':
         return <OrderPage vehicle={selectedVehicleForPurchase} setCurrentPage={setCurrentPage} currentUser={currentUser} setCurrentUser={setCurrentUser} pendingOrder={pendingOrder} />;
       case 'Admin':
-        return <AdminPage />;
+        return <AdminPage onLogout={handleAdminLogout} setCurrentPage={setCurrentPage} />;
       case 'Login':
         return <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
       case 'Signup':
@@ -292,7 +292,7 @@ const App: React.FC = () => {
     }
   };
 
-  const shouldShowNavbarAndFooter = currentPage !== 'VehicleDetail';
+  const shouldShowNavbarAndFooter = currentPage !== 'VehicleDetail' && currentPage !== 'Dashboard' && currentPage !== 'Admin';
 
   return (
     <TranslationProvider>

@@ -22,9 +22,10 @@ interface DashboardSidebarProps {
   setActiveTab: (tab: DashboardTab) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  setCurrentPage: (page: Page) => void;
 }
 
-const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
+const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, setCurrentPage }) => {
   const tabs: { name: DashboardTab, icon: string }[] = [
     { name: 'Wallet', icon: 'wallet-outline' },
     { name: 'Investments', icon: 'analytics-outline' },
@@ -36,6 +37,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
     setActiveTab(tab);
     setIsOpen(false); // Close sidebar on mobile after selection
   };
+  
+  const handleHomeClick = () => {
+    setCurrentPage('Home');
+    setIsOpen(false);
+  }
 
   return (
     <>
@@ -71,6 +77,15 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
                </button>
              ))}
            </nav>
+           <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-800">
+             <button
+                onClick={handleHomeClick}
+                className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white`}
+              >
+                <ion-icon name="home-outline" className="text-xl"></ion-icon>
+                <span className="font-semibold">Back to Home</span>
+              </button>
+           </div>
         </div>
       </aside>
     </>
@@ -482,6 +497,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
             setActiveTab={setActiveTab}
             isOpen={isSidebarOpen}
             setIsOpen={setIsSidebarOpen}
+            setCurrentPage={setCurrentPage}
           />
           <main className="flex-1">
             <DashboardContent 

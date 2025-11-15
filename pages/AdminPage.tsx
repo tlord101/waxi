@@ -9,10 +9,16 @@ import EmailLogsTab from '../components/admin/EmailLogsTab';
 import DepositsTab from '../components/admin/DepositsTab';
 import ContentTab from '../components/admin/ContentTab';
 import PaymentSettingsTab from '../components/admin/PaymentSettingsTab';
+import { Page } from '../types';
 
 export type AdminTab = 'Analytics' | 'Vehicles' | 'Orders' | 'Deposits' | 'Installments' | 'Giveaway' | 'Email Logs' | 'Content' | 'Payment Settings';
 
-const AdminPage: React.FC = () => {
+interface AdminPageProps {
+  onLogout: () => void;
+  setCurrentPage: (page: Page) => void;
+}
+
+const AdminPage: React.FC<AdminPageProps> = ({ onLogout, setCurrentPage }) => {
   const [activeTab, setActiveTab] = useState<AdminTab>('Analytics');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -48,6 +54,8 @@ const AdminPage: React.FC = () => {
         setActiveTab={setActiveTab} 
         isOpen={isMenuOpen}
         setIsOpen={setIsMenuOpen}
+        onLogout={onLogout}
+        setCurrentPage={setCurrentPage}
       />
       <div className="flex-1 flex flex-col">
         <main className="flex-1 p-4 sm:p-6 lg:p-10">

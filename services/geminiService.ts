@@ -52,7 +52,22 @@ export const translateText = async (text: string, targetLanguage: string): Promi
     return text;
   }
   
-  const targetLangName = targetLanguage === 'zh' ? 'Chinese' : targetLanguage === 'es' ? 'Spanish' : 'English';
+  // FIX: Added more language names to support the expanded list of translation targets.
+  const langMap: { [key: string]: string } = {
+    zh: 'Chinese',
+    es: 'Spanish',
+    pt: 'Portuguese',
+    hu: 'Hungarian',
+    th: 'Thai',
+    id: 'Indonesian',
+    ms: 'Malay',
+    hi: 'Hindi',
+    ur: 'Urdu',
+    ar: 'Arabic',
+    en: 'English'
+  };
+
+  const targetLangName = langMap[targetLanguage] || 'English';
 
   try {
     const response = await ai.models.generateContent({

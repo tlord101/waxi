@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, useCallback, useMemo } from 'react';
-import { Language } from '../types';
+import { Language, LANGUAGES } from '../types';
 import { translations } from '../lib/translations';
 import { translateText as apiTranslateText } from '../services/geminiService';
 
@@ -13,13 +13,34 @@ interface TranslationContextType {
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
 
 export const TranslationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // FIX: Updated language initialization to auto-detect the user's browser language.
+  // It now checks localStorage first, then the browser's language setting, and finally falls back to English.
   const [language, setLanguageState] = useState<Language>(() => {
     if (typeof window !== 'undefined') {
-      const savedLang = localStorage.getItem('byd-language');
-      if (savedLang && (savedLang === 'en' || savedLang === 'zh' || savedLang === 'es')) {
-        return savedLang as Language;
+      
+      // 1. Check for a language explicitly set by the user in localStorage
+      const savedLangCode = localStorage.getItem('byd-language');
+      if (savedLangCode) {
+        // FIX: Use .find() instead of .includes() to provide a type guard for TypeScript.
+        // This confirms that the string from localStorage is a valid 'Language' type,
+        // resolving the "not assignable" error without needing an unsafe type assertion.
+        const lang = LANGUAGES.find(l => l.code === savedLangCode);
+        if (lang) {
+          return lang.code;
+        }
+      }
+      
+      // 2. Detect browser language and use it if supported
+      const browserLangCode = navigator.language.split('-')[0]; // e.g., 'en' from 'en-US'
+      // FIX: Apply the same .find() type guard for the browser's language code to
+      // ensure it's a valid 'Language' type before returning it.
+      const lang = LANGUAGES.find(l => l.code === browserLangCode);
+      if (lang) {
+        return lang.code;
       }
     }
+    
+    // 3. Fallback to English
     return 'en';
   });
 
