@@ -194,7 +194,7 @@ const GiveawayPage: React.FC<GiveawayPageProps> = ({ currentUser, setCurrentUser
                             {isProcessing ? 'Processing...' : `Pay with Wallet (Balance: ¥${currentUser.balance.toLocaleString()})`}
                         </button>
                     ) : (
-                         <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 rounded-lg text-center">
+                         <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 rounded-lg text-center">
                             <p className="font-bold">Insufficient Funds in Wallet</p>
                         </div>
                     )
@@ -222,7 +222,7 @@ const GiveawayPage: React.FC<GiveawayPageProps> = ({ currentUser, setCurrentUser
     if (currentEntry?.payment_status === 'Verifying') {
         return (
             <div className="max-w-lg mx-auto bg-white/20 dark:bg-black/20 backdrop-blur-sm p-8 rounded-xl shadow-lg text-center">
-                <ion-icon name="time-outline" className="text-yellow-400 text-7xl mb-4"></ion-icon>
+                <ion-icon name="time-outline" className="text-green-400 text-7xl mb-4"></ion-icon>
                 <h2 className="text-3xl font-bold mb-4">Receipt Submitted!</h2>
                 <p className="text-gray-800 dark:text-gray-300">Your receipt is now being verified by our team. You will receive a confirmation email with your raffle code once approved. This usually takes a few hours.</p>
             </div>

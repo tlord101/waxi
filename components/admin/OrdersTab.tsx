@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { fetchOrders, updateOrder } from '../../services/dbService';
 import { sendOrderConfirmation } from '../../services/emailService';
@@ -43,13 +44,13 @@ const OrdersTab: React.FC = () => {
   const paymentStatusClasses = {
     'Paid': 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300',
     'Verifying': 'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300',
-    'Awaiting Receipt': 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-800 dark:text-yellow-300',
+    'Awaiting Receipt': 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300',
     'Pending': 'bg-gray-100 dark:bg-gray-600/20 text-gray-800 dark:text-gray-300',
     'Failed': 'bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-300',
   };
 
   const fulfillmentStatusClasses = {
-    'Processing': 'bg-yellow-100 dark:bg-yellow-200/20 text-yellow-800 dark:text-yellow-300',
+    'Processing': 'bg-green-100 dark:bg-green-200/20 text-green-800 dark:text-green-300',
     'Delivered': 'bg-green-100 dark:bg-green-200/20 text-green-800 dark:text-green-300',
     'Cancelled': 'bg-red-100 dark:bg-red-200/20 text-red-800 dark:text-red-300',
   };

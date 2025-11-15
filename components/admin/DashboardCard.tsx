@@ -13,7 +13,7 @@ const colorClasses = {
   green: 'bg-green-100 dark:bg-green-500/10 text-green-600 dark:text-green-400',
   blue: 'bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400',
   purple: 'bg-purple-100 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400',
-  yellow: 'bg-yellow-100 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400',
+  yellow: 'bg-green-100 dark:bg-green-500/10 text-green-600 dark:text-green-400',
 };
 
 const DashboardCard: React.FC<DashboardCardProps> = ({ title, value, icon, color }) => {

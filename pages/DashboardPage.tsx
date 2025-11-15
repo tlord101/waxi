@@ -368,11 +368,11 @@ const DashboardContent: React.FC<{
                             </div>
                         )}
                         {pendingDeposit.status === 'Verifying' && (
-                            <div className="bg-amber-100/50 dark:bg-stone-900 border-l-4 border-amber-500 dark:border-amber-600 p-6 rounded-lg text-center">
-                                <ion-icon name="time-outline" className="text-5xl mb-2 text-amber-600 dark:text-amber-500"></ion-icon>
-                                <h3 className="font-bold text-xl text-amber-800 dark:text-amber-500">Receipt Submitted for Verification</h3>
+                            <div className="bg-green-100/50 dark:bg-green-900/20 border-l-4 border-green-500 dark:border-green-600 p-6 rounded-lg text-center">
+                                <ion-icon name="time-outline" className="text-5xl mb-2 text-green-600 dark:text-green-500"></ion-icon>
+                                <h3 className="font-bold text-xl text-green-800 dark:text-green-500">Receipt Submitted for Verification</h3>
                                 <p className="mt-4 text-gray-700 dark:text-gray-300">
-                                    We have received your receipt for the <strong className="font-bold text-amber-700 dark:text-amber-500">¥{pendingDeposit.amount.toLocaleString()}</strong> deposit.
+                                    We have received your receipt for the <strong className="font-bold text-green-700 dark:text-green-500">¥{pendingDeposit.amount.toLocaleString()}</strong> deposit.
                                 </p>
                                 <p className="mt-1 text-gray-700 dark:text-gray-300">Our team is reviewing it and will credit your account shortly. This usually takes a few hours.</p>
                             </div>
@@ -428,7 +428,7 @@ const FloatingActionButton: React.FC<{ order: Order; onClick: () => void }> = ({
 );
 
 const PendingPurchaseAlert: React.FC<{ order: Order; onClick: () => void }> = ({ order, onClick }) => (
-    <div className="mb-8 p-4 bg-yellow-400/10 border-l-4 border-yellow-500 text-yellow-700 dark:text-yellow-300 rounded-r-lg shadow-md animate-fade-in">
+    <div className="mb-8 p-4 bg-green-400/10 border-l-4 border-green-500 text-green-700 dark:text-green-300 rounded-r-lg shadow-md animate-fade-in">
         <div className="flex items-center justify-between">
             <div>
                 <p className="font-bold">Action Required</p>
@@ -436,7 +436,7 @@ const PendingPurchaseAlert: React.FC<{ order: Order; onClick: () => void }> = ({
             </div>
             <button
                 onClick={onClick}
-                className="ml-4 flex-shrink-0 bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition-colors"
+                className="ml-4 flex-shrink-0 bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors"
             >
                 Complete Purchase
             </button>

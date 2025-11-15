@@ -45,7 +45,7 @@ const GiveawayTab: React.FC = () => {
   const paymentStatusClasses = {
     'Paid': 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300',
     'Verifying': 'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300',
-    'Awaiting Receipt': 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-800 dark:text-yellow-300',
+    'Awaiting Receipt': 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300',
     'Pending': 'bg-gray-100 dark:bg-gray-600/20 text-gray-800 dark:text-gray-300',
   };
   
@@ -79,7 +79,7 @@ const GiveawayTab: React.FC = () => {
               </td>
               <td className="px-6 py-4">
                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    entry.winner_status === 'Yes' ? 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-800 dark:text-yellow-300' : 'bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
+                    entry.winner_status === 'Yes' ? 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-300' : 'bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
                   }`}>
                     {entry.winner_status}
                 </span>
@@ -91,7 +91,7 @@ const GiveawayTab: React.FC = () => {
                 {entry.payment_status === 'Paid' && entry.winner_status === 'No' && (
                   <button 
                     onClick={() => handleMarkWinner(entry.id)}
-                    className="font-medium text-yellow-500 hover:underline"
+                    className="font-medium text-green-500 hover:underline"
                   >
                     Mark Winner
                   </button>

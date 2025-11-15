@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import DashboardCard from './DashboardCard';
 import BarChart from './BarChart';
@@ -75,7 +76,7 @@ const AnalyticsTab: React.FC = () => {
                   <p className="font-bold text-gray-900 dark:text-white">¥{order.total_price.toLocaleString()}</p>
                    <span className={`text-xs px-2 py-1 rounded-full ${
                     order.fulfillment_status === 'Delivered' ? 'bg-green-100 dark:bg-green-200/20 text-green-800 dark:text-green-300' :
-                    order.fulfillment_status === 'Processing' ? 'bg-yellow-100 dark:bg-yellow-200/20 text-yellow-800 dark:text-yellow-300' :
+                    order.fulfillment_status === 'Processing' ? 'bg-green-100 dark:bg-green-200/20 text-green-800 dark:text-green-300' :
                     'bg-red-100 dark:bg-red-200/20 text-red-800 dark:text-red-300'
                   }`}>{order.fulfillment_status}</span>
                 </div>
