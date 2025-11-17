@@ -18,6 +18,7 @@ const TABS: { name: AdminTab, icon: string }[] = [
   { name: 'Deposits', icon: 'cash-outline' },
   { name: 'Installments', icon: 'card-outline' },
   { name: 'Giveaway', icon: 'gift-outline' },
+  { name: 'Live Chat', icon: 'chatbubbles-outline' },
   { name: 'Content', icon: 'create-outline' },
   { name: 'Payment Settings', icon: 'settings-outline' },
   { name: 'Email Logs', icon: 'mail-outline' },
@@ -55,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setI
         <div className="p-6 text-center border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-2xl font-bold text-byd-red">ADMIN PANEL</h2>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {TABS.map((tab) => (
             <button
               key={tab.name}

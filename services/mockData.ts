@@ -1,4 +1,4 @@
-import { Vehicle, Order, InstallmentPlan, GiveawayEntry, EmailLog, Investment, User, Deposit, SiteContent } from '../types';
+import { Vehicle, Order, InstallmentPlan, GiveawayEntry, EmailLog, Investment, User, Deposit, SiteContent, ChatSession, ChatMessage } from '../types';
 
 export const mockVehicles: Vehicle[] = [
   {
@@ -253,6 +253,40 @@ export const mockDeposits: Deposit[] = [
     request_date: '2025-07-01',
   }
 ];
+
+export const mockChatSessions: ChatSession[] = [
+    {
+        id: 'chat-session-1',
+        userName: 'Alice',
+        userEmail: 'alice@example.com',
+        status: 'open',
+        createdAt: new Date(),
+        lastMessage: 'Sure, I can help with that!',
+        unreadByAgent: true,
+    },
+    {
+        id: 'chat-session-2',
+        userName: 'Bob',
+        userEmail: 'bob@example.com',
+        status: 'closed',
+        createdAt: new Date(Date.now() - 86400000), // 1 day ago
+        lastMessage: 'Thank you!',
+        unreadByAgent: false,
+    }
+];
+
+export const mockChatMessages: Map<string, ChatMessage[]> = new Map([
+    ['chat-session-1', [
+        { id: 'msg-1', text: 'Hi, I have a question about the BYD Seal.', sender: 'user', timestamp: new Date() },
+        { id: 'msg-2', text: 'Hello Alice, how can I help you today?', sender: 'agent', timestamp: new Date() },
+        { id: 'msg-3', text: 'I was wondering about the financing options.', sender: 'user', timestamp: new Date() },
+        { id: 'msg-4', text: 'Sure, I can help with that!', sender: 'agent', timestamp: new Date() },
+    ]],
+    ['chat-session-2', [
+        { id: 'msg-5', text: 'Hello?', sender: 'user', timestamp: new Date() },
+    ]],
+]);
+
 
 export const mockSiteContent: SiteContent = {
   homepage: {

@@ -1,25 +1,6 @@
 // FIX: Moved Page and Theme types here to break circular dependency between App.tsx and other files.
 export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin' | 'Login' | 'Signup' | 'Dashboard' | 'VehicleDetail';
 export type Theme = 'dark' | 'light';
-// FIX: Added new languages requested by the user for auto-translation.
-export type Language = 'en' | 'zh' | 'es' | 'pt' | 'hu' | 'th' | 'id' | 'ms' | 'hi' | 'ur' | 'ar';
-
-// FIX: Expanded the list of supported languages and added a 'short' property for a more
-// user-friendly display in the language switcher, allowing for native characters.
-export const LANGUAGES: { code: Language; name: string; short: string; }[] = [
-  { code: 'en', name: 'English', short: 'EN' },
-  { code: 'zh', name: '中文 (Chinese)', short: '中' },
-  { code: 'es', name: 'Español (Spanish)', short: 'ES' },
-  { code: 'pt', name: 'Português (Portuguese)', short: 'PT' },
-  { code: 'hu', name: 'Magyar (Hungarian)', short: 'HU' },
-  { code: 'th', name: 'ไทย (Thai)', short: 'ไทย' },
-  { code: 'id', name: 'Bahasa Indonesia (Indonesian)', short: 'ID' },
-  { code: 'ms', name: 'Bahasa Melayu (Malay)', short: 'MS' },
-  { code: 'hi', name: 'हिन्दी (Hindi)', short: 'हि' },
-  { code: 'ur', name: 'اردو (Urdu)', short: 'UR' },
-  { code: 'ar', name: 'العربية (Arabic)', short: 'AR' },
-];
-
 
 export interface Vehicle {
   id: string; // Use string for Firestore document IDs
@@ -109,6 +90,29 @@ export interface Deposit {
   request_date: string;
   receipt_url?: string;
 }
+
+// --- Live Chat Types ---
+
+export interface ChatMessage {
+  id: string;
+  text: string;
+  sender: 'user' | 'agent';
+  timestamp: any; // Firestore Timestamp
+}
+
+export interface ChatSession {
+  id: string;
+  userId?: string; // if logged in
+  userName: string;
+  userEmail: string;
+  status: 'open' | 'closed';
+  createdAt: any; // Firestore Timestamp
+  lastMessage?: string;
+  agentId?: string;
+  agentName?: string;
+  unreadByAgent: boolean;
+}
+
 
 // --- Site Content Management Types ---
 

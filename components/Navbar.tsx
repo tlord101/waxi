@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // FIX: Import Page and Theme from types.ts to break circular dependency.
 import { Page, Theme } from '../types';
 import { NAV_LINKS } from '../constants';
-import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
-import LanguageSwitcher from './LanguageSwitcher';
 import { User } from '../types';
 
 interface NavbarProps {
@@ -21,6 +19,39 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLoggedIn, currentUser, onAdminLogout, onUserLogout, theme, toggleTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    // Dynamically load the GTranslate script to ensure it runs after the wrapper element is rendered by React.
+    // This prevents a race condition where the script can't find its target element on initial page load.
+    
+    // Check if the script is already present to avoid adding it multiple times during development hot reloads.
+    if (document.getElementById('gtranslate-script')) return;
+
+    // Define settings on the window object before the script loads.
+    (window as any).gtranslateSettings = {
+      "default_language": "en",
+      "native_language_names": false,
+      "detect_browser_language": true,
+      "languages": ["en", "fr", "it", "es", "zh-CN", "pt", "th", "hi", "ar", "id", "hu", "ms"],
+      "wrapper_selector": ".gtranslate_wrapper", 
+      "flag_style": "none"
+    };
+
+    const script = document.createElement('script');
+    script.id = 'gtranslate-script';
+    script.src = 'https://cdn.gtranslate.net/widgets/latest/dropdown.js';
+    script.defer = true;
+    
+    document.body.appendChild(script);
+
+    // Basic cleanup to remove the script if the component were to unmount.
+    return () => {
+      const gtranslateScript = document.getElementById('gtranslate-script');
+      if (gtranslateScript) {
+        document.body.removeChild(gtranslateScript);
+      }
+    };
+  }, []);
+
   const handleNavigate = (page: Page) => {
     setCurrentPage(page);
     setIsOpen(false);
@@ -36,21 +67,24 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
     setIsOpen(false);
   }
 
+  const navLinkText: Record<string, string> = {
+    Home: 'Home',
+    Vehicles: 'Vehicles',
+    Installment: 'Installment',
+    Giveaway: 'Giveaway',
+    About: 'About',
+    Contact: 'Contact',
+  };
+
   return (
     <>
       <nav className="absolute top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm text-white">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <div 
-              className="cursor-pointer"
-              onClick={() => handleNavigate('Home')}
-            >
-              <Logo theme="dark" />
-            </div>
+            <div className="gtranslate_wrapper"></div>
             
             <div className="flex items-center space-x-3 sm:space-x-5">
               <ThemeToggle theme={theme} onToggle={toggleTheme} />
-              <LanguageSwitcher />
               <button onClick={() => setIsOpen(!isOpen)} className="font-bold tracking-widest text-base uppercase transition-colors hover:text-byd-red flex items-center">
                 {isOpen ? (
                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -74,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                 onClick={(e) => { e.preventDefault(); handleNavigate(link.name); }}
                 className={`block text-3xl font-semibold transition-colors duration-300 hover:text-byd-red ${currentPage === link.name ? 'text-byd-red' : 'text-white'}`}
               >
-                {link.name}
+                {navLinkText[link.name] || link.name}
               </a>
             ))}
              {isAdminLoggedIn && (

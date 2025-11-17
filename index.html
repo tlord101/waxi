@@ -55,12 +55,30 @@
       .animate-fade-in-up {
         animation: fadeInUp 0.3s ease-out;
       }
-      /* Hide Google Translate's default UI elements */
-      .goog-te-banner-frame.skiptranslate {
+      
+      /* Custom styles for GTranslate dropdown to be very small */
+      .gtranslate_wrapper {
+        display: inline-block;
+      }
+      .gtranslate_wrapper a {
+        border: 1px solid white;
+        border-radius: 4px;
+        padding: 2px 8px !important;
+        font-size: 12px !important;
+        font-weight: 600;
+        color: black !important;
+        background-color: white !important;
+        text-decoration: none;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.5 !important;
+        min-height: 0 !important;
+      }
+
+      /* Hide the "Powered by Google" logo from the dropdown */
+      .gt_logo {
         display: none !important;
-      } 
-      body {
-        top: 0px !important; 
       }
     </style>
     <script type="importmap">
@@ -84,17 +102,5 @@
 </head>
   <body>
     <div id="root"></div>
-    <div id="google_translate_element" style="display: none;"></div>
-    <script type="text/javascript">
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-          pageLanguage: 'en',
-          includedLanguages: 'en,zh-CN,es,pt,hu,th,id,ms,hi,ur,ar',
-          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-          autoDisplay: false
-        }, 'google_translate_element');
-      }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
 </html>

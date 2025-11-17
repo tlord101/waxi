@@ -1,4 +1,4 @@
-import { Order, InstallmentPlan, GiveawayEntry, EmailLog, User, Investment, Vehicle, Deposit, SiteContent } from '../types';
+import { Order, InstallmentPlan, GiveawayEntry, EmailLog, User, Investment, Vehicle, Deposit, SiteContent, ChatSession, ChatMessage } from '../types';
 import { app, auth, db as firestoreDb } from './firebase';
 import * as mockData from './mockData';
 
@@ -19,6 +19,9 @@ let mockInvestments = [...mockData.mockInvestments];
 let mockUsers = [...mockData.mockUsers];
 let mockDeposits = [...mockData.mockDeposits];
 let mockSiteContent = {...mockData.mockSiteContent};
+let mockChatSessions = [...mockData.mockChatSessions];
+// Use a map for messages for easier sub-collection simulation
+let mockChatMessages = new Map<string, ChatMessage[]>(mockData.mockChatMessages);
 
 
 // Helper for generating random IDs
@@ -574,6 +577,67 @@ export const updateGiveawayEntry = async (entryId: string, updates: Partial<Give
         await firestoreDb.collection('giveaway_entries').doc(entryId).update(updates);
     } catch (error) {
         console.error("Error updating giveaway entry:", error);
+    }
+};
+
+// --- LIVE CHAT FUNCTIONS ---
+
+export const fetchChatSessions = async (): Promise<ChatSession[]> => {
+    if (USE_MOCK_DATA) {
+        console.log("Using mock data for chat sessions.");
+        return Promise.resolve(mockChatSessions);
+    }
+    try {
+        const snapshot = await firestoreDb.collection('chat_sessions').orderBy('createdAt', 'desc').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ChatSession));
+    } catch (error) {
+        console.error("Error fetching chat sessions:", error);
+        throw error;
+    }
+};
+
+export const addChatSession = async (sessionData: Omit<ChatSession, 'id'>): Promise<ChatSession> => {
+    if (USE_MOCK_DATA) {
+        const newSession = { ...sessionData, id: generateId() };
+        mockChatSessions.unshift(newSession);
+        return Promise.resolve(newSession);
+    }
+    try {
+        const docRef = await firestoreDb.collection('chat_sessions').add(sessionData);
+        return { ...sessionData, id: docRef.id };
+    } catch (error) {
+        console.error("Error adding chat session:", error);
+        throw error;
+    }
+};
+
+export const updateChatSession = async (sessionId: string, updates: Partial<ChatSession>): Promise<void> => {
+    if (USE_MOCK_DATA) {
+        mockChatSessions = mockChatSessions.map(s => s.id === sessionId ? { ...s, ...updates } : s);
+        return Promise.resolve();
+    }
+    try {
+        await firestoreDb.collection('chat_sessions').doc(sessionId).update(updates);
+    } catch (error) {
+        console.error("Error updating chat session:", error);
+        throw error;
+    }
+};
+
+export const addChatMessage = async (sessionId: string, messageData: Omit<ChatMessage, 'id'>): Promise<ChatMessage> => {
+    if (USE_MOCK_DATA) {
+        const newMessage = { ...messageData, id: generateId() };
+        const messages = mockChatMessages.get(sessionId) || [];
+        messages.push(newMessage);
+        mockChatMessages.set(sessionId, messages);
+        return Promise.resolve(newMessage);
+    }
+    try {
+        const docRef = await firestoreDb.collection('chat_sessions').doc(sessionId).collection('messages').add(messageData);
+        return { ...messageData, id: docRef.id };
+    } catch (error) {
+        console.error("Error adding chat message:", error);
+        throw error;
     }
 };
 

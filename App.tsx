@@ -7,14 +7,13 @@ import InstallmentPage from './pages/InstallmentPage';
 import GiveawayPage from './pages/GiveawayPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
-import AIAssistant from './components/AIAssistant';
+import LiveChatWidget from './components/AIAssistant';
 import OrderPage from './pages/OrderPage';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import VehicleDetailPage from './pages/VehicleDetailPage';
-import { TranslationProvider } from './contexts/TranslationContext';
 import { SiteContentProvider } from './contexts/SiteContentContext';
 // FIX: Import Page and Theme from types.ts to break circular dependency
 import { Vehicle, User, Order, Page, Theme } from './types';
@@ -295,29 +294,27 @@ const App: React.FC = () => {
   const shouldShowNavbarAndFooter = currentPage !== 'VehicleDetail' && currentPage !== 'Dashboard' && currentPage !== 'Admin';
 
   return (
-    <TranslationProvider>
-      <SiteContentProvider>
-        <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
-          {shouldShowNavbarAndFooter && (
-            <Navbar 
-              currentPage={currentPage} 
-              setCurrentPage={setCurrentPage} 
-              isAdminLoggedIn={isAdminLoggedIn}
-              currentUser={currentUser}
-              onAdminLogout={handleAdminLogout}
-              onUserLogout={handleUserLogout}
-              theme={theme}
-              toggleTheme={toggleTheme}
-            />
-          )}
-          <main className="flex-grow text-black dark:text-white">
-            {renderPage()}
-          </main>
-          {shouldShowNavbarAndFooter && <Footer />}
-          <AIAssistant />
-        </div>
-      </SiteContentProvider>
-    </TranslationProvider>
+    <SiteContentProvider>
+      <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
+        {shouldShowNavbarAndFooter && (
+          <Navbar 
+            currentPage={currentPage} 
+            setCurrentPage={setCurrentPage} 
+            isAdminLoggedIn={isAdminLoggedIn}
+            currentUser={currentUser}
+            onAdminLogout={handleAdminLogout}
+            onUserLogout={handleUserLogout}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
+        )}
+        <main className="flex-grow text-black dark:text-white">
+          {renderPage()}
+        </main>
+        {shouldShowNavbarAndFooter && <Footer />}
+        <LiveChatWidget user={currentUser} />
+      </div>
+    </SiteContentProvider>
   );
 };
 
