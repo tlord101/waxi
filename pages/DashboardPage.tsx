@@ -48,22 +48,27 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 text-3xl text-black dark:text-white p-3 w-12 h-12 rounded-full bg-white dark:bg-gray-900 shadow-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-byd-red"
+        className="md:hidden fixed top-4 left-4 z-50 p-3 w-12 h-12 rounded-full bg-byd-red shadow-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-byd-red"
         aria-label="Open menu"
       >
-        <ion-icon name="menu-outline" className="text-2xl"></ion-icon>
+        {/* White three-line hamburger SVG icon */}
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="3" y="6" width="18" height="2" rx="1" fill="white" />
+          <rect x="3" y="11" width="18" height="2" rx="1" fill="white" />
+          <rect x="3" y="16" width="18" height="2" rx="1" fill="white" />
+        </svg>
       </button>
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black/60 z-30 md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 bg-black/60 z-50 md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setIsOpen(false)}
         aria-hidden="true"
       ></div>
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 w-64 h-full bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 z-40 transform transition-transform duration-300 ease-in-out md:static md:w-64 md:h-auto md:transform-none md:z-auto md:flex-shrink-0 md:rounded-lg md:border ${isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}
+        className={`fixed top-0 left-0 w-64 h-full bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 z-60 transform transition-transform duration-300 ease-in-out md:static md:w-64 md:h-auto md:transform-none md:z-auto md:flex-shrink-0 md:rounded-lg md:border ${isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}
       >
         <div className="p-4 flex justify-between items-center md:hidden border-b border-gray-200 dark:border-gray-800">
           <h2 className="font-bold text-lg text-black dark:text-white">Menu</h2>
