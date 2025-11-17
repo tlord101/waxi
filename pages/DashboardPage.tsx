@@ -21,10 +21,11 @@ interface DashboardSidebarProps {
   setActiveTab: (tab: DashboardTab) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  setCurrentPage: (page: Page) => void;
 }
 
 const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, setCurrentPage }) => {
-    const tabs: { name: DashboardTab, icon: string }[] = [
+  const tabs: { name: DashboardTab, icon: string }[] = [
     { name: 'Wallet', icon: 'wallet-outline' },
     { name: 'Investments', icon: 'analytics-outline' },
     { name: 'Purchases', icon: 'receipt-outline' },
@@ -32,10 +33,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
   ];
 
   const handleTabClick = (tab: DashboardTab) => {
-    // Ensure we navigate to the Dashboard page and activate the requested tab.
-    setCurrentPage('Dashboard');
-    setActiveTab(tab);
-    setIsOpen(false); // Close sidebar on mobile after selection
+    // Navigate to dedicated pages for each dashboard tab
+    if (tab === 'Wallet') {
+      setCurrentPage('Wallet');
+    } else if (tab === 'Investments') {
+      setCurrentPage('Investments');
+    } else if (tab === 'Purchases') {
+      setCurrentPage('Purchases');
+    } else if (tab === 'Deposit Funds') {
+      setCurrentPage('Deposit');
+    }
+    setIsOpen(false);
   };
 
   return (
@@ -480,13 +488,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
             setCurrentPage={setCurrentPage}
           />
           <main className="flex-1">
-            <DashboardContent 
-                activeTab={activeTab} 
-                user={user} 
-                setCurrentPage={setCurrentPage} 
-                setActiveTab={setActiveTab} 
-                setCurrentUser={setCurrentUser}
-            />
+            {/* Dashboard overview lives here (welcome, quick actions). Tab-specific pages are now dedicated routes: Wallet, Investments, Purchases, Deposit. */}
           </main>
         </div>
       </div>
