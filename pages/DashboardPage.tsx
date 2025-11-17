@@ -23,7 +23,7 @@ interface DashboardSidebarProps {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
+const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, setCurrentPage }) => {
     const tabs: { name: DashboardTab, icon: string }[] = [
     { name: 'Wallet', icon: 'wallet-outline' },
     { name: 'Investments', icon: 'analytics-outline' },
@@ -32,6 +32,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
   ];
 
   const handleTabClick = (tab: DashboardTab) => {
+    // Ensure we navigate to the Dashboard page and activate the requested tab.
+    setCurrentPage('Dashboard');
     setActiveTab(tab);
     setIsOpen(false); // Close sidebar on mobile after selection
   };
