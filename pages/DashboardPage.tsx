@@ -477,6 +477,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
             setActiveTab={setActiveTab}
             isOpen={isSidebarOpen}
             setIsOpen={setIsSidebarOpen}
+            setCurrentPage={setCurrentPage}
           />
           <main className="flex-1">
             <DashboardContent 
