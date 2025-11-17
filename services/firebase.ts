@@ -8,40 +8,27 @@ const firebaseConfig = {
   appId: "1:503468828299:web:d2e4e7f7b2a25cb069968e",
   measurementId: "G-PP9LDRX010"
 };
+// --- Firebase Initialization (compat) ---
+// Use the compat SDK so existing code that uses the older names (auth.createUserWithEmailAndPassword,
+// firestore.collection(...), auth.onAuthStateChanged as a method, etc.) continues to work without
+// a full rewrite to the modular API.
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
-// --- Firebase Initialization ---
-
-// Validate that the Firebase SDK has loaded
-if (!(window as any).firebase || !(window as any).firebase.initializeApp) {
-    const errorMessage = "FATAL: Firebase SDK not found on window object. Please ensure the Firebase scripts are correctly included in index.html before the main app script.";
-    console.error(errorMessage);
-    throw new Error(errorMessage);
-}
-
-let app, auth, db;
-
+let app: firebase.app.App;
 try {
-    // Initialize Firebase
-    // Check if Firebase is already initialized to prevent re-initialization errors
-    if (!(window as any).firebase.apps.length) {
-        app = (window as any).firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+        app = firebase.initializeApp(firebaseConfig);
     } else {
-        app = (window as any).firebase.app(); // Get the default app if already initialized
+        app = firebase.app();
     }
-    
-    auth = app.auth();
-    db = app.firestore();
-
-} catch (error) {
-    // Provide a more specific error message for common issues like `auth/configuration-not-found`.
-    const originalErrorMessage = error instanceof Error ? error.message : String(error);
-    let detailedErrorMessage = `FATAL: Firebase initialization failed. This can be caused by invalid configuration values. Please verify your Firebase project settings.`;
-    if (originalErrorMessage.includes('auth/configuration-not-found')) {
-        detailedErrorMessage += ` The error 'auth/configuration-not-found' often means that Firebase Authentication is not enabled for this project in the Firebase console, or the API key is invalid.`;
-    }
-    const finalErrorMessage = `${detailedErrorMessage} Original error: ${originalErrorMessage}`;
-    console.error(finalErrorMessage);
-    throw new Error(finalErrorMessage);
+} catch (err) {
+    console.error('Firebase initialization error:', err);
+    throw err;
 }
+
+const auth = firebase.auth();
+const db = firebase.firestore();
 
 export { app, auth, db };

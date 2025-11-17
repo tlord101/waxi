@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Bootstrap Icons from node_modules */
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* Use Inter as the default sans font (Google Fonts are still loaded from the link in index.html) */
+:root {
+  --font-sans: 'Inter', sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* Small helper for fade-in animations preserved from inline styles */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
