@@ -22,6 +22,7 @@ interface DashboardSidebarProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   setCurrentPage: (page: Page) => void;
+  onLogout: () => void;
 }
 
 const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, setCurrentPage }) => {
@@ -67,20 +68,32 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
              <ion-icon name="close-outline"></ion-icon>
            </button>
         </div>
-        <div className="p-4">
-           <nav className="flex flex-col space-y-1">
-             {tabs.map(tab => (
-               <button
-                 key={tab.name}
-                 onClick={() => handleTabClick(tab.name)}
-                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 ${activeTab === tab.name ? 'bg-byd-red text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white'}`}
-               >
-                 {/* FIX: Replaced class with className for ion-icon custom element */}
-                 <ion-icon name={tab.icon} className="text-xl"></ion-icon>
-                 <span className="font-semibold">{tab.name}</span>
-               </button>
-             ))}
-           </nav>
+        <div className="p-4 flex flex-col justify-between h-full">
+           <div>
+             <nav className="flex flex-col space-y-1">
+               {tabs.map(tab => (
+                 <button
+                   key={tab.name}
+                   onClick={() => handleTabClick(tab.name)}
+                   className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 ${activeTab === tab.name ? 'bg-byd-red text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white'}`}
+                 >
+                   <ion-icon name={tab.icon} className="text-xl"></ion-icon>
+                   <span className="font-semibold">{tab.name}</span>
+                 </button>
+               ))}
+             </nav>
+           </div>
+
+           <div className="mt-4 border-t border-gray-200 dark:border-gray-800 pt-4">
+             <button onClick={() => { setCurrentPage('Home'); setIsOpen(false); }} className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-gray-100 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+               <ion-icon name="home-outline"></ion-icon>
+               <span className="font-semibold">Go Home</span>
+             </button>
+             <button onClick={() => { onLogout(); setIsOpen(false); }} className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-byd-red text-white hover:bg-byd-red-dark transition-colors">
+               <ion-icon name="log-out-outline"></ion-icon>
+               <span className="font-semibold">Logout</span>
+             </button>
+           </div>
         </div>
       </aside>
     </>
@@ -500,6 +513,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
             isOpen={isSidebarOpen}
             setIsOpen={setIsSidebarOpen}
             setCurrentPage={setCurrentPage}
+            onLogout={onLogout}
           />
           <main className="flex-1">
             {/* Content for Wallet is surfaced above (Welcome / Quick Actions).

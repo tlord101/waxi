@@ -18,6 +18,7 @@ import PurchasesPage from './pages/PurchasesPage';
 import DepositPage from './pages/DepositPage';
 import VehicleDetailPage from './pages/VehicleDetailPage';
 import SidebarToggleButton from './components/SidebarToggleButton';
+import DashboardHeader from './components/DashboardHeader';
 import { SiteContentProvider } from './contexts/SiteContentContext';
 // FIX: Import Page and Theme from types.ts to break circular dependency
 import { Vehicle, User, Order, Page, Theme } from './types';
@@ -306,6 +307,7 @@ const App: React.FC = () => {
   return (
     <SiteContentProvider>
       <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
+        {/* Show the site Navbar except on dashboard-related pages. */}
         {shouldShowNavbarAndFooter && (
           <Navbar 
             currentPage={currentPage} 
@@ -318,10 +320,15 @@ const App: React.FC = () => {
             toggleTheme={toggleTheme}
           />
         )}
+
+        {/* Dashboard header replaces site navbar on dashboard pages */}
+        {['Dashboard','Investments','Purchases','Deposit','Wallet'].includes(currentPage) && (
+          <DashboardHeader currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleUserLogout} />
+        )}
         <main className="flex-grow text-black dark:text-white">
           {renderPage()}
-          {/* Show the floating sidebar toggle on pages that should expose the dashboard sidebar */}
-          {['Dashboard', 'Investments', 'Purchases', 'Deposit', 'Wallet'].includes(currentPage) && (
+          {/* Show the floating sidebar toggle on pages that are not using the DashboardHeader */}
+          {!['Dashboard', 'Investments', 'Purchases', 'Deposit', 'Wallet'].includes(currentPage) && (
             <SidebarToggleButton setCurrentPage={setCurrentPage} />
           )}
         </main>
