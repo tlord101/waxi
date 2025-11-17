@@ -7,7 +7,7 @@ import * as mockData from './mockData';
 // This is useful for development when the backend is not available or for demo purposes.
 // The current app is failing because the Firestore database has not been created for this project.
 // Using mock data will allow the application to run without backend errors.
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
 // --- MOCK DATA STORE (for write operations) ---
 let mockVehicles = [...mockData.mockVehicles];
@@ -348,8 +348,17 @@ export const ensureAdminUserExists = async (): Promise<void> => {
         } else {
             console.log("Admin user already exists in Firebase Auth.");
         }
-    } catch (error) {
-        console.error("Error during admin user check/creation:", error);
+    } catch (error: any) {
+        // FIX: Handle the specific 'auth/email-already-in-use' error gracefully.
+        // This error can occur in a race condition where `fetchSignInMethodsForEmail`
+        // returns an empty array, but the user already exists by the time
+        // `createUserWithEmailAndPassword` is called. In this case, the desired
+        // state (admin user exists) is met, so we can ignore the error.
+        if (error.code === 'auth/email-already-in-use') {
+            console.log("Admin user already exists, but was caught during creation attempt. Proceeding normally.");
+        } else {
+            console.error("Error during admin user check/creation:", error);
+        }
     }
 };
 

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Hero from '../components/Hero';
 // FIX: Import Page from types.ts to break circular dependency.
 import { Page, Vehicle } from '../types';
-import { useTranslation } from '../contexts/TranslationContext';
 import VehicleCard from '../components/VehicleCard';
 import { useSiteContent } from '../contexts/SiteContentContext';
 import CompareBar from '../components/CompareBar';
@@ -17,7 +16,6 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase, onSelectForDetail }) => {
-  const { t } = useTranslation();
   const { content } = useSiteContent();
   const homepageContent = content?.homepage;
 

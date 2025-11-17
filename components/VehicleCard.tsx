@@ -1,7 +1,5 @@
 import React from 'react';
 import { Vehicle } from '../types';
-import { useTranslation } from '../contexts/TranslationContext';
-import TranslatedText from './TranslatedText';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -13,8 +11,6 @@ interface VehicleCardProps {
 }
 
 const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallment, onSelectForPurchase, onSelectForDetail, onToggleCompare, isSelectedForCompare = false }) => {
-  const { t } = useTranslation();
-
   // Show first 2 key specs for a cleaner look
   const keySpecs = vehicle.specs.slice(0, 2);
 
@@ -26,10 +22,10 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallme
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
         <div className="absolute bottom-0 left-0 p-6">
             <h3 className="text-4xl font-extrabold text-white drop-shadow-lg">
-                <TranslatedText>{vehicle.name}</TranslatedText>
+                {vehicle.name}
             </h3>
             <p className="text-gray-300 mt-1 max-w-md text-sm">
-                <TranslatedText>{vehicle.description}</TranslatedText>
+                {vehicle.description}
             </p>
         </div>
       </div>
@@ -48,8 +44,8 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallme
                 {keySpecs.map(spec => (
                     <div key={spec.name} className="flex flex-col items-center justify-start w-20">
                         <ion-icon name={spec.icon} className="text-byd-red text-3xl mb-1"></ion-icon>
-                        <p className="text-xs text-gray-400 leading-tight"><TranslatedText>{spec.name}</TranslatedText></p>
-                        <p className="font-bold text-sm leading-tight"><TranslatedText>{spec.value}</TranslatedText></p>
+                        <p className="text-xs text-gray-400 leading-tight">{spec.name}</p>
+                        <p className="font-bold text-sm leading-tight">{spec.value}</p>
                     </div>
                 ))}
             </div>
@@ -61,7 +57,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallme
                 onClick={() => onSelectForDetail(vehicle)}
                 className="w-full bg-byd-red text-white py-3 px-4 rounded-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300 text-base flex items-center justify-center gap-2"
             >
-                {t('explore')}
+                Explore
                 <ion-icon name="arrow-forward-outline"></ion-icon>
             </button>
             <div className="flex space-x-3">
@@ -69,13 +65,13 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallme
                     onClick={() => onSelectForPurchase(vehicle)}
                     className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-700 transition-colors duration-300 text-sm"
                 >
-                    {t('buy_now')}
+                    Buy Now
                 </button>
                 <button 
                     onClick={() => onSelectForInstallment(vehicle)}
                     className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-700 transition-colors duration-300 text-sm"
                 >
-                    {t('pay_in_installments')}
+                    Pay in Installments
                 </button>
             </div>
            {onToggleCompare && (
@@ -84,7 +80,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallme
                 className={`w-full py-2 px-4 rounded-lg font-semibold transition-colors duration-300 text-sm flex items-center justify-center gap-2 ${isSelectedForCompare ? 'text-byd-red bg-byd-red/10' : 'text-gray-300 hover:text-white hover:bg-gray-800'}`}
               >
                  <ion-icon name={isSelectedForCompare ? 'checkmark-circle' : 'add-circle-outline'}></ion-icon>
-                {isSelectedForCompare ? t('selected_for_compare') : t('compare')}
+                {isSelectedForCompare ? '✓ Selected for Compare' : 'Compare'}
               </button>
            )}
         </div>

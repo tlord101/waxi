@@ -1,6 +1,5 @@
 import React from 'react';
 import { Vehicle } from '../types';
-import { useTranslation } from '../contexts/TranslationContext';
 
 interface HeroProps {
   vehicle: Vehicle;
@@ -8,7 +7,6 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ vehicle, onExplore }) => {
-  const { t } = useTranslation();
   return (
     <div 
       className="relative w-full h-screen bg-cover bg-center text-white" 
@@ -23,7 +21,7 @@ const Hero: React.FC<HeroProps> = ({ vehicle, onExplore }) => {
           onClick={onExplore}
           className="px-12 py-3 font-semibold text-white tracking-wider transition-colors duration-300 bg-transparent border border-white/80 hover:bg-white/10"
         >
-          {t('hero_explore_more')}
+          Explore More
         </button>
       </div>
     </div>

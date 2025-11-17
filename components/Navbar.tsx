@@ -5,7 +5,6 @@ import { NAV_LINKS } from '../constants';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
-import { useTranslation } from '../contexts/TranslationContext';
 import { User } from '../types';
 
 interface NavbarProps {
@@ -21,7 +20,6 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLoggedIn, currentUser, onAdminLogout, onUserLogout, theme, toggleTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { t } = useTranslation();
 
   const handleNavigate = (page: Page) => {
     setCurrentPage(page);
@@ -59,7 +57,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                    </svg>
                 ) : (
-                  t('nav_menu')
+                  'MENU'
                 )}
               </button>
             </div>
@@ -76,7 +74,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                 onClick={(e) => { e.preventDefault(); handleNavigate(link.name); }}
                 className={`block text-3xl font-semibold transition-colors duration-300 hover:text-byd-red ${currentPage === link.name ? 'text-byd-red' : 'text-white'}`}
               >
-                {t(`nav_${link.name.toLowerCase()}`)}
+                {link.name}
               </a>
             ))}
              {isAdminLoggedIn && (
@@ -84,7 +82,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                 onClick={(e) => { e.preventDefault(); handleNavigate('Admin'); }}
                 className={`block text-3xl font-semibold transition-colors duration-300 hover:text-byd-red ${currentPage === 'Admin' ? 'text-byd-red' : 'text-white'}`}
               >
-                {t('nav_admin')}
+                Admin
               </a>
             )}
           </div>
@@ -93,19 +91,19 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
             {currentUser ? (
                <div className="space-y-4">
                  <button onClick={() => handleNavigate('Dashboard')} className="w-full bg-gray-700 text-white py-3 px-8 rounded-full hover:bg-gray-600 transition-colors duration-300 font-semibold text-lg">
-                   {t('nav_dashboard')}
+                   Dashboard
                  </button>
                  <button onClick={handleUserLogoutAndClose} className="w-full bg-byd-red text-white py-3 px-8 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold text-lg">
-                   {t('nav_logout')}
+                   Logout
                  </button>
                </div>
             ) : (
                <div className="space-y-4">
                  <button onClick={() => handleNavigate('Login')} className="w-full bg-byd-red text-white py-3 px-8 rounded-full hover:bg-byd-red-dark transition-colors duration-300 font-semibold text-lg">
-                    {t('nav_login')}
+                    Login
                   </button>
                    <button onClick={() => handleNavigate('Signup')} className="w-full bg-transparent text-white border border-white py-3 px-8 rounded-full hover:bg-white/10 transition-colors duration-300 font-semibold text-lg">
-                    {t('nav_signup')}
+                    Sign Up
                   </button>
                </div>
             )}

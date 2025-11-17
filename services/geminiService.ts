@@ -4,11 +4,7 @@ const model = 'gemini-2.5-flash';
 
 // This function safely creates the GenAI client only when needed.
 const getGenAIClient = () => {
-    // FIX: Add a check for `process` and `process.env` to prevent ReferenceError
-    // in client-side environments like Vite where `process` is not defined by default.
-    // The app will gracefully disable AI features if the API key is not available.
-    const API_KEY = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : undefined;
-    
+    const API_KEY = process.env.API_KEY;
     if (!API_KEY) {
         console.error("AI ASSISTANT OFFLINE: Gemini API key is not configured. Please set the API_KEY environment variable in your deployment settings. The AI assistant will not be functional.");
         return null;
@@ -46,52 +42,6 @@ export const askBYDAssistant = async (history: { role: 'user' | 'model'; parts: 
   } catch (error) {
     console.error("Error calling Gemini API:", error);
     return "I'm sorry, I'm having trouble connecting to my knowledge base right now. Please try again later.";
-  }
-};
-
-export const translateText = async (text: string, targetLanguage: string): Promise<string> => {
-  const ai = getGenAIClient();
-  if (!ai) {
-    console.warn("AI client not available for translation. Returning original text.");
-    return text;
-  }
-  
-  // FIX: Added more language names to support the expanded list of translation targets.
-  const langMap: { [key: string]: string } = {
-    zh: 'Chinese',
-    es: 'Spanish',
-    pt: 'Portuguese',
-    hu: 'Hungarian',
-    th: 'Thai',
-    id: 'Indonesian',
-    ms: 'Malay',
-    hi: 'Hindi',
-    ur: 'Urdu',
-    ar: 'Arabic',
-    en: 'English'
-  };
-
-  const targetLangName = langMap[targetLanguage] || 'English';
-
-  try {
-    const response = await ai.models.generateContent({
-      model: model, // 'gemini-2.5-flash'
-      contents: `Translate the following English text to ${targetLangName}. Respond with only the translated text, no extra formatting or explanations.\n\nText: "${text}"`,
-      config: {
-        temperature: 0.2, // Lower temperature for more deterministic translation
-      },
-    });
-
-    // Clean up potential markdown or quotes from the response
-    let translated = response.text.trim();
-    if (translated.startsWith('"') && translated.endsWith('"')) {
-        translated = translated.substring(1, translated.length - 1);
-    }
-    return translated;
-
-  } catch (error) {
-    console.error(`Error translating text to ${targetLanguage}:`, error);
-    return text; // Fallback to original text on error
   }
 };
 

@@ -22,6 +22,10 @@ const LanguageSwitcher: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // FIX: Find the short name for the current language to display in the button.
+  // This provides a more user-friendly and native representation (e.g., '中' for Chinese).
+  const currentLanguageShort = LANGUAGES.find(l => l.code === language)?.short || language.toUpperCase();
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -31,7 +35,8 @@ const LanguageSwitcher: React.FC = () => {
         aria-expanded={isOpen}
       >
         <i className="bi bi-globe text-xl text-white"></i>
-        <span className="font-semibold text-sm text-white">{language.toUpperCase()}</span>
+        {/* FIX: Use the new 'short' name for a better display. */}
+        <span className="font-semibold text-sm text-white">{currentLanguageShort}</span>
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-black rounded-lg shadow-xl z-50 border border-gray-200 dark:border-gray-800 animate-fade-in-up">
