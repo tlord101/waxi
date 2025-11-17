@@ -81,6 +81,23 @@ const VehicleDetailPage: React.FC<VehicleDetailPageProps> = ({ vehicle, setCurre
           </div>
         </div>
       </main>
+      {/* Explore More: Interiors */}
+      {vehicle.interiors && vehicle.interiors.length > 0 && (
+        <section className="relative z-10 w-full max-w-6xl mx-auto mt-12 p-6 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 text-white">
+          <h3 className="text-2xl font-bold mb-4">Explore More — Interiors</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {vehicle.interiors.map((it, idx) => (
+              <figure key={idx} className="bg-black/40 rounded-xl overflow-hidden shadow-lg">
+                <img src={it.imageUrl} alt={it.title || `Interior ${idx+1}`} className="w-full h-44 object-cover" />
+                <figcaption className="p-4 bg-gradient-to-t from-black/60 to-transparent">
+                  <h4 className="text-lg font-semibold">{it.title}</h4>
+                  <p className="text-sm text-gray-300 mt-1">{it.description}</p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

@@ -24,6 +24,9 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
   const [isSaving, setIsSaving] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(initialVehicle?.imageUrl || defaultVehicle.imageUrl);
+  const [interiors, setInteriors] = useState<{ imageFile?: File | null; imageUrl?: string; title?: string; description?: string }[]>(
+    initialVehicle?.interiors?.map(i => ({ imageUrl: i.imageUrl, title: i.title, description: i.description })) || []
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -100,10 +103,24 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
       if (imageFile) {
         finalImageUrl = await uploadImage(imageFile);
       }
-      
+      // Upload any interior images that are new files
+      const finalizedInteriors = await Promise.all(interiors.map(async (it) => {
+        if (it.imageFile) {
+          try {
+            const uploaded = await uploadImage(it.imageFile);
+            return { imageUrl: uploaded, title: it.title || '', description: it.description || '' };
+          } catch (err) {
+            console.error('Interior image upload failed:', err);
+            return { imageUrl: it.imageUrl || '', title: it.title || '', description: it.description || '' };
+          }
+        }
+        return { imageUrl: it.imageUrl || '', title: it.title || '', description: it.description || '' };
+      }));
+
       onSubmit({
         ...vehicle,
         imageUrl: finalImageUrl,
+        interiors: finalizedInteriors,
       });
 
     } catch (error) {
@@ -171,6 +188,51 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
                             <input id="image-upload" type="file" className="sr-only" accept="image/*" onChange={handleImageFileChange}/>
                         </label>
                     </div>
+                </div>
+            </div>
+            {/* Interiors */}
+            <div>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Interiors</h3>
+                <div className="space-y-4 p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-800/50">
+                  {interiors.map((it, idx) => (
+                    <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-center">
+                        <div className="md:col-span-1">
+                          <img src={it.imageUrl || (it.imageFile ? URL.createObjectURL(it.imageFile) : '')} alt={`Interior ${idx+1}`} className="w-28 h-20 object-cover rounded-md bg-gray-200 dark:bg-gray-700" />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block text-xs text-gray-700 dark:text-gray-300">Title</label>
+                          <input value={it.title || ''} onChange={e => {
+                              const new = [...interiors]; new[idx] = { ...new[idx], title: e.target.value }; setInteriors(new);
+                          }} className="w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md" />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block text-xs text-gray-700 dark:text-gray-300">Description</label>
+                          <input value={it.description || ''} onChange={e => {
+                              const newI = [...interiors]; newI[idx] = { ...newI[idx], description: e.target.value }; setInteriors(newI);
+                          }} className="w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md" />
+                        </div>
+                        <div className="md:col-span-1 flex flex-col gap-2">
+                          <label className="cursor-pointer bg-white dark:bg-gray-700 py-2 px-3 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                            <span>Replace Image</span>
+                            <input type="file" accept="image/*" className="sr-only" onChange={e => {
+                                const file = e.target.files?.[0]; if (file) { const newArr = [...interiors]; newArr[idx] = { ...newArr[idx], imageFile: file, imageUrl: '' }; setInteriors(newArr); }
+                            }} />
+                          </label>
+                          <button type="button" onClick={() => setInteriors(prev => prev.filter((_, i) => i !== idx))} className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 text-sm">Remove</button>
+                        </div>
+                    </div>
+                  ))}
+                  <div className="flex items-center gap-4">
+                    <label className="cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+                      <span>Add Interior Image</span>
+                      <input type="file" accept="image/*" className="sr-only" onChange={e => {
+                        const file = e.target.files?.[0]; if (file) {
+                          setInteriors(prev => [...prev, { imageFile: file }]);
+                        }
+                      }} />
+                    </label>
+                    <button type="button" onClick={() => setInteriors(prev => [...prev, { title: '', description: '', imageUrl: '' }])} className="bg-gray-200 dark:bg-gray-700 text-black dark:text-white py-2 px-4 rounded-md">+ Add Blank Interior</button>
+                  </div>
                 </div>
             </div>
              {/* Description */}

@@ -14,6 +14,11 @@ export interface Vehicle {
     name: string;
     value: string;
   }[];
+  interiors?: {
+    imageUrl: string;
+    title?: string;
+    description?: string;
+  }[];
 }
 
 export interface User {
