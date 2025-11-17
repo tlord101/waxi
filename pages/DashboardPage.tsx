@@ -5,7 +5,7 @@ import { getInvestmentsForUser, addInvestment, updateUser, getPendingDepositForU
 import { sendDepositRequestToAgent, sendDepositReceiptToAgent } from '../services/emailService';
 import PaymentModal from '../components/PaymentModal';
 
-type DashboardTab = 'Wallet' | 'Investments' | 'Purchases' | 'Deposit Funds' | 'Actions';
+type DashboardTab = 'Wallet' | 'Investments' | 'Purchases' | 'Deposit Funds';
 
 interface DashboardPageProps {
   user: User;
@@ -24,12 +24,11 @@ interface DashboardSidebarProps {
 }
 
 const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
-  const tabs: { name: DashboardTab, icon: string }[] = [
+    const tabs: { name: DashboardTab, icon: string }[] = [
     { name: 'Wallet', icon: 'wallet-outline' },
     { name: 'Investments', icon: 'analytics-outline' },
     { name: 'Purchases', icon: 'receipt-outline' },
     { name: 'Deposit Funds', icon: 'add-circle-outline' },
-    { name: 'Actions', icon: 'flash-outline' },
   ];
 
   const handleTabClick = (tab: DashboardTab) => {
@@ -373,30 +372,7 @@ const DashboardContent: React.FC<{
                     />
             </div>
         );
-      case 'Actions':
-        return (
-            <div className="animate-fade-in">
-                <h2 className="text-3xl font-bold mb-6">Quick Actions</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button onClick={() => setCurrentPage('Vehicles')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
-                        <h3 className="font-bold text-lg">Buy a Car</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Use your balance for a new vehicle purchase.</p>
-                    </button>
-                    <button onClick={() => setActiveTab('Investments')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
-                        <h3 className="font-bold text-lg">Invest</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Explore investment opportunities.</p>
-                    </button>
-                    <button onClick={() => setCurrentPage('Giveaway')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
-                        <h3 className="font-bold text-lg">Apply for Giveaway</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Enter the current giveaway event.</p>
-                    </button>
-                    <button onClick={() => setCurrentPage('Installment')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
-                        <h3 className="font-bold text-lg">Settle Installments</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Manage and pay your active installment plans.</p>
-                    </button>
-                </div>
-            </div>
-        );
+      
       default:
         return null;
     }
@@ -467,6 +443,29 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
         {pendingOrder && (
             <PendingPurchaseAlert order={pendingOrder} onClick={() => onCompletePurchase(pendingOrder)} />
         )}
+
+        {/* Quick Actions moved from the 'Actions' tab so they're visible on the Dashboard */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button onClick={() => setCurrentPage('Vehicles')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
+              <h3 className="font-bold text-lg text-black dark:text-white">Buy a Car</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Use your balance for a new vehicle purchase.</p>
+            </button>
+            <button onClick={() => setActiveTab('Investments')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
+              <h3 className="font-bold text-lg text-black dark:text-white">Invest</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Explore investment opportunities.</p>
+            </button>
+            <button onClick={() => setCurrentPage('Giveaway')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
+              <h3 className="font-bold text-lg text-black dark:text-white">Apply for Giveaway</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Enter the current giveaway event.</p>
+            </button>
+            <button onClick={() => setCurrentPage('Installment')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
+              <h3 className="font-bold text-lg text-black dark:text-white">Settle Installments</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Manage and pay your active installment plans.</p>
+            </button>
+          </div>
+        </div>
 
         <div className="flex flex-col md:flex-row gap-8">
           <DashboardSidebar 
