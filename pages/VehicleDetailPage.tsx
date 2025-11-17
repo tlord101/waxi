@@ -38,7 +38,7 @@ const VehicleDetailPage: React.FC<VehicleDetailPageProps> = ({ vehicle, setCurre
         <span>All Vehicles</span>
       </button>
 
-      <main className="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 gap-8 items-start animate-fade-in-up text-white">
+      <main className="relative z-10 w-full max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-2 gap-8 items-start animate-fade-in-up text-white">
         {/* Left Side: Info & Actions */}
         <div className="bg-black/40 backdrop-blur-md p-8 rounded-2xl border border-white/20">
           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-2">{vehicle.name}</h1>
