@@ -410,6 +410,12 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
   const [activeTab, setActiveTab] = useState<DashboardTab>('Wallet');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    const handler = () => setIsSidebarOpen(open => !open);
+    window.addEventListener('toggle-dashboard-sidebar', handler as EventListener);
+    return () => window.removeEventListener('toggle-dashboard-sidebar', handler as EventListener);
+  }, []);
+
   return (
     <div className="py-16">
       <div className="container mx-auto px-6">

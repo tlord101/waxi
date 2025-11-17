@@ -17,6 +17,7 @@ import InvestmentsPage from './pages/InvestmentsPage';
 import PurchasesPage from './pages/PurchasesPage';
 import DepositPage from './pages/DepositPage';
 import VehicleDetailPage from './pages/VehicleDetailPage';
+import SidebarToggleButton from './components/SidebarToggleButton';
 import { SiteContentProvider } from './contexts/SiteContentContext';
 // FIX: Import Page and Theme from types.ts to break circular dependency
 import { Vehicle, User, Order, Page, Theme } from './types';
@@ -319,6 +320,10 @@ const App: React.FC = () => {
         )}
         <main className="flex-grow text-black dark:text-white">
           {renderPage()}
+          {/* Show the floating sidebar toggle on pages that should expose the dashboard sidebar */}
+          {['Dashboard', 'Investments', 'Purchases', 'Deposit', 'Wallet'].includes(currentPage) && (
+            <SidebarToggleButton />
+          )}
         </main>
         {shouldShowNavbarAndFooter && <Footer />}
         <LiveChatWidget user={currentUser} />
