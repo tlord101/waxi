@@ -303,7 +303,8 @@ const App: React.FC = () => {
     }
   };
 
-  const shouldShowNavbarAndFooter = currentPage !== 'VehicleDetail' && currentPage !== 'Dashboard' && currentPage !== 'Admin';
+  const dashboardPagesToHideNavbar: Page[] = ['VehicleDetail', 'Dashboard', 'Admin', 'Wallet', 'Investments', 'Purchases', 'Deposit'];
+  const shouldShowNavbarAndFooter = !dashboardPagesToHideNavbar.includes(currentPage);
 
   return (
     <SiteContentProvider>
