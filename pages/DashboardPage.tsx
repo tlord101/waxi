@@ -53,8 +53,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
         <div className="p-4 flex justify-between items-center md:hidden border-b border-gray-200 dark:border-gray-800">
            <h2 className="font-bold text-lg text-black dark:text-white">Menu</h2>
            <button onClick={() => setIsOpen(false)} className="text-2xl text-gray-500 dark:text-gray-400 hover:text-byd-red transition-colors">
-              {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
-              <ion-icon name="close-outline"></ion-icon>
+             {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
+             <ion-icon name="close-outline"></ion-icon>
            </button>
         </div>
         <div className="p-4">
@@ -146,7 +146,7 @@ const DashboardContent: React.FC<{
         alert(`Successfully invested ¥${amount.toLocaleString()}`);
     };
 
-     const handleProceedToDeposit = () => {
+      const handleProceedToDeposit = () => {
         const amount = parseFloat(depositAmount);
         setDepositError('');
         if (isNaN(amount) || amount <= 0) {
@@ -181,7 +181,7 @@ const DashboardContent: React.FC<{
         setDepositAmount(''); // Clear the input
     };
 
-     const handleReceiptFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const handleReceiptFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
         setReceiptFile(e.target.files[0]);
         }
@@ -256,20 +256,20 @@ const DashboardContent: React.FC<{
                 <div>
                     <h2 className="text-3xl font-bold mb-6">Make an Investment</h2>
                      <div className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg">
-                        {investmentError && <p className="text-red-500 text-sm mb-2">{investmentError}</p>}
-                        <div className="flex flex-col sm:flex-row gap-2">
-                            <input 
-                                type="number" 
-                                placeholder={`Amount (Balance: ¥${user.balance.toLocaleString()})`} 
-                                value={investmentAmount}
-                                onChange={e => setInvestmentAmount(e.target.value)}
-                                className="flex-grow p-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-byd-red focus:border-byd-red" 
-                            />
-                            <button onClick={handleInvestment} className="bg-byd-red text-white py-3 px-8 rounded-md font-semibold hover:bg-byd-red-dark transition-colors">
-                                Invest Now
-                            </button>
-                        </div>
-                    </div>
+                         {investmentError && <p className="text-red-500 text-sm mb-2">{investmentError}</p>}
+                         <div className="flex flex-col sm:flex-row gap-2">
+                             <input 
+                                 type="number" 
+                                 placeholder={`Amount (Balance: ¥${user.balance.toLocaleString()})`} 
+                                 value={investmentAmount}
+                                 onChange={e => setInvestmentAmount(e.target.value)}
+                                 className="flex-grow p-3 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-byd-red focus:border-byd-red" 
+                             />
+                             <button onClick={handleInvestment} className="bg-byd-red text-white py-3 px-8 rounded-md font-semibold hover:bg-byd-red-dark transition-colors">
+                                 Invest Now
+                             </button>
+                         </div>
+                     </div>
                 </div>
 
                 <div>
@@ -308,7 +308,7 @@ const DashboardContent: React.FC<{
             <div className="animate-fade-in">
                 <h2 className="text-3xl font-bold mb-6">Make a Deposit</h2>
                 {pendingDeposit ? (
-                     <>
+                      <>
                         {pendingDeposit.status === 'Awaiting Receipt' && (
                             <div className="bg-blue-500/10 border-l-4 border-blue-500 text-blue-700 dark:text-blue-300 p-6 rounded-r-lg">
                                 <ion-icon name="mail-outline" className="text-5xl mb-2 mx-auto block"></ion-icon>
@@ -346,7 +346,7 @@ const DashboardContent: React.FC<{
                                 <p>Our team is reviewing it and will credit your account shortly. This usually takes a few hours.</p>
                             </div>
                         )}
-                    </>
+                      </>
                 ) : (
                     <div className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg">
                         <p className="mb-4">Enter the amount you wish to deposit into your account.</p>
@@ -366,11 +366,11 @@ const DashboardContent: React.FC<{
                         </button>
                     </div>
                 )}
-                 <PaymentModal
-                    isOpen={isPaymentModalOpen}
-                    onClose={() => setIsPaymentModalOpen(false)}
-                    onSelectPayment={handleSelectDepositMethod}
-                />
+                    <PaymentModal
+                        isOpen={isPaymentModalOpen}
+                        onClose={() => setIsPaymentModalOpen(false)}
+                        onSelectPayment={handleSelectDepositMethod}
+                    />
             </div>
         );
       case 'Actions':
@@ -382,7 +382,7 @@ const DashboardContent: React.FC<{
                         <h3 className="font-bold text-lg">Buy a Car</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Use your balance for a new vehicle purchase.</p>
                     </button>
-                     <button onClick={() => setActiveTab('Investments')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
+                    <button onClick={() => setActiveTab('Investments')} className="bg-gray-100 dark:bg-gray-800/50 p-6 rounded-lg text-left hover:ring-2 hover:ring-byd-red transition-all">
                         <h3 className="font-bold text-lg">Invest</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Explore investment opportunities.</p>
                     </button>
@@ -414,9 +414,9 @@ const FloatingActionButton: React.FC<{ order: Order; onClick: () => void }> = ({
       className="fixed bottom-8 right-8 z-20 bg-byd-red text-white py-3 px-5 rounded-full shadow-2xl flex items-center justify-center hover:bg-byd-red-dark transition-all duration-300 transform hover:scale-105 group"
       aria-label={`Complete purchase for ${order.vehicle_name}`}
     >
-        {/* FIX: Replaced class with className for ion-icon custom element */}
-        <ion-icon name="cloud-upload-outline" className="text-2xl"></ion-icon>
-        <span className="ml-2 font-semibold">Upload Receipt</span>
+      {/* FIX: Replaced class with className for ion-icon custom element */}
+      <ion-icon name="cloud-upload-outline" className="text-2xl"></ion-icon>
+      <span className="ml-2 font-semibold">Upload Receipt</span>
     </button>
 );
 
@@ -449,11 +449,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="md:hidden text-2xl p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="md:hidden bg-byd-red text-white p-3 rounded-full hover:bg-byd-red-dark transition-colors shadow-lg"
               aria-label="Open menu"
             >
-              {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
-              <ion-icon name="menu-outline"></ion-icon>
+              <i className="bi bi-list text-2xl"></i>
             </button>
             <h1 className="text-4xl sm:text-5xl font-extrabold">My Dashboard</h1>
           </div>
