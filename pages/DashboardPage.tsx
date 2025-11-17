@@ -45,7 +45,16 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
 
   return (
     <>
-      {/* Overlay for mobile */}
+      {/* Hamburger Button */}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-50 text-3xl text-black dark:text-white p-3 w-12 h-12 rounded-full bg-white dark:bg-gray-900 shadow-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-byd-red"
+        aria-label="Open menu"
+      >
+        <ion-icon name="menu-outline" className="text-2xl"></ion-icon>
+      </button>
+
+      {/* Overlay */}
       <div
         className={`fixed inset-0 bg-black/60 z-30 md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setIsOpen(false)}
@@ -57,35 +66,39 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
         className={`fixed top-0 left-0 w-64 h-full bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 z-40 transform transition-transform duration-300 ease-in-out md:static md:w-64 md:h-auto md:transform-none md:z-auto md:flex-shrink-0 md:rounded-lg md:border ${isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}
       >
         <div className="p-4 flex justify-between items-center md:hidden border-b border-gray-200 dark:border-gray-800">
-           <h2 className="font-bold text-lg text-black dark:text-white">Menu</h2>
-           <button onClick={() => setIsOpen(false)} className="text-2xl text-gray-500 dark:text-gray-400 hover:text-byd-red transition-colors">
-              {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
-              <ion-icon name="close-outline"></ion-icon>
-           </button>
+          <h2 className="font-bold text-lg text-black dark:text-white">Menu</h2>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="text-2xl text-gray-500 dark:text-gray-400 hover:text-byd-red transition-colors"
+            aria-label="Close menu"
+          >
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
         </div>
         <div className="p-4">
-           <nav className="flex flex-col space-y-1">
-             {tabs.map(tab => (
-               <button
-                 key={tab.name}
-                 onClick={() => handleTabClick(tab.name)}
-                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 ${activeTab === tab.name ? 'bg-byd-red text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white'}`}
-               >
-                 {/* FIX: Replaced class with className for ion-icon custom element */}
-                 <ion-icon name={tab.icon} className="text-xl"></ion-icon>
-                 <span className="font-semibold">{tab.name}</span>
-               </button>
-             ))}
-           </nav>
-           <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-800">
-             <button
-                onClick={handleHomeClick}
-                className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white`}
+          <nav className="flex flex-col space-y-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.name}
+                onClick={() => handleTabClick(tab.name)}
+                className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 ${
+                  activeTab === tab.name ? 'bg-byd-red text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white'
+                }`}
               >
-                <ion-icon name="home-outline" className="text-xl"></ion-icon>
-                <span className="font-semibold">Back to Home</span>
+                <ion-icon name={tab.icon} className="text-xl"></ion-icon>
+                <span className="font-semibold">{tab.name}</span>
               </button>
-           </div>
+            ))}
+          </nav>
+          <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-800">
+            <button
+              onClick={handleHomeClick}
+              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white`}
+            >
+              <ion-icon name="home-outline" className="text-xl"></ion-icon>
+              <span className="font-semibold">Back to Home</span>
+            </button>
+          </div>
         </div>
       </aside>
     </>
@@ -482,13 +495,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleBack = () => {
-    if (typeof window !== 'undefined' && window.history && window.history.length > 1) {
-      window.history.back();
-    } else {
-      setCurrentPage('Home');
-    }
-  };
 
   return (
     <div className="py-16">
@@ -496,20 +502,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
         <div className={`sticky top-4 z-50 bg-white/70 dark:bg-black/60 backdrop-blur-sm p-3 rounded-md mb-6 border border-gray-100 dark:border-gray-800 transform transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-24'}`}>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <button
-                onClick={handleBack}
-                className="text-lg p-2 rounded-full bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm hover:opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-byd-red focus:ring-offset-2"
-                aria-label="Back"
-              >
-                <ion-icon name="arrow-back-outline" className="text-xl"></ion-icon>
-              </button>
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="text-2xl p-2 rounded-full bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm hover:opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-byd-red focus:ring-offset-2"
-                aria-label="Open menu"
-              >
-                <ion-icon name="menu-outline"></ion-icon>
-              </button>
               <h1 className="text-2xl sm:text-4xl font-extrabold ml-2">My Dashboard</h1>
             </div>
             <div className="flex items-center gap-3">
