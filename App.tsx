@@ -13,6 +13,9 @@ import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
+import InvestmentsPage from './pages/InvestmentsPage';
+import PurchasesPage from './pages/PurchasesPage';
+import DepositPage from './pages/DepositPage';
 import VehicleDetailPage from './pages/VehicleDetailPage';
 import { SiteContentProvider } from './contexts/SiteContentContext';
 // FIX: Import Page and Theme from types.ts to break circular dependency
@@ -284,6 +287,12 @@ const App: React.FC = () => {
         return <SignupPage onSignup={handleUserSignup} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
       case 'Dashboard':
         return <DashboardPage user={currentUser!} onLogout={handleUserLogout} setCurrentPage={setCurrentPage} setCurrentUser={setCurrentUser} pendingOrder={pendingOrder} onCompletePurchase={handleCompletePurchase} />;
+      case 'Investments':
+        return currentUser ? <InvestmentsPage user={currentUser} setCurrentUser={setCurrentUser} setCurrentPage={setCurrentPage} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
+      case 'Purchases':
+        return currentUser ? <PurchasesPage user={currentUser} setCurrentPage={setCurrentPage} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
+      case 'Deposit':
+        return currentUser ? <DepositPage user={currentUser} setCurrentUser={setCurrentUser} setCurrentPage={setCurrentPage} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
       case 'VehicleDetail':
         return <VehicleDetailPage vehicle={selectedVehicleForDetail} setCurrentPage={setCurrentPage} onSelectForPurchase={handleSelectForPurchase} onSelectForInstallment={handleSelectForInstallment} />;
       default:

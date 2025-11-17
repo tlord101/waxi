@@ -1,5 +1,5 @@
 // FIX: Moved Page and Theme types here to break circular dependency between App.tsx and other files.
-export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin' | 'Login' | 'Signup' | 'Dashboard' | 'VehicleDetail';
+export type Page = 'Home' | 'Vehicles' | 'Installment' | 'Giveaway' | 'About' | 'Contact' | 'Order' | 'Admin' | 'Login' | 'Signup' | 'Dashboard' | 'VehicleDetail' | 'Investments' | 'Purchases' | 'Deposit' | 'Wallet';
 export type Theme = 'dark' | 'light';
 
 export interface Vehicle {

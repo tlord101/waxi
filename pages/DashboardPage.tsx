@@ -21,10 +21,11 @@ interface DashboardSidebarProps {
   setActiveTab: (tab: DashboardTab) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  setCurrentPage: (page: Page) => void;
 }
 
 const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, setCurrentPage }) => {
-    const tabs: { name: DashboardTab, icon: string }[] = [
+  const tabs: { name: DashboardTab, icon: string }[] = [
     { name: 'Wallet', icon: 'wallet-outline' },
     { name: 'Investments', icon: 'analytics-outline' },
     { name: 'Purchases', icon: 'receipt-outline' },
@@ -32,9 +33,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
   ];
 
   const handleTabClick = (tab: DashboardTab) => {
-    // Ensure we navigate to the Dashboard page and activate the requested tab.
-    setCurrentPage('Dashboard');
-    setActiveTab(tab);
+    // If user selects Wallet, stay on Dashboard and activate Wallet tab.
+    if (tab === 'Wallet') {
+      setCurrentPage('Dashboard');
+      setActiveTab('Wallet');
+    } else if (tab === 'Investments') {
+      setCurrentPage('Investments');
+    } else if (tab === 'Purchases') {
+      setCurrentPage('Purchases');
+    } else if (tab === 'Deposit Funds') {
+      setCurrentPage('Deposit');
+    }
     setIsOpen(false); // Close sidebar on mobile after selection
   };
 
@@ -480,13 +489,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
             setCurrentPage={setCurrentPage}
           />
           <main className="flex-1">
-            <DashboardContent 
-                activeTab={activeTab} 
-                user={user} 
-                setCurrentPage={setCurrentPage} 
-                setActiveTab={setActiveTab} 
-                setCurrentUser={setCurrentUser}
-            />
+            {/* Content for Wallet is surfaced above (Welcome / Quick Actions).
+                Other tabs now have their own dedicated pages: Investments, Purchases, Deposit.
+                Use the sidebar to navigate to those pages. */}
           </main>
         </div>
       </div>
