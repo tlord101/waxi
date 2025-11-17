@@ -229,26 +229,7 @@ const DashboardContent: React.FC<{
     const renderContent = () => {
     switch (activeTab) {
       case 'Wallet':
-        return (
-          <div className="animate-fade-in">
-            <h2 className="text-3xl font-bold mb-2">Welcome back, {user.name}!</h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-8">Here's a summary of your account wallet.</p>
-            <div className="bg-gradient-to-br from-byd-red to-byd-red-dark text-white p-8 rounded-xl shadow-lg flex flex-col items-center text-center">
-                <p className="text-lg opacity-80">Current Balance</p>
-                <p className="text-5xl font-extrabold tracking-tight my-2">¥{user.balance.toLocaleString()}</p>
-                <button 
-                  onClick={() => setActiveTab('Deposit Funds')}
-                  className="mt-6 bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-6 rounded-full transition-colors duration-300 backdrop-blur-sm"
-                >
-                  <span className="flex items-center gap-2">
-                    {/* FIX: Corrected ion-icon usage to ensure proper rendering and type compatibility. */}
-                    <ion-icon name="add-circle-outline"></ion-icon>
-                    <span>Deposit Funds</span>
-                  </span>
-                </button>
-            </div>
-          </div>
-        );
+        return null;
       case 'Investments':
         return (
             <div className="animate-fade-in space-y-8">
@@ -444,7 +425,28 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
             <PendingPurchaseAlert order={pendingOrder} onClick={() => onCompletePurchase(pendingOrder)} />
         )}
 
-        {/* Quick Actions moved from the 'Actions' tab so they're visible on the Dashboard */}
+        {/* Welcome / Balance (moved from Wallet tab) */}
+        <div className="animate-fade-in space-y-6 mb-8">
+          <div>
+            <h2 className="text-3xl font-bold mb-2">Welcome back, {user.name}!</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">Here's a summary of your account wallet.</p>
+            <div className="bg-gradient-to-br from-byd-red to-byd-red-dark text-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center">
+              <p className="text-lg opacity-80">Current Balance</p>
+              <p className="text-4xl font-extrabold tracking-tight my-2">¥{user.balance.toLocaleString()}</p>
+              <button 
+                onClick={() => setActiveTab('Deposit Funds')}
+                className="mt-4 bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300"
+              >
+                <span className="flex items-center gap-2">
+                  <ion-icon name="add-circle-outline"></ion-icon>
+                  <span>Deposit Funds</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions moved from the previous Actions tab so they're visible on the Dashboard */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
