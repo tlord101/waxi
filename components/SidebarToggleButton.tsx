@@ -1,9 +1,17 @@
 import React from 'react';
 
-const SidebarToggleButton: React.FC = () => {
+interface Props {
+  setCurrentPage: (page: string) => void;
+}
+
+const SidebarToggleButton: React.FC<Props> = ({ setCurrentPage }) => {
   const handleClick = () => {
-    // Dispatch a global event that dashboard sidebar can listen for
-    window.dispatchEvent(new CustomEvent('toggle-dashboard-sidebar'));
+    // Navigate to Dashboard first so the sidebar component mounts
+    setCurrentPage('Dashboard');
+    // Give React a tick to mount Dashboard, then open the sidebar
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('open-dashboard-sidebar'));
+    }, 120);
   };
 
   return (

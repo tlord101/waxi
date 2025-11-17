@@ -322,7 +322,7 @@ const App: React.FC = () => {
           {renderPage()}
           {/* Show the floating sidebar toggle on pages that should expose the dashboard sidebar */}
           {['Dashboard', 'Investments', 'Purchases', 'Deposit', 'Wallet'].includes(currentPage) && (
-            <SidebarToggleButton />
+            <SidebarToggleButton setCurrentPage={setCurrentPage} />
           )}
         </main>
         {shouldShowNavbarAndFooter && <Footer />}

@@ -411,9 +411,16 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const handler = () => setIsSidebarOpen(open => !open);
-    window.addEventListener('toggle-dashboard-sidebar', handler as EventListener);
-    return () => window.removeEventListener('toggle-dashboard-sidebar', handler as EventListener);
+    // Toggle handler (legacy)
+    const toggleHandler = () => setIsSidebarOpen(open => !open);
+    // Explicit open handler used by the global button to navigate then open
+    const openHandler = () => setIsSidebarOpen(true);
+    window.addEventListener('toggle-dashboard-sidebar', toggleHandler as EventListener);
+    window.addEventListener('open-dashboard-sidebar', openHandler as EventListener);
+    return () => {
+      window.removeEventListener('toggle-dashboard-sidebar', toggleHandler as EventListener);
+      window.removeEventListener('open-dashboard-sidebar', openHandler as EventListener);
+    };
   }, []);
 
   return (
