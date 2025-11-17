@@ -21,12 +21,10 @@ interface DashboardSidebarProps {
   setActiveTab: (tab: DashboardTab) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  setCurrentPage: (page: Page) => void;
-  onLogout: () => void;
 }
 
 const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, setCurrentPage }) => {
-  const tabs: { name: DashboardTab, icon: string }[] = [
+    const tabs: { name: DashboardTab, icon: string }[] = [
     { name: 'Wallet', icon: 'wallet-outline' },
     { name: 'Investments', icon: 'analytics-outline' },
     { name: 'Purchases', icon: 'receipt-outline' },
@@ -34,17 +32,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
   ];
 
   const handleTabClick = (tab: DashboardTab) => {
-    // If user selects Wallet, stay on Dashboard and activate Wallet tab.
-    if (tab === 'Wallet') {
-      setCurrentPage('Dashboard');
-      setActiveTab('Wallet');
-    } else if (tab === 'Investments') {
-      setCurrentPage('Investments');
-    } else if (tab === 'Purchases') {
-      setCurrentPage('Purchases');
-    } else if (tab === 'Deposit Funds') {
-      setCurrentPage('Deposit');
-    }
+    // Ensure we navigate to the Dashboard page and activate the requested tab.
+    setCurrentPage('Dashboard');
+    setActiveTab(tab);
     setIsOpen(false); // Close sidebar on mobile after selection
   };
 
@@ -68,32 +58,20 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
              <ion-icon name="close-outline"></ion-icon>
            </button>
         </div>
-        <div className="p-4 flex flex-col justify-between h-full">
-           <div>
-             <nav className="flex flex-col space-y-1">
-               {tabs.map(tab => (
-                 <button
-                   key={tab.name}
-                   onClick={() => handleTabClick(tab.name)}
-                   className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 ${activeTab === tab.name ? 'bg-byd-red text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white'}`}
-                 >
-                   <ion-icon name={tab.icon} className="text-xl"></ion-icon>
-                   <span className="font-semibold">{tab.name}</span>
-                 </button>
-               ))}
-             </nav>
-           </div>
-
-           <div className="mt-4 border-t border-gray-200 dark:border-gray-800 pt-4">
-             <button onClick={() => { setCurrentPage('Home'); setIsOpen(false); }} className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-gray-100 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-               <ion-icon name="home-outline"></ion-icon>
-               <span className="font-semibold">Go Home</span>
-             </button>
-             <button onClick={() => { onLogout(); setIsOpen(false); }} className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-byd-red text-white hover:bg-byd-red-dark transition-colors">
-               <ion-icon name="log-out-outline"></ion-icon>
-               <span className="font-semibold">Logout</span>
-             </button>
-           </div>
+        <div className="p-4">
+           <nav className="flex flex-col space-y-1">
+             {tabs.map(tab => (
+               <button
+                 key={tab.name}
+                 onClick={() => handleTabClick(tab.name)}
+                 className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors duration-200 ${activeTab === tab.name ? 'bg-byd-red text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-black dark:text-white'}`}
+               >
+                 {/* FIX: Replaced class with className for ion-icon custom element */}
+                 <ion-icon name={tab.icon} className="text-xl"></ion-icon>
+                 <span className="font-semibold">{tab.name}</span>
+               </button>
+             ))}
+           </nav>
         </div>
       </aside>
     </>
@@ -423,19 +401,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
   const [activeTab, setActiveTab] = useState<DashboardTab>('Wallet');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    // Toggle handler (legacy)
-    const toggleHandler = () => setIsSidebarOpen(open => !open);
-    // Explicit open handler used by the global button to navigate then open
-    const openHandler = () => setIsSidebarOpen(true);
-    window.addEventListener('toggle-dashboard-sidebar', toggleHandler as EventListener);
-    window.addEventListener('open-dashboard-sidebar', openHandler as EventListener);
-    return () => {
-      window.removeEventListener('toggle-dashboard-sidebar', toggleHandler as EventListener);
-      window.removeEventListener('open-dashboard-sidebar', openHandler as EventListener);
-    };
-  }, []);
-
   return (
     <div className="py-16">
       <div className="container mx-auto px-6">
@@ -513,12 +478,15 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
             isOpen={isSidebarOpen}
             setIsOpen={setIsSidebarOpen}
             setCurrentPage={setCurrentPage}
-            onLogout={onLogout}
           />
           <main className="flex-1">
-            {/* Content for Wallet is surfaced above (Welcome / Quick Actions).
-                Other tabs now have their own dedicated pages: Investments, Purchases, Deposit.
-                Use the sidebar to navigate to those pages. */}
+            <DashboardContent 
+                activeTab={activeTab} 
+                user={user} 
+                setCurrentPage={setCurrentPage} 
+                setActiveTab={setActiveTab} 
+                setCurrentUser={setCurrentUser}
+            />
           </main>
         </div>
       </div>
