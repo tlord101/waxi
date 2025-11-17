@@ -107,7 +107,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
       </nav>
 
       {/* Fullscreen Menu Overlay */}
-      <div className={`fixed inset-0 z-40 bg-black/95 backdrop-blur-sm transition-all duration-500 ease-in-out flex flex-col items-center justify-center ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+      <div className={`fixed inset-0 z-40 bg-black/95 backdrop-blur-sm transition-all duration-500 ease-in-out flex flex-col items-center justify-center ${isOpen ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'}`}>
         <div className="text-center text-white animate-fade-in-up" style={{ animationDelay: '100ms' }}>
           <div className="space-y-6">
             {NAV_LINKS.map((link) => (
