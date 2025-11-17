@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { User, Deposit } from '../types';
+import { User, Deposit, Page } from '../types';
+import DashboardHeader from '../components/DashboardHeader';
 import { getPendingDepositForUser, addDeposit, updateDeposit } from '../services/dbService';
 import { sendDepositRequestToAgent, sendDepositReceiptToAgent } from '../services/emailService';
 import PaymentModal from '../components/PaymentModal';
@@ -7,9 +8,12 @@ import PaymentModal from '../components/PaymentModal';
 interface Props {
   user: User;
   setCurrentUser: (user: User) => void;
+  currentPage: Page;
+  setCurrentPage: (page: Page) => void;
+  onLogout: () => void;
 }
 
-const DepositPage: React.FC<Props> = ({ user }) => {
+const DepositPage: React.FC<Props> = ({ user, setCurrentUser, currentPage, setCurrentPage, onLogout }) => {
   const [depositAmount, setDepositAmount] = useState('');
   const [depositError, setDepositError] = useState('');
   const [pendingDeposit, setPendingDeposit] = useState<Deposit | null>(null);
@@ -99,9 +103,11 @@ const DepositPage: React.FC<Props> = ({ user }) => {
   };
 
   return (
-    <div className="py-16 container mx-auto px-6">
-      <h1 className="text-4xl font-extrabold mb-6">Deposit Funds</h1>
-      <div className="animate-fade-in">
+    <div>
+      <DashboardHeader currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={onLogout} title="Deposit Funds" />
+      <div className="py-16 container mx-auto px-6">
+        <h1 className="text-4xl font-extrabold mb-6">Deposit Funds</h1>
+        <div className="animate-fade-in">
         {pendingDeposit ? (
           <>
             {pendingDeposit.status === 'Awaiting Receipt' && (

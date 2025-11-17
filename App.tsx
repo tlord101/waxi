@@ -289,13 +289,13 @@ const App: React.FC = () => {
       case 'Dashboard':
         return <DashboardPage user={currentUser!} onLogout={handleUserLogout} setCurrentPage={setCurrentPage} setCurrentUser={setCurrentUser} pendingOrder={pendingOrder} onCompletePurchase={handleCompletePurchase} />;
       case 'Wallet':
-        return currentUser ? <WalletPage user={currentUser} setCurrentPage={setCurrentPage} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
+        return currentUser ? <WalletPage user={currentUser} currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleUserLogout} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
       case 'Investments':
-        return currentUser ? <InvestmentsPage user={currentUser} setCurrentUser={setCurrentUser} setCurrentPage={setCurrentPage} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
+        return currentUser ? <InvestmentsPage user={currentUser} setCurrentUser={setCurrentUser} currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleUserLogout} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
       case 'Purchases':
-        return currentUser ? <PurchasesPage user={currentUser} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
+        return currentUser ? <PurchasesPage user={currentUser} currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleUserLogout} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
       case 'Deposit':
-        return currentUser ? <DepositPage user={currentUser} setCurrentUser={setCurrentUser} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
+        return currentUser ? <DepositPage user={currentUser} setCurrentUser={setCurrentUser} currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleUserLogout} /> : <LoginPage onLogin={handleUserLogin} onGoogleSignIn={handleGoogleSignIn} setCurrentPage={setCurrentPage} />;
       case 'VehicleDetail':
         return <VehicleDetailPage vehicle={selectedVehicleForDetail} setCurrentPage={setCurrentPage} onSelectForPurchase={handleSelectForPurchase} onSelectForInstallment={handleSelectForInstallment} />;
       default:

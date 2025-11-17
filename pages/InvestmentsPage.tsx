@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { User, Investment } from '../types';
+import { User, Investment, Page } from '../types';
+import DashboardHeader from '../components/DashboardHeader';
 import { getInvestmentsForUser, addInvestment, updateUser } from '../services/dbService';
 
 interface Props {
   user: User;
   setCurrentUser: (user: User) => void;
-  setCurrentPage?: (page: string) => void;
+  currentPage: Page;
+  setCurrentPage?: (page: Page) => void;
+  onLogout: () => void;
 }
 
-const InvestmentsPage: React.FC<Props> = ({ user, setCurrentUser }) => {
+const InvestmentsPage: React.FC<Props> = ({ user, setCurrentUser, currentPage, setCurrentPage, onLogout }) => {
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [investmentAmount, setInvestmentAmount] = useState('');
   const [investmentError, setInvestmentError] = useState('');
@@ -50,8 +53,10 @@ const InvestmentsPage: React.FC<Props> = ({ user, setCurrentUser }) => {
   };
 
   return (
-    <div className="py-16 container mx-auto px-6">
-      <h1 className="text-4xl font-extrabold mb-6">Investments</h1>
+    <div>
+      <DashboardHeader currentPage={currentPage} setCurrentPage={setCurrentPage || (() => {})} onLogout={onLogout} title="Investments" />
+      <div className="py-16 container mx-auto px-6">
+        <h1 className="text-4xl font-extrabold mb-6">Investments</h1>
       <div className="space-y-8">
         <div>
           <h2 className="text-3xl font-bold mb-6">Make an Investment</h2>
