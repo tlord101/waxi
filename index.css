@@ -14,6 +14,19 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Ensure GTranslate dropdown text is always visible (black) even inside dark navbars */
+.gtranslate_wrapper, .gtranslate_wrapper * {
+  color: #000 !important;
+  background-color: #fff !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+/* Remove any forced white text from children that might be injected */
+.gtranslate_wrapper .gt_logo, .gtranslate_wrapper img {
+  display: none !important;
+}
+
 /* Small helper for fade-in animations preserved from inline styles */
 .animate-fade-in {
   animation: fadeIn 0.4s ease-in-out;
