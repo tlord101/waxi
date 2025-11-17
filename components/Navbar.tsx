@@ -44,17 +44,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
     document.body.appendChild(script);
 
     // Basic cleanup to remove the script if the component were to unmount.
-    // Use safe removal to avoid exceptions if the node has already been removed or moved.
     return () => {
       const gtranslateScript = document.getElementById('gtranslate-script');
       if (gtranslateScript) {
-        // Prefer Element.remove() which is safe if the node is not attached.
-        // Fallback to parentNode removal if remove() isn't available for any reason.
-        if (typeof (gtranslateScript as any).remove === 'function') {
-          (gtranslateScript as any).remove();
-        } else if (gtranslateScript.parentNode) {
-          gtranslateScript.parentNode.removeChild(gtranslateScript);
-        }
+        document.body.removeChild(gtranslateScript);
       }
     };
   }, []);
