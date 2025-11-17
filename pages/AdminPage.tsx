@@ -68,6 +68,22 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, setCurrentPage }) => {
 
   return (
     <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+      {/* Hamburger Button for mobile */}
+      <button
+        onClick={() => setIsMenuOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-50 text-3xl text-black dark:text-white"
+        aria-label="Open menu"
+      >
+        <ion-icon name="menu-outline"></ion-icon>
+      </button>
+
+      {/* Overlay for mobile when sidebar is open */}
+      <div
+        className={`fixed inset-0 bg-black/60 z-30 md:hidden transition-opacity duration-300 ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setIsMenuOpen(false)}
+        aria-hidden="true"
+      ></div>
+
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
