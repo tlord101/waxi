@@ -1,9 +1,9 @@
+/* Import Bootstrap Icons from node_modules */
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import Bootstrap Icons from node_modules */
-@import "bootstrap-icons/font/bootstrap-icons.css";
 
 /* Use Inter as the default sans font (Google Fonts are still loaded from the link in index.html) */
 :root {

@@ -201,9 +201,9 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
                         </div>
                         <div className="md:col-span-2">
                           <label className="block text-xs text-gray-700 dark:text-gray-300">Title</label>
-                          <input value={it.title || ''} onChange={e => {
-                              const new = [...interiors]; new[idx] = { ...new[idx], title: e.target.value }; setInteriors(new);
-                          }} className="w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md" />
+                            <input value={it.title || ''} onChange={e => {
+                              const updated = [...interiors]; updated[idx] = { ...updated[idx], title: e.target.value }; setInteriors(updated);
+                            }} className="w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md" />
                         </div>
                         <div className="md:col-span-2">
                           <label className="block text-xs text-gray-700 dark:text-gray-300">Description</label>
