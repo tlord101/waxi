@@ -41,12 +41,9 @@ const DashboardHeader: React.FC<Props> = ({ currentPage, setCurrentPage, onLogou
   }, []);
 
   const handleMenuClick = () => {
-    if (currentPage !== 'Dashboard') {
-      setCurrentPage('Dashboard');
-      setTimeout(() => window.dispatchEvent(new CustomEvent('open-dashboard-sidebar')), 120);
-    } else {
-      window.dispatchEvent(new CustomEvent('open-dashboard-sidebar'));
-    }
+    // Always open the dashboard sidebar without changing the current page
+    // This prevents the menu icon from navigating to the Dashboard page.
+    window.dispatchEvent(new CustomEvent('open-dashboard-sidebar'));
   };
 
   return (
