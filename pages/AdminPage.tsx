@@ -61,22 +61,27 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, setCurrentPage }) => {
         setCurrentPage={setCurrentPage}
       />
       <div className="flex-1 flex flex-col">
-        <main className="flex-1 p-4 sm:p-6 lg:p-10">
-          {/* Mobile Header elements, now inside main */}
-          <div className="md:hidden flex items-center gap-4 mb-6">
+        <div className="sticky top-4 z-50 bg-white/70 dark:bg-black/60 backdrop-blur-sm p-3 rounded-md mb-6 border border-gray-100 dark:border-gray-800">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button onClick={() => setCurrentPage('Home')} className="text-lg p-2 rounded-full bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm hover:opacity-90 transition-colors" aria-label="Back">
+                <ion-icon name="arrow-back-outline" className="text-xl"></ion-icon>
+              </button>
               <button 
                   onClick={() => setIsMenuOpen(true)} 
-                  className="text-2xl text-black dark:text-white"
+                  className="text-2xl p-2 rounded-full bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm hover:opacity-90 transition-colors"
                   aria-label="Open menu"
               >
                   <ion-icon name="menu-outline" className="text-2xl"></ion-icon>
               </button>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{activeTab}</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 ml-2">{activeTab}</h1>
+            </div>
+            <div>
+              <button onClick={onLogout} className="bg-white dark:bg-gray-900 text-black dark:text-white py-2 px-4 rounded-full hover:opacity-90 transition-colors duration-200 font-semibold text-sm shadow-sm">Logout</button>
+            </div>
           </div>
-          
-          {/* Desktop Header */}
-          <h1 className="hidden md:block text-3xl sm:text-4xl font-bold mb-6 text-gray-900 dark:text-gray-100">{activeTab}</h1>
-          
+        </div>
+        <main className="flex-1 p-4 sm:p-6 lg:p-10">
           <div className="w-full">
             {renderContent()}
           </div>
