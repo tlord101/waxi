@@ -23,9 +23,10 @@ interface DashboardSidebarProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   setCurrentPage: (page: Page) => void;
+  onLogout?: () => void;
 }
 
-const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, setCurrentPage }) => {
+const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, setCurrentPage, onLogout }) => {
   const tabs: { name: DashboardTab, icon: string }[] = [
     { name: 'Wallet', icon: 'wallet-outline' },
     { name: 'Investments', icon: 'analytics-outline' },
@@ -81,6 +82,15 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ activeTab, setActiv
                </button>
              ))}
            </nav>
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+            <button
+              onClick={() => { if (typeof onLogout === 'function') { onLogout(); setIsOpen(false); } }}
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <ion-icon name="log-out-outline" className="text-xl"></ion-icon>
+              <span className="font-semibold">Logout</span>
+            </button>
+          </div>
         </div>
       </aside>
     </>
@@ -281,6 +291,18 @@ const DashboardContent: React.FC<{
                         <div className="text-center py-12 bg-gray-100 dark:bg-gray-800/50 rounded-lg">
                             <p className="text-gray-500 dark:text-gray-400">No active investments found.</p>
                         </div>
+                         <div className="p-4 border-t border-gray-200 dark:border-gray-700 mt-4">
+                           <button
+                             onClick={() => {
+                               if (onLogout) onLogout();
+                               setIsOpen(false);
+                             }}
+                             className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                           >
+                             <ion-icon name="log-out-outline" className="text-xl"></ion-icon>
+                             <span className="font-semibold">Logout</span>
+                           </button>
+                         </div>
                     )}
                 </div>
             </div>
@@ -414,13 +436,14 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
       currentPage="Dashboard"
       setCurrentPage={setCurrentPage}
       onLogout={onLogout}
-      sidebarContent={({ isOpen, setIsOpen, activeTab: sbActive, setActiveTab: setSbActive, setCurrentPage: sc }) => (
+      sidebarContent={({ isOpen, setIsOpen, activeTab: sbActive, setActiveTab: setSbActive, setCurrentPage: sc, onLogout: scOnLogout }) => (
         <DashboardSidebar
           activeTab={sbActive}
           setActiveTab={setSbActive}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           setCurrentPage={sc}
+          onLogout={scOnLogout}
         />
       )}
     >
