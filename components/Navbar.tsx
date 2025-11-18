@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // FIX: Import Page and Theme from types.ts to break circular dependency.
 import { Page, Theme } from '../types';
 import ThemeToggle from './ThemeToggle';
@@ -16,8 +16,9 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLoggedIn, currentUser, onAdminLogout, onUserLogout, theme, toggleTheme }) => {
-  // Navbar no longer uses an internal fullscreen menu. The MENU button
-  // will navigate to the Dashboard and open the dashboard sidebar.
+  // Navbar provides a small dropdown menu on the homepage MENU button.
+  // The dropdown is accessible (ESC to close, outside click to close) and
+  // shows contextual links including Dashboard when a user is signed in.
 
   useEffect(() => {
     // Dynamically load the GTranslate script to ensure it runs after the wrapper element is rendered by React.
@@ -80,90 +81,93 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
     Contact: 'Contact',
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const onClickOutside = (e: MouseEvent) => {
+      if (!wrapperRef.current) return;
+      if (!wrapperRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    document.addEventListener('mousedown', onClickOutside);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onClickOutside);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, []);
+
+  const handleNavigate = (page: Page) => {
+    setCurrentPage(page);
+    setIsOpen(false);
+    // If navigating to dashboards, open the sidebar after navigation
+    if (page === 'Dashboard' || page === 'Admin') {
+      setTimeout(() => window.dispatchEvent(new CustomEvent('open-dashboard-sidebar')), 120);
+    }
+  };
+
+  const handleAuthNavigate = (action: 'login' | 'signup') => {
+    setIsOpen(false);
+    if (action === 'login') setCurrentPage('Login');
+    if (action === 'signup') setCurrentPage('Signup');
+  };
+
+  const DashboardLink = () => {
+    if (isAdminLoggedIn) {
+      return (
+        <button onClick={() => handleNavigate('Admin')} className="w-full text-left px-4 py-2 hover:bg-gray-800">Admin Dashboard</button>
+      );
+    }
+    if (currentUser) {
+      return (
+        <button onClick={() => handleNavigate('Dashboard')} className="w-full text-left px-4 py-2 hover:bg-gray-800">Dashboard</button>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <nav className="absolute top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm text-white">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="gtranslate_wrapper"></div>
-            
-            <div className="flex items-center space-x-3 sm:space-x-5">
+
+            <div className="flex items-center space-x-3 sm:space-x-5" ref={wrapperRef}>
               <ThemeToggle theme={theme} onToggle={toggleTheme} />
-              <MenuButton
-                setCurrentPage={setCurrentPage}
-                currentUser={currentUser}
-                onUserLogout={handleUserLogoutAndClose}
-              />
+              <div className="relative">
+                <button onClick={() => setIsOpen(s => !s)} aria-expanded={isOpen} aria-haspopup="true" className="font-bold tracking-widest text-base uppercase transition-colors hover:text-byd-red flex items-center">
+                  MENU
+                </button>
+                {isOpen && (
+                  <div role="menu" aria-label="Main menu" className="absolute right-0 mt-2 w-56 bg-gray-800 text-white rounded-md shadow-lg ring-1 ring-black/30">
+                    <div className="py-2">
+                      <button onClick={() => handleNavigate('Contact')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Contact Us</button>
+                      <button onClick={() => handleNavigate('About')} className="w-full text-left px-4 py-2 hover:bg-gray-700">About Us</button>
+                      <button onClick={() => handleNavigate('Giveaway')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Giveaway</button>
+                      <div className="border-t border-gray-700 my-1" />
+                      {!currentUser && !isAdminLoggedIn && (
+                        <>
+                          <button onClick={() => handleAuthNavigate('login')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Login</button>
+                          <button onClick={() => handleAuthNavigate('signup')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Signup</button>
+                        </>
+                      )}
+                      <DashboardLink />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </nav>
-      {/* Fullscreen overlay removed — Navbar MENU now opens the dashboard sidebar for a single consistent menu experience. */}
     </>
   );
 };
 
 export default Navbar;
-
-// Small accessible menu component placed here to keep Navbar self-contained.
-const MenuButton: React.FC<{ setCurrentPage: (p: Page) => void; currentUser: User | null; onUserLogout: () => void}> = ({ setCurrentPage, currentUser, onUserLogout }) => {
-  const [open, setOpen] = useState(false);
-  const ref = React.useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const onDocClick = (e: MouseEvent) => {
-      if (!ref.current) return;
-      if (!ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('click', onDocClick);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('click', onDocClick);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, []);
-
-  const navigate = (page: Page) => {
-    setCurrentPage(page);
-    setOpen(false);
-  };
-
-  return (
-    <div className="relative" ref={ref}>
-      <button
-        onClick={() => setOpen(o => !o)}
-        aria-expanded={open}
-        aria-haspopup="menu"
-        className="font-bold tracking-widest text-base uppercase transition-colors hover:text-byd-red flex items-center"
-      >
-        MENU
-      </button>
-
-      {open && (
-        <div role="menu" aria-label="Site menu" className="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-900 text-black dark:text-white rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 z-50">
-          <ul className="py-1">
-            <li>
-              <button role="menuitem" onClick={() => navigate('Contact')} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">Contact Us</button>
-            </li>
-            <li>
-              <button role="menuitem" onClick={() => navigate('About')} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">About Us</button>
-            </li>
-            <li>
-              <button role="menuitem" onClick={() => navigate('Giveaway')} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">Giveaway</button>
-            </li>
-            <li>
-              {currentUser ? (
-                <button role="menuitem" onClick={() => { onUserLogout(); setOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">Logout</button>
-              ) : (
-                <button role="menuitem" onClick={() => navigate('Login')} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">Login</button>
-              )}
-            </li>
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-};
