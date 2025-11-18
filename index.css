@@ -12,6 +12,11 @@
 
 body {
   font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 /* Ensure GTranslate dropdown text is always visible (black) even inside dark navbars */

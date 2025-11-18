@@ -17,8 +17,8 @@ const bydLogoDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(bydLogoSvgS
 const Logo: React.FC<LogoProps> = ({ 
   theme = 'dark',
   className = '',
-  wuxiSize = 'text-xl',
-  logoHeight = 'h-6' // Adjusted height for new logo
+  wuxiSize = 'text-base sm:text-xl',
+  logoHeight = 'h-5 sm:h-6' // Adjusted height for new logo - smaller on mobile
 }) => {
   const { content } = useSiteContent();
   const wuxiTextColor = theme === 'dark' ? 'text-white' : 'text-black';
@@ -31,7 +31,7 @@ const Logo: React.FC<LogoProps> = ({
   const logoUrl = content?.logo_url || bydLogoDataUri;
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex items-center gap-2 sm:gap-3 ${className}`}>
       <img 
         src={logoUrl}
         alt="Zhengzhou Logo"
