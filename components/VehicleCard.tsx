@@ -26,9 +26,6 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallme
             <h3 className="text-4xl font-extrabold text-white drop-shadow-lg">
                 {vehicle.name}
             </h3>
-            <p className="text-gray-300 mt-1 max-w-md text-sm">
-                {vehicle.description}
-            </p>
         </div>
       </div>
       
