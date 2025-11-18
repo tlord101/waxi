@@ -84,7 +84,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, setCurrentPage }) => {
       )}
     >
       <div className="flex-1 flex flex-col">
-        <div className={`sticky top-4 z-50 bg-white/70 dark:bg-black/60 backdrop-blur-sm p-3 rounded-md mb-6 border border-gray-100 dark:border-gray-800 transform transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-24'}`}>
+        <div className={`sticky top-4 z-20 bg-white/70 dark:bg-black/60 backdrop-blur-sm p-3 rounded-md mb-6 border border-gray-100 dark:border-gray-800 transform transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-24'}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button onClick={() => {
