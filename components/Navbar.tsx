@@ -89,9 +89,11 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
             
             <div className="flex items-center space-x-3 sm:space-x-5">
               <ThemeToggle theme={theme} onToggle={toggleTheme} />
-              <button onClick={() => { setCurrentPage('Dashboard'); setTimeout(() => window.dispatchEvent(new CustomEvent('open-dashboard-sidebar')), 120); }} className="font-bold tracking-widest text-base uppercase transition-colors hover:text-byd-red flex items-center">
-                MENU
-              </button>
+              <MenuButton
+                setCurrentPage={setCurrentPage}
+                currentUser={currentUser}
+                onUserLogout={handleUserLogoutAndClose}
+              />
             </div>
           </div>
         </div>
@@ -102,3 +104,66 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
 };
 
 export default Navbar;
+
+// Small accessible menu component placed here to keep Navbar self-contained.
+const MenuButton: React.FC<{ setCurrentPage: (p: Page) => void; currentUser: User | null; onUserLogout: () => void}> = ({ setCurrentPage, currentUser, onUserLogout }) => {
+  const [open, setOpen] = useState(false);
+  const ref = React.useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (!ref.current) return;
+      if (!ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('click', onDocClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('click', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, []);
+
+  const navigate = (page: Page) => {
+    setCurrentPage(page);
+    setOpen(false);
+  };
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className="font-bold tracking-widest text-base uppercase transition-colors hover:text-byd-red flex items-center"
+      >
+        MENU
+      </button>
+
+      {open && (
+        <div role="menu" aria-label="Site menu" className="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-900 text-black dark:text-white rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 z-50">
+          <ul className="py-1">
+            <li>
+              <button role="menuitem" onClick={() => navigate('Contact')} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">Contact Us</button>
+            </li>
+            <li>
+              <button role="menuitem" onClick={() => navigate('About')} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">About Us</button>
+            </li>
+            <li>
+              <button role="menuitem" onClick={() => navigate('Giveaway')} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">Giveaway</button>
+            </li>
+            <li>
+              {currentUser ? (
+                <button role="menuitem" onClick={() => { onUserLogout(); setOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">Logout</button>
+              ) : (
+                <button role="menuitem" onClick={() => navigate('Login')} className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800">Login</button>
+              )}
+            </li>
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
