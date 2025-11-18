@@ -117,6 +117,10 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
         return { imageUrl: it.imageUrl || '', title: it.title || '', description: it.description || '' };
       }));
 
+      // Debug: log what will be submitted so we can verify image URLs
+      console.log('VehicleForm: final image URL ->', finalImageUrl);
+      console.log('VehicleForm: finalized interiors ->', finalizedInteriors);
+
       onSubmit({
         ...vehicle,
         imageUrl: finalImageUrl,

@@ -12,6 +12,8 @@ const VehiclesTab: React.FC = () => {
   const refreshVehicles = async () => {
     setIsLoading(true);
     const fetchedVehicles = await fetchVehicles();
+    // Debug: log fetched vehicles to verify interiors saved
+    console.log('VehiclesTab: fetched vehicles ->', fetchedVehicles);
     setVehicles(fetchedVehicles);
     setIsLoading(false);
   };
