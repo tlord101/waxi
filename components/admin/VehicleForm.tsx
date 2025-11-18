@@ -179,8 +179,8 @@ const VehicleForm: React.FC<VehicleFormProps> = ({ initialVehicle, onSubmit, onC
                 </div>
                  {/* Price */}
                 <div>
-                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Price (¥)</label>
-                    <input type="number" name="price" id="price" value={vehicle.price} onChange={handleChange} required className="mt-1 block w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-byd-red focus:border-byd-red"/>
+                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Price ($)</label>
+                    <input type="number" name="price" id="price" value={vehicle.price} onChange={handleChange} required className="mt-1 block w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-byd-red focus:border-byd-red" placeholder="Enter price in USD"/>
                 </div>
                 {/* Image Upload */}
                 <div>

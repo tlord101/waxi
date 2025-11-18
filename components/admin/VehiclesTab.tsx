@@ -68,7 +68,11 @@ const VehiclesTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="text-right">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          <ion-icon name="information-circle-outline" className="align-middle mr-1"></ion-icon>
+          All prices are stored in USD ($) and automatically converted for users based on their location.
+        </p>
         <button 
           onClick={() => setView('add')}
           className="bg-byd-red text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-byd-red-dark transition-colors"
@@ -83,7 +87,7 @@ const VehiclesTab: React.FC = () => {
               <th scope="col" className="px-6 py-3">Image</th>
               <th scope="col" className="px-6 py-3">Name</th>
               <th scope="col" className="px-6 py-3">Type</th>
-              <th scope="col" className="px-6 py-3">Price</th>
+              <th scope="col" className="px-6 py-3">Price (USD)</th>
               <th scope="col" className="px-6 py-3">Actions</th>
             </tr>
           </thead>
@@ -95,7 +99,7 @@ const VehiclesTab: React.FC = () => {
                 </td>
                 <td className="px-6 py-4 font-medium text-black dark:text-white whitespace-nowrap">{vehicle.name}</td>
                 <td className="px-6 py-4">{vehicle.type}</td>
-                <td className="px-6 py-4">¥{vehicle.price.toLocaleString()}</td>
+                <td className="px-6 py-4">${vehicle.price.toLocaleString()}</td>
                 <td className="px-6 py-4">
                   <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-4">
                     <button 
