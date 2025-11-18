@@ -1,6 +1,6 @@
 import React from 'react';
 import { User, Page } from '../types';
-import DashboardHeader from '../components/DashboardHeader';
+import DashboardLayout from '../components/DashboardLayout';
 
 interface Props {
   user: User;
@@ -11,8 +11,7 @@ interface Props {
 
 const PurchasesPage: React.FC<Props> = ({ user, currentPage, setCurrentPage, onLogout }) => {
   return (
-    <div>
-      <DashboardHeader currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={onLogout} title="Purchases" />
+    <DashboardLayout currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={onLogout}>
       <div className="py-16 container mx-auto px-6">
         <h1 className="text-4xl font-extrabold mb-6">Purchases</h1>
         <div className="animate-fade-in">
@@ -22,7 +21,7 @@ const PurchasesPage: React.FC<Props> = ({ user, currentPage, setCurrentPage, onL
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

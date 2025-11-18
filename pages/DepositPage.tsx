@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { User, Deposit, Page } from '../types';
-import DashboardHeader from '../components/DashboardHeader';
+import DashboardLayout from '../components/DashboardLayout';
 import { getPendingDepositForUser, addDeposit, updateDeposit } from '../services/dbService';
 import { sendDepositRequestToAgent, sendDepositReceiptToAgent } from '../services/emailService';
 import PaymentModal from '../components/PaymentModal';
@@ -103,9 +103,7 @@ const DepositPage: React.FC<Props> = ({ user, setCurrentUser, currentPage, setCu
   };
 
   return (
-    <div>
-      <DashboardHeader currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={onLogout} title="Deposit Funds" />
-
+    <DashboardLayout currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={onLogout}>
       <div className="py-16 container mx-auto px-6">
         <h1 className="text-4xl font-extrabold mb-6">Deposit Funds</h1>
 
@@ -177,8 +175,9 @@ const DepositPage: React.FC<Props> = ({ user, setCurrentUser, currentPage, setCu
             onSelectPayment={handleSelectDepositMethod}
           />
         </div>
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

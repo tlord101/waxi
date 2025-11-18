@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { User, Investment, Page } from '../types';
-import DashboardHeader from '../components/DashboardHeader';
+import DashboardLayout from '../components/DashboardLayout';
 import { getInvestmentsForUser, addInvestment, updateUser } from '../services/dbService';
 
 interface Props {
@@ -53,8 +53,7 @@ const InvestmentsPage: React.FC<Props> = ({ user, setCurrentUser, currentPage, s
   };
 
   return (
-    <div>
-      <DashboardHeader currentPage={currentPage} setCurrentPage={setCurrentPage || (() => {})} onLogout={onLogout} title="Investments" />
+    <DashboardLayout currentPage={currentPage} setCurrentPage={setCurrentPage || (() => {})} onLogout={onLogout}>
       <div className="py-16 container mx-auto px-6">
         <h1 className="text-4xl font-extrabold mb-6">Investments</h1>
 
@@ -99,8 +98,9 @@ const InvestmentsPage: React.FC<Props> = ({ user, setCurrentUser, currentPage, s
             )}
           </section>
         </div>
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

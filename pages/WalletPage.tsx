@@ -1,6 +1,6 @@
 import React from 'react';
 import { User, Page } from '../types';
-import DashboardHeader from '../components/DashboardHeader';
+import DashboardLayout from '../components/DashboardLayout';
 
 interface Props {
   user: User;
@@ -11,8 +11,7 @@ interface Props {
 
 const WalletPage: React.FC<Props> = ({ user, currentPage, setCurrentPage, onLogout }) => {
   return (
-    <div>
-      <DashboardHeader currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={onLogout} title="My Dashboard" />
+    <DashboardLayout currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={onLogout}>
       <div className="py-16 container mx-auto px-6">
         <h1 className="text-4xl font-extrabold mb-6">Wallet</h1>
         <div className="bg-gradient-to-br from-byd-red to-byd-red-dark text-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center max-w-xl mx-auto">
@@ -26,7 +25,7 @@ const WalletPage: React.FC<Props> = ({ user, currentPage, setCurrentPage, onLogo
           </button>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
