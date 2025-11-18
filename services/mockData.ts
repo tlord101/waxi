@@ -289,6 +289,7 @@ export const mockChatMessages: Map<string, ChatMessage[]> = new Map([
 
 
 export const mockSiteContent: SiteContent = {
+  logo_url: 'data:image/svg+xml;utf8,%3Csvg%20height%3D%2220%22%20viewBox%3D%220%200%2034%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M2%2011.0001C5.66667%204.33345%2016.3333%20-0.333218%2022.5%204.00011%22%20stroke%3D%22%23D9001B%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M10.5%2015.5C14.1667%2013.5%2020.1667%2013.5%2023.8333%2015.5%22%20stroke%3D%22%23D9001B%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E',
   homepage: {
     giveaway_bg_image_url: 'https://picsum.photos/seed/byd-giveaway-bg/1920/1080',
     giveaway_title: 'Win a BYD Dolphin!',

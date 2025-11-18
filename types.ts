@@ -174,6 +174,7 @@ export interface PaymentSettings {
 }
 
 export interface SiteContent {
+  logo_url: string;
   homepage: HomePageContent;
   footer: FooterContent;
   aboutpage: AboutPageContent;

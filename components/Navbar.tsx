@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 // FIX: Import Page and Theme from types.ts to break circular dependency.
 import { Page, Theme } from '../types';
 import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
 import { User } from '../types';
 
 interface NavbarProps {
@@ -134,9 +135,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
       <nav className="absolute top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm text-white">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <div className="gtranslate_wrapper"></div>
+            <Logo theme="dark" />
 
             <div className="flex items-center space-x-3 sm:space-x-5" ref={wrapperRef}>
+              <div className="gtranslate_wrapper"></div>
               <ThemeToggle theme={theme} onToggle={toggleTheme} />
               <div className="relative">
                 <button onClick={() => setIsOpen(s => !s)} aria-expanded={isOpen} aria-haspopup="true" className="font-bold tracking-widest text-base uppercase transition-colors hover:text-byd-red flex items-center">

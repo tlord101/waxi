@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSiteContent } from '../contexts/SiteContentContext';
 
 interface LogoProps {
   theme?: 'dark' | 'light';
@@ -19,16 +20,20 @@ const Logo: React.FC<LogoProps> = ({
   wuxiSize = 'text-xl',
   logoHeight = 'h-6' // Adjusted height for new logo
 }) => {
+  const { content } = useSiteContent();
   const wuxiTextColor = theme === 'dark' ? 'text-white' : 'text-black';
   
   const hoverGlowClass = theme === 'dark' 
     ? 'hover:drop-shadow-[0_0_20px_#ff2a2a]' 
     : 'hover:drop-shadow-[0_0_10px_#d9001b]';
 
+  // Use uploaded logo if available, otherwise use default
+  const logoUrl = content?.logo_url || bydLogoDataUri;
+
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <img 
-        src={bydLogoDataUri}
+        src={logoUrl}
         alt="Wuxi Logo"
         className={`${logoHeight} w-auto transition-all duration-300 ease-in-out ${hoverGlowClass}`}
       />
@@ -41,3 +46,4 @@ const Logo: React.FC<LogoProps> = ({
 };
 
 export default Logo;
+

@@ -122,6 +122,45 @@ const ContentTab: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-fade-in">
+      {/* Site Logo Section */}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+        <h3 className="text-xl font-bold mb-4 border-b pb-2 dark:border-gray-700 text-black dark:text-white">Site Logo</h3>
+        <div className="space-y-4">
+          <ImageUploadField 
+            label="Site Logo" 
+            currentImageUrl={formData.logo_url} 
+            onImageChange={(file) => handleImageChange('logo_url', file)} 
+          />
+          <div className="text-right">
+            <button 
+              onClick={async () => {
+                if (!formData) return;
+                setIsSaving(true);
+                try {
+                  let logoUrl = formData.logo_url;
+                  if (newImages['logo_url']) {
+                    logoUrl = await uploadImage(newImages['logo_url']);
+                  }
+                  await updateSiteContent('logo_url', logoUrl);
+                  alert('Site logo saved successfully!');
+                  refreshContent();
+                  setNewImages({});
+                } catch (error) {
+                  console.error("Failed to save logo:", error);
+                  alert("An error occurred while saving. Please check the console.");
+                } finally {
+                  setIsSaving(false);
+                }
+              }}
+              disabled={isSaving} 
+              className="bg-byd-red text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-byd-red-dark transition-colors disabled:bg-gray-500"
+            >
+              {isSaving ? 'Saving...' : 'Save Logo'}
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Home Page Form */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
         <h3 className="text-xl font-bold mb-4 border-b pb-2 dark:border-gray-700 text-black dark:text-white">Home Page Content</h3>

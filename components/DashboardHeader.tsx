@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Page } from '../types';
+import Logo from './Logo';
 
 interface Props {
   currentPage: Page;
@@ -55,10 +56,14 @@ const DashboardHeader: React.FC<Props> = ({ currentPage, setCurrentPage, onLogou
               <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
+          <Logo theme="light" className="hidden sm:flex" />
+        </div>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold">{title || 'My Dashboard'}</h1>
+        </div>
+        <div className="flex items-center gap-4">
           <div className="gtranslate_wrapper"></div>
         </div>
-        <h1 className="text-2xl font-bold">{title || 'My Dashboard'}</h1>
-        <div className="w-24" />
       </div>
     </header>
   );
