@@ -409,6 +409,20 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
   const [activeTab, setActiveTab] = useState<DashboardTab>('Wallet');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Listen for a global event to open the dashboard sidebar (dispatched by DashboardHeader)
+  useEffect(() => {
+    const openSidebar = () => setIsSidebarOpen(true);
+    window.addEventListener('open-dashboard-sidebar', openSidebar as EventListener);
+    return () => window.removeEventListener('open-dashboard-sidebar', openSidebar as EventListener);
+  }, []);
+
+  // Listen for the global event dispatched by `DashboardHeader` to open the sidebar
+  useEffect(() => {
+    const openHandler = (e?: Event) => setIsSidebarOpen(true);
+    window.addEventListener('open-dashboard-sidebar', openHandler as EventListener);
+    return () => window.removeEventListener('open-dashboard-sidebar', openHandler as EventListener);
+  }, []);
+
   return (
     <div className="py-16">
       <div className="container mx-auto px-6">
