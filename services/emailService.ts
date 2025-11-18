@@ -1,6 +1,6 @@
 import { apiSendEmail } from './apiService';
 
-const AGENT_EMAIL = 'agent@wuxibyd.com';
+const AGENT_EMAIL = 'agent@zhengzhoubyd.com';
 
 export const sendDepositRequestToAgent = async (data: {
   userName: string;

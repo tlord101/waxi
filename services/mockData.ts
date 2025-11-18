@@ -189,7 +189,7 @@ export const mockEmailLogs: EmailLog[] = [
         id: 'log-02',
         sent_at: new Date('2025-06-20T11:00:00Z').toISOString(),
         email_type: 'payment_receipt_agent',
-        recipient: 'agent@wuxibyd.com',
+        recipient: 'agent@zhengzhoubyd.com',
         subject: 'Payment Receipt Submitted for Order ord-002',
         body: '<p>A payment receipt has been submitted by Jane Smith...</p>',
         status: 'sent',
@@ -246,7 +246,7 @@ export const mockDeposits: Deposit[] = [
     id: 'dep-002',
     userId: 'admin-user-id-placeholder',
     userName: 'Admin User',
-    userEmail: 'admin@wuxibyd.com',
+    userEmail: 'admin@zhengzhoubyd.com',
     amount: 100000,
     method: 'Crypto',
     status: 'Completed',
@@ -296,8 +296,8 @@ export const mockSiteContent: SiteContent = {
     giveaway_description: 'Participate in our exclusive giveaway for a chance to own the future of city driving. A $1,000 entry fee is required to secure your spot.',
     giveaway_button_text: 'Enter the Giveaway',
     about_image_url: 'https://picsum.photos/seed/byd-dealership/800/600',
-    about_title: 'Welcome to Wuxi BYD',
-    about_text: 'At Wuxi BYD Vehicles Co., Ltd, we are committed to providing innovative and sustainable transportation solutions. As an authorized dealer in the heart of Wuxi, we bring you the latest in electric vehicle technology, backed by unparalleled customer service.',
+    about_title: 'Welcome to Zhengzhou BYD',
+    about_text: 'At Zhengzhou BYD Vehicles Co., Ltd, we are committed to providing innovative and sustainable transportation solutions. As an authorized dealer in the heart of Zhengzhou, we bring you the latest in electric vehicle technology, backed by unparalleled customer service.',
     about_button_link_text: 'Learn More About Us →',
   },
   footer: {
@@ -310,18 +310,18 @@ export const mockSiteContent: SiteContent = {
     instagram_url: '#',
     tiktok_url: '#',
     youtube_url: '#',
-    copyright_text: `©${new Date().getFullYear()} Wuxi BYD Vehicle Co., Ltd. All Rights Reserved.`,
+    copyright_text: `©${new Date().getFullYear()} Zhengzhou BYD Vehicle Co., Ltd. All Rights Reserved.`,
   },
   aboutpage: {
-    banner_image_url: 'https://picsum.photos/seed/wuxi-factory/1920/600',
-    banner_title: 'WUXI BYD',
+    banner_image_url: 'https://picsum.photos/seed/zhengzhou-factory/1920/600',
+    banner_title: 'ZHENGZHOU BYD',
     banner_subtitle: 'Official BYD Export Office',
-    main_title: 'Wuxi BYD Vehicle Co., Ltd — Company Profile',
+    main_title: 'Zhengzhou BYD Vehicle Co., Ltd — Company Profile',
     main_content: `What It Is:
 A subsidiary of the BYD Group dedicated to the export sales of BYD vehicles.
 
 Location:
-Based in Wuxi, Jiangsu Province, China.
+Based in Zhengzhou, Henan Province, China.
 
 Core Business / Role:
 - Handles global distribution of BYD new-energy vehicles (EVs, hybrids) to overseas markets.
@@ -340,7 +340,7 @@ Recognition / Credibility:
 - Recognized as an “official BYD Export Office,” not a third-party trader.
 - Integral to BYD’s global strategy, leveraging BYD’s brand and manufacturing capacity.`,
     contact_title: 'Contact Our Export Office',
-    contact_address: 'No. 985 Fengxiang Road, Liangxi District, Wuxi, China',
+    contact_address: 'No. 985 Fengxiang Road, Jinshui District, Zhengzhou, China',
     contact_email: 'info@bydvehicles.com',
     contact_phone: '+86-173-6171-1305',
   },

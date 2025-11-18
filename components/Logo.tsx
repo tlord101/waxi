@@ -34,12 +34,12 @@ const Logo: React.FC<LogoProps> = ({
     <div className={`flex items-center gap-3 ${className}`}>
       <img 
         src={logoUrl}
-        alt="Wuxi Logo"
+        alt="Zhengzhou Logo"
         className={`${logoHeight} w-auto transition-all duration-300 ease-in-out ${hoverGlowClass}`}
       />
 
       <span className={`${wuxiSize} font-semibold ${wuxiTextColor} tracking-wider transition-colors duration-300`}>
-        Wuxi
+        Zhengzhou
       </span>
     </div>
   );
