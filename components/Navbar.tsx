@@ -136,7 +136,9 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
       <nav className="absolute top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm text-white">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <Logo theme="dark" />
+            <button onClick={() => handleNavigate('Home')} className="cursor-pointer">
+              <Logo theme="dark" />
+            </button>
 
             <div className="flex items-center space-x-3 sm:space-x-5" ref={wrapperRef}>
               <div className="gtranslate_wrapper"></div>
@@ -149,6 +151,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                 {isOpen && (
                   <div role="menu" aria-label="Main menu" className="absolute right-0 mt-2 w-56 bg-gray-800 text-white rounded-md shadow-lg ring-1 ring-black/30">
                     <div className="py-2">
+                      <button onClick={() => handleNavigate('Home')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Home</button>
+                      <button onClick={() => handleNavigate('Vehicles')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Vehicles</button>
                       <button onClick={() => handleNavigate('Contact')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Contact Us</button>
                       <button onClick={() => handleNavigate('About')} className="w-full text-left px-4 py-2 hover:bg-gray-700">About Us</button>
                       <button onClick={() => handleNavigate('Giveaway')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Giveaway</button>

@@ -53,6 +53,14 @@ const VehiclesPage: React.FC<VehiclesPageProps> = ({ vehicles, setCurrentPage, o
   return (
     <div className="py-16">
       <div className="container mx-auto px-6">
+        <button
+          onClick={() => setCurrentPage('Home')}
+          className="mb-6 flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-byd-red dark:hover:text-byd-red transition-colors"
+        >
+          <ion-icon name="arrow-back-outline" className="text-2xl"></ion-icon>
+          <span className="font-semibold">Back to Home</span>
+        </button>
+        
         <h1 className="text-5xl font-extrabold text-center mb-4">Our Vehicle Lineup</h1>
         <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
           From sleek sedans to versatile SUVs and commercial solutions, explore the full range of BYD's innovative electric vehicles. Find the perfect model that fits your lifestyle.

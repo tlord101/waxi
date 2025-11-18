@@ -276,9 +276,9 @@ const App: React.FC = () => {
       case 'Giveaway':
         return <GiveawayPage currentUser={currentUser} setCurrentUser={setCurrentUser} setCurrentPage={setCurrentPage} />;
       case 'About':
-        return <AboutPage />;
+        return <AboutPage setCurrentPage={setCurrentPage} />;
       case 'Contact':
-        return <ContactPage />;
+        return <ContactPage setCurrentPage={setCurrentPage} />;
       case 'Order':
         return <OrderPage vehicle={selectedVehicleForPurchase} setCurrentPage={setCurrentPage} currentUser={currentUser} setCurrentUser={setCurrentUser} pendingOrder={pendingOrder} />;
       case 'Admin':

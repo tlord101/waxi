@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSiteContent } from '../contexts/SiteContentContext';
+import { Page } from '../types';
 
 // Reusable component for fade-in animation on scroll
 const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -40,7 +41,7 @@ const FadeInSection: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 };
 
 
-const AboutPage: React.FC = () => {
+const AboutPage: React.FC<{ setCurrentPage: (page: Page) => void }> = ({ setCurrentPage }) => {
   const { content, isLoading } = useSiteContent();
 
   if (isLoading || !content?.aboutpage) {
@@ -55,6 +56,17 @@ const AboutPage: React.FC = () => {
 
   return (
     <div>
+      {/* Back Button */}
+      <div className="container mx-auto px-6 pt-6">
+        <button
+          onClick={() => setCurrentPage('Home')}
+          className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-byd-red dark:hover:text-byd-red transition-colors"
+        >
+          <ion-icon name="arrow-back-outline" className="text-2xl"></ion-icon>
+          <span className="font-semibold">Back to Home</span>
+        </button>
+      </div>
+      
       {/* Banner Section */}
       <div className="relative h-[50vh] flex items-center justify-center text-center">
         <img src={aboutpage.banner_image_url} alt="Wuxi Factory" className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-30"/>

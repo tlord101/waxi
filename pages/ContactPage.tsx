@@ -1,8 +1,9 @@
 
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Page } from '../types';
 
-const ContactPage: React.FC = () => {
+const ContactPage: React.FC<{ setCurrentPage: (page: Page) => void }> = ({ setCurrentPage }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -13,6 +14,14 @@ const ContactPage: React.FC = () => {
   return (
     <div className="py-16">
       <div className="container mx-auto px-6">
+        <button
+          onClick={() => setCurrentPage('Home')}
+          className="mb-6 flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-byd-red dark:hover:text-byd-red transition-colors"
+        >
+          <ion-icon name="arrow-back-outline" className="text-2xl"></ion-icon>
+          <span className="font-semibold">Back to Home</span>
+        </button>
+        
         <div className="text-center">
             <h1 className="text-5xl font-extrabold mb-4">Get In Touch</h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
