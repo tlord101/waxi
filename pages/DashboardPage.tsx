@@ -4,6 +4,7 @@ import { User, Investment, Order, Page, Deposit } from '../types';
 import { getInvestmentsForUser, addInvestment, updateUser, getPendingDepositForUser, addDeposit, updateDeposit } from '../services/dbService';
 import { sendDepositRequestToAgent, sendDepositReceiptToAgent } from '../services/emailService';
 import PaymentModal from '../components/PaymentModal';
+import DashboardLayout from '../components/DashboardLayout';
 
 type DashboardTab = 'Wallet' | 'Investments' | 'Purchases' | 'Deposit Funds';
 
@@ -407,56 +408,27 @@ const PendingPurchaseAlert: React.FC<{ order: Order; onClick: () => void }> = ({
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurrentPage, setCurrentUser, pendingOrder, onCompletePurchase }) => {
   const [activeTab, setActiveTab] = useState<DashboardTab>('Wallet');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Listen for global requests to open the dashboard sidebar (dispatched by DashboardHeader)
-  useEffect(() => {
-    const handleOpenSidebar = () => setIsSidebarOpen(true);
-    window.addEventListener('open-dashboard-sidebar', handleOpenSidebar as EventListener);
-    return () => window.removeEventListener('open-dashboard-sidebar', handleOpenSidebar as EventListener);
-  }, []);
-
-  // Listen for a global event to open the dashboard sidebar (dispatched by DashboardHeader)
-  useEffect(() => {
-    const openSidebar = () => setIsSidebarOpen(true);
-    window.addEventListener('open-dashboard-sidebar', openSidebar as EventListener);
-    return () => window.removeEventListener('open-dashboard-sidebar', openSidebar as EventListener);
-  }, []);
-
-  // Listen for the global event dispatched by `DashboardHeader` to open the sidebar
-  useEffect(() => {
-    const openHandler = (e?: Event) => setIsSidebarOpen(true);
-    window.addEventListener('open-dashboard-sidebar', openHandler as EventListener);
-    return () => window.removeEventListener('open-dashboard-sidebar', openHandler as EventListener);
-  }, []);
 
   return (
-    <div className="py-16">
+    <DashboardLayout
+      currentPage="Dashboard"
+      setCurrentPage={setCurrentPage}
+      onLogout={onLogout}
+      sidebarContent={({ isOpen, setIsOpen, activeTab: sbActive, setActiveTab: setSbActive, setCurrentPage: sc }) => (
+        <DashboardSidebar
+          activeTab={sbActive}
+          setActiveTab={setSbActive}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          setCurrentPage={sc}
+        />
+      )}
+    >
       <div className="container mx-auto px-6">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="md:hidden bg-byd-red text-white p-3 rounded-full hover:bg-byd-red-dark transition-colors shadow-lg"
-              aria-label="Open menu"
-            >
-              <i className="bi bi-list text-2xl"></i>
-            </button>
-            <h1 className="text-4xl sm:text-5xl font-extrabold">My Dashboard</h1>
-          </div>
-          <button
-            onClick={onLogout}
-            className="bg-gray-200 dark:bg-gray-700 text-black dark:text-white py-2 px-4 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 font-semibold text-sm"
-          >
-            Logout
-          </button>
-        </div>
-        
         {pendingOrder && (
-            <PendingPurchaseAlert order={pendingOrder} onClick={() => onCompletePurchase(pendingOrder)} />
+          <PendingPurchaseAlert order={pendingOrder} onClick={() => onCompletePurchase(pendingOrder)} />
         )}
 
-        {/* Welcome / Balance (moved from Wallet tab) */}
         <div className="animate-fade-in space-y-6 mb-8">
           <div>
             <h2 className="text-3xl font-bold mb-2">Welcome back, {user.name}!</h2>
@@ -464,7 +436,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
             <div className="bg-gradient-to-br from-byd-red to-byd-red-dark text-white p-6 rounded-xl shadow-lg flex flex-col items-center text-center">
               <p className="text-lg opacity-80">Current Balance</p>
               <p className="text-4xl font-extrabold tracking-tight my-2">¥{user.balance.toLocaleString()}</p>
-              <button 
+              <button
                 onClick={() => setActiveTab('Deposit Funds')}
                 className="mt-4 bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300"
               >
@@ -477,7 +449,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
           </div>
         </div>
 
-        {/* Quick Actions moved from the previous Actions tab so they're visible on the Dashboard */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -501,13 +472,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
         </div>
 
         <div className="flex flex-col md:flex-row gap-8">
-          <DashboardSidebar 
-            activeTab={activeTab} 
-            setActiveTab={setActiveTab}
-            isOpen={isSidebarOpen}
-            setIsOpen={setIsSidebarOpen}
-            setCurrentPage={setCurrentPage}
-          />
           <main className="flex-1">
             {/* Dashboard overview lives here (welcome, quick actions). Tab-specific pages are now dedicated routes: Wallet, Investments, Purchases, Deposit. */}
           </main>
@@ -516,7 +480,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, onLogout, setCurren
       {pendingOrder && (
         <FloatingActionButton order={pendingOrder} onClick={() => onCompletePurchase(pendingOrder)} />
       )}
-    </div>
+    </DashboardLayout>
   );
 };
 
