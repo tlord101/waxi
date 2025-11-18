@@ -175,7 +175,6 @@ const DepositPage: React.FC<Props> = ({ user, setCurrentUser, currentPage, setCu
             onSelectPayment={handleSelectDepositMethod}
           />
         </div>
-        </div>
       </div>
     </DashboardLayout>
   );

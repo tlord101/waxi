@@ -98,7 +98,6 @@ const InvestmentsPage: React.FC<Props> = ({ user, setCurrentUser, currentPage, s
             )}
           </section>
         </div>
-        </div>
       </div>
     </DashboardLayout>
   );
