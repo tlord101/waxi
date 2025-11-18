@@ -58,7 +58,11 @@ const DashboardHeader: React.FC<Props> = ({ currentPage, setCurrentPage, onLogou
           <div className="gtranslate_wrapper"></div>
         </div>
         <h1 className="text-2xl font-bold">{title || 'My Dashboard'}</h1>
-        <div className="w-24" />
+        <div className="flex items-center gap-3">
+          <button onClick={onLogout} className="bg-gray-200 dark:bg-gray-700 text-black dark:text-white py-2 px-4 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 font-semibold text-sm">
+            Logout
+          </button>
+        </div>
       </div>
     </header>
   );
