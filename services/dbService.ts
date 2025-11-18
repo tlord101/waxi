@@ -652,6 +652,12 @@ export const getSiteContent = async (): Promise<SiteContent | null> => {
         const content: Partial<SiteContent> = {};
         const collectionRef = firestoreDb.collection('site_content');
         
+        const logoDoc = await collectionRef.doc('logo_url').get();
+        if (logoDoc.exists) {
+            const logoData = logoDoc.data();
+            content.logo_url = logoData?.url || '';
+        }
+        
         const homepageDoc = await collectionRef.doc('homepage').get();
         if (homepageDoc.exists) content.homepage = homepageDoc.data() as SiteContent['homepage'];
         

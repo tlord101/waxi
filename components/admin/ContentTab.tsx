@@ -141,7 +141,7 @@ const ContentTab: React.FC = () => {
                   if (newImages['logo_url']) {
                     logoUrl = await uploadImage(newImages['logo_url']);
                   }
-                  await updateSiteContent('logo_url', logoUrl);
+                  await updateSiteContent('logo_url', { url: logoUrl });
                   alert('Site logo saved successfully!');
                   refreshContent();
                   setNewImages({});
