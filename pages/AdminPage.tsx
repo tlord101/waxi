@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/admin/Sidebar';
+import DashboardLayout from '../components/DashboardLayout';
 import AnalyticsTab from '../components/admin/AnalyticsTab';
 import VehiclesTab from '../components/admin/VehiclesTab';
 import OrdersTab from '../components/admin/OrdersTab';
@@ -67,31 +68,21 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, setCurrentPage }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Hamburger Button for mobile */}
-      <button
-        onClick={() => setIsMenuOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 text-3xl text-black dark:text-white"
-        aria-label="Open menu"
-      >
-        <ion-icon name="menu-outline"></ion-icon>
-      </button>
-
-      {/* Overlay for mobile when sidebar is open */}
-      <div
-        className={`fixed inset-0 bg-black/60 z-30 md:hidden transition-opacity duration-300 ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-        onClick={() => setIsMenuOpen(false)}
-        aria-hidden="true"
-      ></div>
-
-      <Sidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        isOpen={isMenuOpen}
-        setIsOpen={setIsMenuOpen}
-        onLogout={onLogout}
-        setCurrentPage={setCurrentPage}
-      />
+    <DashboardLayout
+      currentPage="Admin"
+      setCurrentPage={setCurrentPage}
+      onLogout={onLogout}
+      sidebarContent={({ isOpen, setIsOpen }) => (
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          onLogout={onLogout}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
+    >
       <div className="flex-1 flex flex-col">
         <div className={`sticky top-4 z-50 bg-white/70 dark:bg-black/60 backdrop-blur-sm p-3 rounded-md mb-6 border border-gray-100 dark:border-gray-800 transform transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-24'}`}>
           <div className="flex items-center justify-between">
@@ -104,13 +95,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, setCurrentPage }) => {
                   }
                 }} className="text-lg p-2 rounded-full bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm hover:opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-byd-red focus:ring-offset-2" aria-label="Back">
                 <ion-icon name="arrow-back-outline" className="text-xl"></ion-icon>
-              </button>
-              <button 
-                  onClick={() => setIsMenuOpen(true)} 
-                  className="text-2xl p-2 rounded-full bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm hover:opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-byd-red focus:ring-offset-2"
-                  aria-label="Open menu"
-              >
-                  <ion-icon name="menu-outline" className="text-2xl"></ion-icon>
               </button>
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 ml-2">{activeTab}</h1>
             </div>
@@ -125,7 +109,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, setCurrentPage }) => {
           </div>
         </main>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
