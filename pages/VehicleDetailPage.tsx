@@ -122,16 +122,16 @@ const VehicleDetailPage: React.FC<VehicleDetailPageProps> = ({
               {vehicle.interiors.map((it, idx) => (
                 <figure
                   key={idx}
-                  className="bg-black/40 rounded-xl overflow-hidden shadow-lg"
+                  className="rounded-xl overflow-hidden shadow-lg relative group"
                 >
                   <img
                     src={it.imageUrl}
                     alt={it.title || `Interior ${idx + 1}`}
                     className="w-full h-32 sm:h-40 md:h-48 object-cover"
                   />
-                  <figcaption className="p-4 bg-gradient-to-t from-black/60 to-transparent">
-                    <h4 className="text-lg font-semibold">{it.title}</h4>
-                    <p className="text-sm text-gray-300 mt-1">{it.description}</p>
+                  <figcaption className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
+                    <h4 className="text-lg font-semibold text-white">{it.title}</h4>
+                    <p className="text-sm text-gray-200 mt-1">{it.description}</p>
                   </figcaption>
                 </figure>
               ))}
