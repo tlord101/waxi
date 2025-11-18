@@ -1,5 +1,6 @@
 import React from 'react';
 import { Vehicle, Page } from '../types';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 interface VehicleDetailPageProps {
   vehicle: Vehicle | null;
@@ -14,6 +15,7 @@ const VehicleDetailPage: React.FC<VehicleDetailPageProps> = ({
   onSelectForPurchase,
   onSelectForInstallment,
 }) => {
+  const { formatPrice } = useCurrency();
 
   if (!vehicle) {
     return (
@@ -64,7 +66,7 @@ const VehicleDetailPage: React.FC<VehicleDetailPageProps> = ({
 
           <div className="mb-8">
             <span className="text-gray-300 text-lg">Starting from</span>
-            <p className="text-4xl md:text-5xl font-bold">¥{vehicle.price.toLocaleString()}</p>
+            <p className="text-4xl md:text-5xl font-bold">{formatPrice(vehicle.price)}</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">

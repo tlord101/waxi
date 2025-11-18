@@ -19,6 +19,7 @@ import PurchasesPage from './pages/PurchasesPage';
 import DepositPage from './pages/DepositPage';
 import VehicleDetailPage from './pages/VehicleDetailPage';
 import { SiteContentProvider } from './contexts/SiteContentContext';
+import { CurrencyProvider } from './contexts/CurrencyContext';
 // FIX: Import Page and Theme from types.ts to break circular dependency
 import { Vehicle, User, Order, Page, Theme } from './types';
 import { auth } from './services/firebase'; // Import Firebase auth instance
@@ -308,25 +309,27 @@ const App: React.FC = () => {
 
   return (
     <SiteContentProvider>
-      <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
-        {shouldShowNavbarAndFooter && (
-          <Navbar 
-            currentPage={currentPage} 
-            setCurrentPage={setCurrentPage} 
-            isAdminLoggedIn={isAdminLoggedIn}
-            currentUser={currentUser}
-            onAdminLogout={handleAdminLogout}
-            onUserLogout={handleUserLogout}
-            theme={theme}
-            toggleTheme={toggleTheme}
-          />
-        )}
-        <main className="flex-grow text-black dark:text-white">
-          {renderPage()}
-        </main>
-        {shouldShowNavbarAndFooter && <Footer />}
-        <LiveChatWidget user={currentUser} />
-      </div>
+      <CurrencyProvider>
+        <div className="font-sans flex flex-col min-h-screen animate-fade-in bg-white dark:bg-black transition-colors duration-400">
+          {shouldShowNavbarAndFooter && (
+            <Navbar 
+              currentPage={currentPage} 
+              setCurrentPage={setCurrentPage} 
+              isAdminLoggedIn={isAdminLoggedIn}
+              currentUser={currentUser}
+              onAdminLogout={handleAdminLogout}
+              onUserLogout={handleUserLogout}
+              theme={theme}
+              toggleTheme={toggleTheme}
+            />
+          )}
+          <main className="flex-grow text-black dark:text-white">
+            {renderPage()}
+          </main>
+          {shouldShowNavbarAndFooter && <Footer />}
+          <LiveChatWidget user={currentUser} />
+        </div>
+      </CurrencyProvider>
     </SiteContentProvider>
   );
 };

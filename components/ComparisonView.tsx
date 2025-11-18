@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Vehicle } from '../types';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 interface ComparisonViewProps {
   vehicles: Vehicle[];
@@ -16,6 +17,8 @@ interface SpecDefinition {
 }
 
 const ComparisonView: React.FC<ComparisonViewProps> = ({ vehicles, onClose }) => {
+  const { formatPrice } = useCurrency();
+  
   // Create a master list of all unique spec names from all vehicles being compared
   const allSpecNames = new Set<string>();
   vehicles.forEach(vehicle => {
@@ -29,7 +32,7 @@ const ComparisonView: React.FC<ComparisonViewProps> = ({ vehicles, onClose }) =>
   
   // Define the master list of specs to compare, with static ones first
   const specKeys: SpecDefinition[] = [
-    { key: 'price', name: 'Price', format: (val: number) => `¥${val.toLocaleString()}` },
+    { key: 'price', name: 'Price', format: (val: number) => formatPrice(val) },
     { key: 'type', name: 'Type' },
     ...dynamicSpecKeys
   ];

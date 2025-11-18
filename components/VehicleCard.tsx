@@ -1,5 +1,6 @@
 import React from 'react';
 import { Vehicle } from '../types';
+import { useCurrency } from '../contexts/CurrencyContext';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -11,6 +12,7 @@ interface VehicleCardProps {
 }
 
 const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallment, onSelectForPurchase, onSelectForDetail, onToggleCompare, isSelectedForCompare = false }) => {
+  const { formatPrice } = useCurrency();
   // Show first 2 key specs for a cleaner look
   const keySpecs = vehicle.specs.slice(0, 2);
 
@@ -36,7 +38,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallme
             <div>
                 <p className="text-gray-400 text-sm">Starting From</p>
                 <p className="text-4xl font-bold">
-                    ¥{vehicle.price.toLocaleString()}
+                    {formatPrice(vehicle.price)}
                     <span className="text-lg font-normal text-gray-500"> est.</span>
                 </p>
             </div>
