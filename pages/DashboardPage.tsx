@@ -291,18 +291,6 @@ const DashboardContent: React.FC<{
                         <div className="text-center py-12 bg-gray-100 dark:bg-gray-800/50 rounded-lg">
                             <p className="text-gray-500 dark:text-gray-400">No active investments found.</p>
                         </div>
-                         <div className="p-4 border-t border-gray-200 dark:border-gray-700 mt-4">
-                           <button
-                             onClick={() => {
-                               if (onLogout) onLogout();
-                               setIsOpen(false);
-                             }}
-                             className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-                           >
-                             <ion-icon name="log-out-outline" className="text-xl"></ion-icon>
-                             <span className="font-semibold">Logout</span>
-                           </button>
-                         </div>
                     )}
                 </div>
             </div>

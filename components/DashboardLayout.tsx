@@ -9,6 +9,7 @@ interface SidebarRenderOptions {
   setIsOpen: (open: boolean) => void;
   activeTab: DashboardTab;
   setActiveTab: (tab: DashboardTab) => void;
+  onLogout: () => void;
   setCurrentPage: (page: Page) => void;
 }
 
@@ -78,7 +79,7 @@ const DashboardLayout: React.FC<Props> = ({ currentPage, setCurrentPage, onLogou
                 </div>
                 <div className="p-4">
                   {sidebarContent ? (
-                    sidebarContent({ isOpen, setIsOpen, activeTab, setActiveTab, setCurrentPage })
+                    sidebarContent({ isOpen, setIsOpen, activeTab, setActiveTab, setCurrentPage, onLogout })
                   ) : (
                     <nav className="flex flex-col space-y-1">
                       {tabs.map(tab => (
