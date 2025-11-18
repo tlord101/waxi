@@ -60,9 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
     };
   }, []);
 
-  const handleNavigate = (page: Page) => {
-    setCurrentPage(page);
-  };
+  
 
   const handleUserLogoutAndClose = () => {
     onUserLogout();
