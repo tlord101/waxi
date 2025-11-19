@@ -20,7 +20,7 @@ const DashboardHeader: React.FC<Props> = ({ currentPage, setCurrentPage, onLogou
       "detect_browser_language": true,
       "languages": ["en", "fr", "it", "es", "zh-CN", "pt", "th", "hi", "ar", "id", "hu", "ms"],
       "wrapper_selector": ".gtranslate_wrapper",
-      "flag_style": "none"
+      "flag_style": "3d"
     };
 
     const script = document.createElement('script');
