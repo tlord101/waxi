@@ -58,7 +58,7 @@ const LanguageSelector: React.FC = () => {
         aria-haspopup="true"
         aria-label="Select language"
       >
-        <ion-icon name="globe-outline" class="text-2xl text-white"></ion-icon>
+        <ion-icon name="globe-outline" style={{ fontSize: '24px', color: 'white' }}></ion-icon>
       </button>
 
       {isOpen && (
