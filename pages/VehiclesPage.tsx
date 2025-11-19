@@ -51,8 +51,8 @@ const VehiclesPage: React.FC<VehiclesPageProps> = ({ vehicles, setCurrentPage, o
   const vehicleTypes: VehicleType[] = ['All', 'Sedan', 'SUV', 'Hatchback', 'Commercial', 'Special'];
 
   return (
-    <div className="py-16">
-      <div className="container mx-auto px-6">
+    <div>
+      <div className="container mx-auto px-6 py-16">
         <button
           onClick={() => setCurrentPage('Home')}
           className="mb-6 flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-byd-red dark:hover:text-byd-red transition-colors"
@@ -79,8 +79,9 @@ const VehiclesPage: React.FC<VehiclesPageProps> = ({ vehicles, setCurrentPage, o
             ))}
           </div>
         </div>
+      </div>
 
-        <div className={`grid grid-cols-1 gap-8 max-w-3xl mx-auto ${compareList.length > 0 ? 'pb-28' : ''}`}>
+        <div className={`flex flex-col ${compareList.length > 0 ? 'pb-28' : ''}`}>
           {filteredVehicles.map((vehicle) => (
             <VehicleCard 
               key={vehicle.id} 
