@@ -13,7 +13,7 @@ interface VehicleCardProps {
 const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onSelectForInstallment, onSelectForPurchase, onSelectForDetail, onToggleCompare, isSelectedForCompare = false }) => {
   return (
     <div 
-      className={`relative w-full h-96 bg-cover bg-center text-white rounded-xl overflow-hidden group cursor-pointer ${isSelectedForCompare ? 'ring-4 ring-byd-red' : ''}`}
+      className={`relative w-screen h-screen bg-cover bg-center text-white overflow-hidden group cursor-pointer ${isSelectedForCompare ? 'ring-4 ring-byd-red' : ''}`}
       style={{ backgroundImage: `url(${vehicle.imageUrl})` }}
       onClick={() => onSelectForDetail(vehicle)}
     >
