@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Page } from '../types';
 import Logo from './Logo';
+import LanguageSelector from './LanguageSelector';
 
 interface Props {
   currentPage: Page;
@@ -62,7 +63,8 @@ const DashboardHeader: React.FC<Props> = ({ currentPage, setCurrentPage, onLogou
           <h1 className="text-2xl font-bold">{title || 'My Dashboard'}</h1>
         </div>
         <div className="flex items-center gap-4">
-          <div className="gtranslate_wrapper"></div>
+          <div className="gtranslate_wrapper" style={{ display: 'none' }}></div>
+          <LanguageSelector />
         </div>
       </div>
     </header>

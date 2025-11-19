@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Page, Theme } from '../types';
 import ThemeToggle from './ThemeToggle';
 import Logo from './Logo';
+import LanguageSelector from './LanguageSelector';
 import { User } from '../types';
 
 interface NavbarProps {
@@ -140,7 +141,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
             </button>
 
             <div className="flex items-center space-x-3 sm:space-x-5" ref={wrapperRef}>
-              <div className="gtranslate_wrapper"></div>
+              <div className="gtranslate_wrapper" style={{ display: 'none' }}></div>
+              <LanguageSelector />
               <ThemeToggle theme={theme} onToggle={toggleTheme} />
               <div className="relative">
                 <button onClick={() => setIsOpen(s => !s)} aria-expanded={isOpen} aria-haspopup="true" className="font-bold tracking-widest text-sm sm:text-base uppercase transition-colors hover:text-byd-red flex items-center whitespace-nowrap">
