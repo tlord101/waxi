@@ -161,16 +161,15 @@ export const sendGiveawayReceiptToAgent = async (data: {
 const createEmailTemplate = (title: string, content: string) => `
   <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
     <div style="background-color: #000; color: white; padding: 20px; text-align: center;">
-      <h1 style="margin: 0; color: #d9001b; font-size: 28px;">WUXI BYD</h1>
+      <h1 style="margin: 0; color: #d9001b; font-size: 28px;">ZHENGZHOU BYD</h1>
     </div>
     <div style="padding: 30px;">
       <h2 style="color: #d9001b; font-size: 22px;">${title}</h2>
       ${content}
-      <p style="margin-top: 30px; font-size: 14px; color: #777;">Thank you for choosing Wuxi BYD Vehicles Co., Ltd.</p>
+            <p style="margin-top: 30px; font-size: 14px; color: #777;">Thank you for choosing Zhengzhou BYD Vehicles Co., Ltd.</p>
     </div>
-    <div style="background-color: #f8f8f8; color: #777; padding: 20px; text-align: center; font-size: 12px;">
-      <p>&copy; ${new Date().getFullYear()} Wuxi BYD Vehicles Co., Ltd. All Rights Reserved.</p>
-    </div>
+    <div style="background-color: #1a1a1a; padding: 20px; text-align: center; color: #999; font-size: 12px;">
+      <p>&copy; ${new Date().getFullYear()} Zhengzhou BYD Vehicles Co., Ltd. All Rights Reserved.</p>
   </div>
 `;
 

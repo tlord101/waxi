@@ -4,7 +4,7 @@ import { useSiteContent } from '../contexts/SiteContentContext';
 interface LogoProps {
   theme?: 'dark' | 'light';
   className?: string;
-  wuxiSize?: string;
+  textSize?: string;
   logoHeight?: string;
 }
 
@@ -17,11 +17,11 @@ const bydLogoDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(bydLogoSvgS
 const Logo: React.FC<LogoProps> = ({ 
   theme = 'dark',
   className = '',
-  wuxiSize = 'text-base sm:text-xl',
-  logoHeight = 'h-5 sm:h-6' // Adjusted height for new logo - smaller on mobile
+  textSize = 'text-xl',
+  logoHeight = 'h-6' // Adjusted height for new logo
 }) => {
   const { content } = useSiteContent();
-  const wuxiTextColor = theme === 'dark' ? 'text-white' : 'text-black';
+  const textColor = theme === 'dark' ? 'text-white' : 'text-black';
   
   const hoverGlowClass = theme === 'dark' 
     ? 'hover:drop-shadow-[0_0_20px_#ff2a2a]' 
@@ -31,14 +31,14 @@ const Logo: React.FC<LogoProps> = ({
   const logoUrl = content?.logo_url || bydLogoDataUri;
 
   return (
-    <div className={`flex items-center gap-2 sm:gap-3 ${className}`}>
+    <div className={`flex items-center gap-3 ${className}`}>
       <img 
         src={logoUrl}
         alt="Zhengzhou Logo"
         className={`${logoHeight} w-auto transition-all duration-300 ease-in-out ${hoverGlowClass}`}
       />
 
-      <span className={`${wuxiSize} font-semibold ${wuxiTextColor} tracking-wider transition-colors duration-300`}>
+      <span className={`${textSize} font-semibold ${textColor} tracking-wider transition-colors duration-300`}>
         Zhengzhou
       </span>
     </div>

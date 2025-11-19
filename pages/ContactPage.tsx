@@ -59,7 +59,7 @@ const ContactPage: React.FC<{ setCurrentPage: (page: Page) => void }> = ({ setCu
                     <div className="flex items-start space-x-4">
                         {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
                         <ion-icon name="location-outline" className="text-byd-red text-2xl mt-1"></ion-icon>
-                        <span>No. 888, BYD Avenue, Xishan District, Wuxi, Jiangsu, China</span>
+                        <span>No. 888, BYD Avenue, Xishan District, Zhengzhou, Henan, China</span>
                     </div>
                      <div className="flex items-center space-x-4">
                         {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
@@ -69,7 +69,7 @@ const ContactPage: React.FC<{ setCurrentPage: (page: Page) => void }> = ({ setCu
                      <div className="flex items-center space-x-4">
                         {/* Fix: Replaced 'class' with 'className' for the ion-icon custom element. */}
                         <ion-icon name="mail-outline" className="text-byd-red text-2xl"></ion-icon>
-                        <a href="mailto:sales@wuxibyd.com" className="hover:text-byd-red hover:underline transition-colors">sales@wuxibyd.com</a>
+                        <a href="mailto:sales@zhengzhoubyd.com" className="hover:text-byd-red hover:underline transition-colors">sales@zhengzhoubyd.com</a>
                     </div>
                 </div>
                 

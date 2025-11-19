@@ -31,7 +31,7 @@ export const askBYDAssistant = async (history: { role: 'user' | 'model'; parts: 
         If you don't know an answer, be honest and offer to connect them with a sales representative.
         Never make up information about vehicle specifications or pricing.
         
-        Our dealership is located in Zhengzhou, Henan, China.`,
+        Our dealership is located in Zhengzhou, Henan, China.`,,
       },
       history: history,
     });
