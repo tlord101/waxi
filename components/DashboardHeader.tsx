@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Page } from '../types';
 import Logo from './Logo';
-import CurrencySelector from './CurrencySelector';
 
 interface Props {
   currentPage: Page;
@@ -64,7 +63,6 @@ const DashboardHeader: React.FC<Props> = ({ currentPage, setCurrentPage, onLogou
         </div>
         <div className="flex items-center gap-4">
           <div className="gtranslate_wrapper"></div>
-          <CurrencySelector />
         </div>
       </div>
     </header>

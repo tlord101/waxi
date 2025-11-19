@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Page, Theme } from '../types';
 import ThemeToggle from './ThemeToggle';
 import Logo from './Logo';
-import CurrencySelector from './CurrencySelector';
 import { User } from '../types';
 
 interface NavbarProps {
@@ -140,9 +139,8 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
               <Logo theme="dark" />
             </button>
 
-            <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-5" ref={wrapperRef}>
+            <div className="flex items-center space-x-3 sm:space-x-5" ref={wrapperRef}>
               <div className="gtranslate_wrapper"></div>
-              <CurrencySelector />
               <ThemeToggle theme={theme} onToggle={toggleTheme} />
               <div className="relative">
                 <button onClick={() => setIsOpen(s => !s)} aria-expanded={isOpen} aria-haspopup="true" className="font-bold tracking-widest text-sm sm:text-base uppercase transition-colors hover:text-byd-red flex items-center whitespace-nowrap">
