@@ -55,15 +55,16 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
       {heroVehicle && <Hero vehicle={heroVehicle} onExplore={() => onSelectForDetail(heroVehicle)} />}
       
       {/* --- Main Vehicle Listing Section (Merged from VehiclesPage) --- */}
-      <section className="py-20 bg-white dark:bg-black">
-        <div className="container mx-auto px-6">
+      <section className="bg-white dark:bg-black">
+        <div className="container mx-auto px-6 py-20">
           <h2 className="text-4xl font-bold text-center mb-4">Our Vehicle Lineup</h2>
           <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
             From sleek sedans to versatile SUVs and commercial solutions, explore the full range of BYD's innovative electric vehicles. Find the perfect model that fits your lifestyle.
           </p>
+        </div>
 
           {/* Vehicle Grid - now shows all filtered vehicles */}
-          <div className={`grid grid-cols-1 gap-8 max-w-3xl mx-auto ${compareList.length > 0 ? 'pb-28' : ''}`}>
+          <div className={`flex flex-col ${compareList.length > 0 ? 'pb-28' : ''}`}>
             {vehicles.map((vehicle) => (
               <VehicleCard 
                 key={vehicle.id} 
@@ -76,7 +77,6 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
               />
             ))}
           </div>
-        </div>
       </section>
 
       {/* --- Rest of HomePage content (Giveaway, About) --- */}
