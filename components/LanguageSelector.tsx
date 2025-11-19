@@ -41,12 +41,26 @@ const LanguageSelector: React.FC = () => {
   }, []);
 
   const handleLanguageChange = (lang: typeof languages[0]) => {
-    // Trigger GTranslate language change
+    // Try multiple methods to trigger GTranslate language change
+    
+    // Method 1: Try to find and trigger the select element
     const select = document.querySelector('.gtranslate_wrapper select') as HTMLSelectElement;
     if (select) {
       select.value = lang.code;
       select.dispatchEvent(new Event('change', { bubbles: true }));
     }
+    
+    // Method 2: Try to find GTranslate links
+    const gtLink = document.querySelector(`.gtranslate_wrapper a[data-gt-lang="${lang.code}"]`) as HTMLAnchorElement;
+    if (gtLink) {
+      gtLink.click();
+    }
+    
+    // Method 3: Check if doGTranslate function exists globally
+    if (typeof (window as any).doGTranslate === 'function') {
+      (window as any).doGTranslate(`en|${lang.code}`);
+    }
+    
     setSelectedLang(lang);
     setIsOpen(false);
   };
@@ -55,14 +69,13 @@ const LanguageSelector: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-white/10 transition-colors"
+        className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-white/10 transition-colors"
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label="Select language"
       >
-        <span className="text-lg">{selectedLang.flag}</span>
-        <span className="font-semibold text-white text-sm">{selectedLang.short}</span>
-        <ion-icon name={isOpen ? "chevron-up-outline" : "chevron-down-outline"} style={{ fontSize: '16px', color: 'white' }}></ion-icon>
+        <span className="text-2xl leading-none">{selectedLang.flag}</span>
+        <ion-icon name={isOpen ? "chevron-up-outline" : "chevron-down-outline"} style={{ fontSize: '14px', color: 'white' }}></ion-icon>
       </button>
 
       {isOpen && (
@@ -72,7 +85,7 @@ const LanguageSelector: React.FC = () => {
               <button
                 key={lang.code}
                 onClick={() => handleLanguageChange(lang)}
-                className="w-full text-left px-4 py-2 hover:bg-gray-700 flex items-center gap-3 transition-colors"
+                className={`w-full text-left px-4 py-2 hover:bg-gray-700 flex items-center gap-3 transition-colors ${selectedLang.code === lang.code ? 'bg-gray-700' : ''}`}
               >
                 <span className="text-lg">{lang.flag}</span>
                 <span>{lang.name}</span>
