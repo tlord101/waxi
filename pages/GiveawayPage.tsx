@@ -12,6 +12,11 @@ interface GiveawayPageProps {
 
 const COUNTRIES = ["China", "United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Japan", "Other"];
 
+// HAN EV pricing
+const HAN_EV_PRICE = 239800;
+const ORIGINAL_PRICE = Math.round(HAN_EV_PRICE * 1.3); // 30% more than sale price
+const DISCOUNT_AMOUNT = 40000;
+
 const GiveawayPage: React.FC<GiveawayPageProps> = ({ currentUser, setCurrentUser, setCurrentPage }) => {
   const { content, isLoading } = useSiteContent();
   const paymentSettings = content?.paymentSettings?.giveaway;
@@ -289,41 +294,138 @@ const GiveawayPage: React.FC<GiveawayPageProps> = ({ currentUser, setCurrentUser
 
   if (!currentUser) {
     return (
-      <div className="relative py-20 overflow-hidden min-h-[80vh] flex items-center">
-        <img src={content.homepage.giveaway_bg_image_url} alt="Giveaway Background" className="absolute inset-0 w-full h-full object-cover opacity-30 dark:opacity-30"/>
-        <div className="relative container mx-auto px-6">
-          <div className="max-w-lg mx-auto bg-white/20 dark:bg-black/20 backdrop-blur-sm p-8 rounded-xl shadow-lg text-center">
-            <div className="text-6xl mb-4 text-byd-red"><i className="bi bi-person-lock"></i></div>
-            <h2 className="text-3xl font-bold text-byd-red mb-4">Login Required</h2>
-            <p className="text-lg text-gray-800 dark:text-gray-200 mb-6">You must be logged in to your account to enter the giveaway.</p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => setCurrentPage('Login')}
-                className="w-full bg-byd-red text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red-dark transition-colors duration-300"
-              >
-                Login
-              </button>
-              <button
-                onClick={() => setCurrentPage('Signup')}
-                className="w-full bg-transparent border border-byd-red text-byd-red dark:text-white dark:border-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-byd-red/10 dark:hover:bg-white/10 transition-colors duration-300"
-              >
-                Sign Up
-              </button>
-            </div>
+      <div className="relative min-h-screen w-full overflow-hidden flex items-center justify-center">
+        {/* Background Image - BYD HAN EV */}
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center"
+          style={{ 
+            backgroundImage: 'url(https://i.ibb.co/vvRThLL/han.jpg)',
+          }}
+        />
+        
+        {/* Dark overlay for contrast */}
+        <div className="absolute inset-0 bg-black/20" />
+        
+        {/* Premium Content Overlay */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-12 text-center">
+          
+          {/* Main Headline */}
+          <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-black mb-4 sm:mb-6 tracking-tighter drop-shadow-2xl">
+            BLACK FRIDAY BYD
+          </h1>
+          
+          {/* General Offer */}
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 sm:mb-8 tracking-tight drop-shadow-lg px-4">
+            UNLOCK UNBELIEVABLE SAVINGS ON THE ENTIRE HAN EV LINE!<br />
+            <span className="text-byd-red">UP TO ¥{DISCOUNT_AMOUNT.toLocaleString()} OFF!</span>
+          </h2>
+          
+          {/* Model Name */}
+          <h3 className="text-4xl sm:text-5xl md:text-6xl font-black text-black mb-8 sm:mb-10 tracking-wider drop-shadow-xl">
+            BYD HAN EV
+          </h3>
+          
+          {/* Price Block */}
+          <div className="mb-8 sm:mb-12">
+            <p className="text-xl sm:text-2xl md:text-3xl text-white font-semibold mb-2 line-through opacity-80">
+              WAS ¥{ORIGINAL_PRICE.toLocaleString()}
+            </p>
+            <p className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white drop-shadow-2xl mb-2">
+              NOW JUST <span className="text-byd-red">¥{HAN_EV_PRICE.toLocaleString()}</span>
+            </p>
+            <p className="text-lg sm:text-xl md:text-2xl text-white/90 font-medium">
+              STARTING AT THIS INCREDIBLE PRICE
+            </p>
           </div>
+          
+          {/* Call to Action Button */}
+          <button
+            onClick={() => setCurrentPage('Login')}
+            className="px-12 sm:px-16 md:px-20 py-5 sm:py-6 md:py-7 text-xl sm:text-2xl md:text-3xl font-black text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 uppercase tracking-wider border-4 border-white"
+          >
+            BOOK A TEST DRIVE
+          </button>
+          
+          {/* Login prompt */}
+          <p className="mt-6 sm:mt-8 text-lg sm:text-xl text-white/90 font-semibold drop-shadow-lg">
+            Login or Sign Up to Book Your Test Drive
+          </p>
+          
+        </div>
+        
+        {/* Small Footnotes */}
+        <div className="absolute bottom-4 left-0 right-0 px-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs sm:text-sm text-white/80 z-10">
+          <p className="drop-shadow-md">Terms and conditions apply. Promotion not combinable with other offers.</p>
+          <p className="drop-shadow-md">Prices valid on Snow White models only.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative py-20 overflow-hidden min-h-[80vh] flex items-center">
-      <img src={content.homepage.giveaway_bg_image_url} alt="Giveaway Background" className="absolute inset-0 w-full h-full object-cover opacity-30 dark:opacity-30"/>
-      <div className="relative container mx-auto px-6">
-        {step === 'FORM' && <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-center">{content.homepage.giveaway_title}</h1>}
-        <div className="mt-12">
-          {renderContent()}
+    <div className="relative min-h-screen w-full overflow-hidden flex items-center justify-center">
+      {/* Background Image - BYD HAN EV */}
+      <div 
+        className="absolute inset-0 w-full h-full bg-cover bg-center"
+        style={{ 
+          backgroundImage: 'url(https://i.ibb.co/vvRThLL/han.jpg)',
+        }}
+      />
+      
+      {/* Dark overlay for contrast */}
+      <div className="absolute inset-0 bg-black/20" />
+      
+      {/* Premium Content Overlay */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-12 text-center">
+        
+        {/* Main Headline */}
+        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-black mb-4 sm:mb-6 tracking-tighter drop-shadow-2xl">
+          BLACK FRIDAY BYD
+        </h1>
+        
+        {/* General Offer */}
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 sm:mb-8 tracking-tight drop-shadow-lg px-4">
+          UNLOCK UNBELIEVABLE SAVINGS ON THE ENTIRE HAN EV LINE!<br />
+          <span className="text-byd-red">UP TO ¥{DISCOUNT_AMOUNT.toLocaleString()} OFF!</span>
+        </h2>
+        
+        {/* Model Name */}
+        <h3 className="text-4xl sm:text-5xl md:text-6xl font-black text-black mb-8 sm:mb-10 tracking-wider drop-shadow-xl">
+          BYD HAN EV
+        </h3>
+        
+        {/* Price Block */}
+        <div className="mb-8 sm:mb-12">
+          <p className="text-xl sm:text-2xl md:text-3xl text-white font-semibold mb-2 line-through opacity-80">
+            WAS ¥{ORIGINAL_PRICE.toLocaleString()}
+          </p>
+          <p className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white drop-shadow-2xl mb-2">
+            NOW JUST <span className="text-byd-red">¥{HAN_EV_PRICE.toLocaleString()}</span>
+          </p>
+          <p className="text-lg sm:text-xl md:text-2xl text-white/90 font-medium">
+            STARTING AT THIS INCREDIBLE PRICE
+          </p>
         </div>
+        
+        {/* Call to Action Button */}
+        <button
+          onClick={() => setCurrentPage('VehicleDetail')}
+          className="px-12 sm:px-16 md:px-20 py-5 sm:py-6 md:py-7 text-xl sm:text-2xl md:text-3xl font-black text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300 uppercase tracking-wider border-4 border-white"
+        >
+          BOOK A TEST DRIVE
+        </button>
+        
+        {/* User greeting */}
+        <p className="mt-6 sm:mt-8 text-lg sm:text-xl text-white/90 font-semibold drop-shadow-lg">
+          Welcome, {currentUser.name}! Book Your Exclusive Test Drive Now
+        </p>
+        
+      </div>
+      
+      {/* Small Footnotes */}
+      <div className="absolute bottom-4 left-0 right-0 px-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs sm:text-sm text-white/80 z-10">
+        <p className="drop-shadow-md">Terms and conditions apply. Promotion not combinable with other offers.</p>
+        <p className="drop-shadow-md">Prices valid on Snow White models only.</p>
       </div>
     </div>
   );
