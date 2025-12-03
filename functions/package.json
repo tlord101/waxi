@@ -1,0 +1,27 @@
+{
+  "name": "waxi-functions",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "18"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "firebase-admin": "^11.10.0",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  }
+}
+{
+  "name": "waxi-ai-functions",
+  "version": "0.1.0",
+  "main": "index.js",
+  "engines": {
+    "node": "18"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}

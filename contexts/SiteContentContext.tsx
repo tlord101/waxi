@@ -6,6 +6,7 @@ interface SiteContentContextType {
   content: SiteContent | null;
   isLoading: boolean;
   refreshContent: () => void;
+  saveSiteContent?: (docId: keyof SiteContent | 'paymentSettings', data: any) => Promise<void>;
 }
 
 const SiteContentContext = createContext<SiteContentContextType | undefined>(undefined);
@@ -26,6 +27,16 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   };
 
+  const saveSiteContent = async (docId: keyof SiteContent | 'paymentSettings', data: any) => {
+    try {
+      await updateSiteContent(docId, data);
+      await fetchContent();
+    } catch (error) {
+      console.error('Failed to save site content:', error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     fetchContent();
   }, []);
@@ -33,7 +44,8 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const value = useMemo(() => ({
     content,
     isLoading,
-    refreshContent: fetchContent
+    refreshContent: fetchContent,
+    saveSiteContent
   }), [content, isLoading]);
 
   return (

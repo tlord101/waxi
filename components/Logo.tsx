@@ -29,17 +29,18 @@ const Logo: React.FC<LogoProps> = ({
 
   // Use uploaded logo if available, otherwise use default
   const logoUrl = content?.logo_url || bydLogoDataUri;
+  const siteName = content?.site_name || 'Zhengzhou';
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <img 
         src={logoUrl}
-        alt="Zhengzhou Logo"
+        alt={`${siteName} Logo`}
         className={`${logoHeight} w-auto transition-all duration-300 ease-in-out ${hoverGlowClass}`}
       />
 
       <span className={`${textSize} font-semibold ${textColor} tracking-wider transition-colors duration-300`}>
-        Zhengzhou
+        {siteName}
       </span>
     </div>
   );

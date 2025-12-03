@@ -4,6 +4,7 @@ import { Page, Theme } from '../types';
 import ThemeToggle from './ThemeToggle';
 import Logo from './Logo';
 import LanguageSelector from './LanguageSelector';
+import { useSiteContent } from '../contexts/SiteContentContext';
 import { User } from '../types';
 
 interface NavbarProps {
@@ -151,6 +152,35 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
                 {isOpen && (
                   <div role="menu" aria-label="Main menu" className="absolute right-0 mt-2 w-56 bg-gray-800 text-white rounded-md shadow-lg ring-1 ring-black/30">
                     <div className="py-2">
+                      {/** Render editable menu from SiteContent when available */}
+                      {
+                        (() => {
+                          try {
+                            const { content } = (useSiteContent() as any);
+                            const menu = content?.menu;
+                            if (menu && Array.isArray(menu) && menu.length > 0) {
+                              return menu.map((item: any) => {
+                                if (item.children && item.children.length > 0) {
+                                  return (
+                                    <div key={item.id} className="border-b border-gray-700">
+                                      <div className="px-4 py-2 font-semibold">{item.label}</div>
+                                      {item.children.map((c: any) => (
+                                        <button key={c.id} onClick={() => handleNavigate((c.route as any) || 'Home')} className="w-full text-left px-6 py-2 hover:bg-gray-700">{c.label}</button>
+                                      ))}
+                                    </div>
+                                  );
+                                }
+                                return <button key={item.id} onClick={() => handleNavigate((item.route as any) || 'Home')} className="w-full text-left px-4 py-2 hover:bg-gray-700">{item.label}</button>;
+                              });
+                            }
+                          } catch (err) {
+                            // fallback to static menu below
+                          }
+                          return null;
+                        })()
+                      }
+
+                      {/* Fallback static menu */}
                       <button onClick={() => handleNavigate('Home')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Home</button>
                       <button onClick={() => handleNavigate('Vehicles')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Vehicles</button>
                       <button onClick={() => handleNavigate('Contact')} className="w-full text-left px-4 py-2 hover:bg-gray-700">Contact Us</button>

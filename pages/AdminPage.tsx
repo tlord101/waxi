@@ -11,9 +11,11 @@ import DepositsTab from '../components/admin/DepositsTab';
 import ContentTab from '../components/admin/ContentTab';
 import PaymentSettingsTab from '../components/admin/PaymentSettingsTab';
 import LiveChatTab from '../components/admin/LiveChatTab';
+import AiPageBuilder from '../components/admin/AiPageBuilder';
+import MenuEditor from '../components/admin/MenuEditor';
 import { Page } from '../types';
 
-export type AdminTab = 'Analytics' | 'Vehicles' | 'Orders' | 'Deposits' | 'Installments' | 'Giveaway' | 'Live Chat' | 'Email Logs' | 'Content' | 'Payment Settings';
+export type AdminTab = 'Analytics' | 'Vehicles' | 'Orders' | 'Deposits' | 'Installments' | 'Giveaway' | 'Live Chat' | 'Email Logs' | 'Content' | 'Payment Settings' | 'AI Builder' | 'Menu Editor';
 
 interface AdminPageProps {
   onLogout: () => void;
@@ -38,6 +40,10 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, setCurrentPage }) => {
         return <InstallmentsTab />;
       case 'Giveaway':
         return <GiveawayTab />;
+      case 'AI Builder':
+        return <AiPageBuilder />;
+      case 'Menu Editor':
+        return <MenuEditor />;
       case 'Live Chat':
         return <LiveChatTab />;
       case 'Email Logs':

@@ -40,3 +40,25 @@ html {
 .animate-fade-in-up {
   animation: fadeInUp 0.3s ease-out;
 }
+
+/* Make form controls readable in both light and dark themes */
+input[type="text"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="url"], select, textarea {
+  @apply text-black dark:text-white;
+}
+
+/* Ensure select dropdowns inherit readable text color */
+select {
+  color: inherit;
+}
+
+/* Admin forms: force readable text in inputs/selects/textarea in both themes */
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  color: #000 !important;
+}
+.dark .admin-form input,
+.dark .admin-form select,
+.dark .admin-form textarea {
+  color: #fff !important;
+}

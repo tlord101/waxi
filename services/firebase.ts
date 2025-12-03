@@ -15,6 +15,7 @@ const firebaseConfig = {
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
+import 'firebase/compat/storage';
 
 let app: firebase.app.App;
 try {
@@ -30,5 +31,6 @@ try {
 
 const auth = firebase.auth();
 const db = firebase.firestore();
+const storage = firebase.storage();
 
-export { app, auth, db };
+export { app, auth, db, storage };

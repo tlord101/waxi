@@ -657,6 +657,8 @@ export const getSiteContent = async (): Promise<SiteContent | null> => {
             const logoData = logoDoc.data();
             content.logo_url = logoData?.url || '';
         }
+        const siteNameDoc = await collectionRef.doc('site_name').get();
+        if (siteNameDoc.exists) content.site_name = siteNameDoc.data()?.name || siteNameDoc.data()?.site_name || '';
         
         const homepageDoc = await collectionRef.doc('homepage').get();
         if (homepageDoc.exists) content.homepage = homepageDoc.data() as SiteContent['homepage'];
@@ -669,6 +671,12 @@ export const getSiteContent = async (): Promise<SiteContent | null> => {
         
         const paymentSettingsDoc = await collectionRef.doc('paymentSettings').get();
         if (paymentSettingsDoc.exists) content.paymentSettings = paymentSettingsDoc.data() as SiteContent['paymentSettings'];
+
+        const menuDoc = await collectionRef.doc('menu').get();
+        if (menuDoc.exists) content.menu = menuDoc.data()?.items || menuDoc.data();
+
+        const pagesDoc = await collectionRef.doc('pages').get();
+        if (pagesDoc.exists) content.pages = pagesDoc.data() as SiteContent['pages'];
 
         return content as SiteContent;
     } catch (error) {

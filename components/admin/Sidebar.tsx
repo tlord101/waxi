@@ -22,6 +22,8 @@ const TABS: { name: AdminTab, icon: string }[] = [
   { name: 'Content', icon: 'create-outline' },
   { name: 'Payment Settings', icon: 'settings-outline' },
   { name: 'Email Logs', icon: 'mail-outline' },
+  { name: 'AI Builder', icon: 'sparkles-outline' },
+  { name: 'Menu Editor', icon: 'menu-outline' },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, isOpen, setIsOpen, onLogout, setCurrentPage }) => {
