@@ -74,18 +74,18 @@ const AdminSiteSettings: React.FC = () => {
         <label className="block font-semibold mb-1">Logo URL / Upload</label>
         <input
           type="text"
-          className="w-full border rounded px-3 py-2 mb-2"
+          className="w-full border rounded px-3 py-2 mb-2 text-black"
           value={logoUrl}
           onChange={e => setLogoUrl(e.target.value)}
           placeholder="Paste image URL or upload below"
         />
-        <input type="file" accept="image/*" onChange={handleLogoFile} />
+        <input type="file" accept="image/*" onChange={handleLogoFile} className="text-black" />
       </div>
       <div className="mb-4">
         <label className="block font-semibold mb-1">Site Name</label>
         <input
           type="text"
-          className="w-full border rounded px-3 py-2"
+          className="w-full border rounded px-3 py-2 text-black"
           value={siteName}
           onChange={e => setSiteName(e.target.value)}
         />
@@ -96,18 +96,18 @@ const AdminSiteSettings: React.FC = () => {
         <label className="block font-semibold mb-1">Hero Background Image</label>
         <input
           type="text"
-          className="w-full border rounded px-3 py-2 mb-2"
+          className="w-full border rounded px-3 py-2 mb-2 text-black"
           value={heroBg}
           onChange={e => setHeroBg(e.target.value)}
           placeholder="Paste image URL or upload below"
         />
-        <input type="file" accept="image/*" onChange={handleHeroFile} />
+        <input type="file" accept="image/*" onChange={handleHeroFile} className="text-black" />
       </div>
       <div className="mb-4">
         <label className="block font-semibold mb-1">Headline</label>
         <input
           type="text"
-          className="w-full border rounded px-3 py-2"
+          className="w-full border rounded px-3 py-2 text-black"
           value={headline}
           onChange={e => setHeadline(e.target.value)}
         />
@@ -116,7 +116,7 @@ const AdminSiteSettings: React.FC = () => {
         <label className="block font-semibold mb-1">Subheadline</label>
         <input
           type="text"
-          className="w-full border rounded px-3 py-2"
+          className="w-full border rounded px-3 py-2 text-black"
           value={subheadline}
           onChange={e => setSubheadline(e.target.value)}
         />
@@ -125,7 +125,7 @@ const AdminSiteSettings: React.FC = () => {
         <label className="block font-semibold mb-1">Button Text</label>
         <input
           type="text"
-          className="w-full border rounded px-3 py-2"
+          className="w-full border rounded px-3 py-2 text-black"
           value={buttonText}
           onChange={e => setButtonText(e.target.value)}
         />

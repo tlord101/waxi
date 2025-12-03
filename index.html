@@ -18,19 +18,21 @@
         document.documentElement.classList.remove('dark')
       }
 
-      tailwind.config = {
-        darkMode: 'class', // Enable class-based dark mode
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-            colors: {
-              'byd-red': '#d9001b',
-              'byd-red-dark': '#a50014',
+      if (typeof tailwind !== 'undefined') {
+        tailwind.config = {
+          darkMode: 'class', // Enable class-based dark mode
+          theme: {
+            extend: {
+              fontFamily: {
+                sans: ['Inter', 'sans-serif'],
+              },
+              colors: {
+                'byd-red': '#d9001b',
+                'byd-red-dark': '#a50014',
+              },
             },
           },
-        },
+        }
       }
     </script>
     <style>

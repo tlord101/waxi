@@ -63,19 +63,19 @@ const AiPageBuilder: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <label className="block font-semibold mb-1">Page</label>
-          <select value={pageId} onChange={e => setPageId(e.target.value)} className="w-full border rounded px-3 py-2 text-black dark:text-white">
+          <select value={pageId} onChange={e => setPageId(e.target.value)} className="w-full border rounded px-3 py-2 text-black">
             {AVAILABLE_PAGES.map(p => <option key={p} value={p}>{p}</option>)}
           </select>
         </div>
         <div className="md:col-span-2">
           <label className="block font-semibold mb-1">Prompt</label>
-          <textarea value={prompt} onChange={e => setPrompt(e.target.value)} rows={3} className="w-full border rounded px-3 py-2 text-black dark:text-white" />
+          <textarea value={prompt} onChange={e => setPrompt(e.target.value)} rows={3} className="w-full border rounded px-3 py-2 text-black" />
         </div>
       </div>
 
       <div className="mb-4">
         <label className="block font-semibold mb-1">Reference Images (optional)</label>
-        <input type="file" accept="image/*" multiple onChange={handleFiles} />
+        <input type="file" accept="image/*" multiple onChange={handleFiles} className="text-black" />
         <div className="mt-3 flex gap-3">
           {imageUrls.map(u => <img key={u} src={u} className="h-20 w-auto object-cover rounded" alt="ref" />)}
         </div>
@@ -89,7 +89,7 @@ const AiPageBuilder: React.FC = () => {
       {spec && (
         <div className="mt-6 border-t pt-6">
           <h3 className="text-xl font-semibold mb-3">Preview (Spec)</h3>
-          <pre className="whitespace-pre-wrap text-sm bg-gray-100 p-3 rounded">{JSON.stringify(spec, null, 2)}</pre>
+          <pre className="whitespace-pre-wrap text-sm bg-gray-100 p-3 rounded text-black">{JSON.stringify(spec, null, 2)}</pre>
         </div>
       )}
     </div>
