@@ -41,9 +41,9 @@ const Hero: React.FC = () => {
       </div>
 
       {/* MAIN CONTENT */}
-      <main className="flex-grow flex items-center justify-center relative z-10 w-full max-w-[95%] mx-auto px-4 lg:px-8 min-h-screen">
+      <main className="flex-grow flex items-center justify-center relative z-10 w-full max-w-[95%] mx-auto px-4 lg:px-8 min-h-screen pt-[50px] md:pt-0">
         
-        <div className="flex flex-col md:flex-row items-center justify-between w-full gap-4 md:gap-12">
+        <div className="flex flex-col md:flex-row items-center justify-between w-full gap-2 md:gap-12">
 
           {/* LEFT SIDE: TEXT (Width 45%) */}
           <div className="w-full md:w-[45%] space-y-6 animate-fade-in relative z-20 text-left md:pl-4 pt-10 md:pt-0">
@@ -73,7 +73,7 @@ const Hero: React.FC = () => {
           </div>
 
           {/* RIGHT SIDE: VISUALS (Width 55%) */}
-          <div className="w-full md:w-[55%] relative h-[400px] md:h-[600px] flex items-center justify-end perspective-1000 mt-8 md:mt-0">
+          <div className="w-full md:w-[55%] relative h-[300px] md:h-[600px] flex items-center justify-end perspective-1000 mt-0 md:mt-0">
             
             {/* Car Image - Dynamically loaded from admin settings */}
             <div className="relative z-30 w-[110%] md:w-[130%] right-[5%] md:right-0 hover:scale-105 transition-transform duration-700">
