@@ -1,7 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSiteContent } from '../contexts/SiteContentContext';
 
 const Hero: React.FC = () => {
+  const navigate = useNavigate();
   const siteContent = useSiteContent();
   const heroImageUrl = siteContent?.content?.homepage?.hero_image_url || 'https://pngimg.com/d/audi_PNG1736.png';
 
@@ -63,8 +65,8 @@ const Hero: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap gap-4 pt-4 delay-200 animate-fade-in opacity-0 fill-mode-forwards">
-              <button className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full hover:scale-105 transition shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center gap-2">
-                Book Test Drive <i className="fa-solid fa-arrow-right"></i>
+              <button onClick={() => navigate('/Dashboard')} className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full hover:scale-105 transition shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center gap-2">
+                Visit Dashboard <i className="fa-solid fa-arrow-right"></i>
               </button>
               <button className="border border-white hover:border-red-600 text-white hover:text-red-600 py-3 px-8 rounded-full transition bg-transparent hover:bg-white/5">
                 View Specs
