@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { SiteContentContext } from '../contexts/SiteContentContext';
+import { useSiteContent } from '../contexts/SiteContentContext';
 
 const Hero: React.FC = () => {
-  const siteContentCtx = useContext(SiteContentContext);
-  const heroImageUrl = siteContentCtx?.content?.homepage?.hero_image_url || 'https://pngimg.com/d/audi_PNG1736.png';
+  const siteContent = useSiteContent();
+  const heroImageUrl = siteContent?.content?.homepage?.hero_image_url || 'https://pngimg.com/d/audi_PNG1736.png';
 
   return (
     <>
