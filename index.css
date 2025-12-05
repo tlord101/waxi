@@ -5,9 +5,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Use Inter as the default sans font (Google Fonts are still loaded from the link in index.html) */
+/* Use Inter as the default sans font and Playfair Display as serif (Google Fonts are loaded from the link in index.html) */
 :root {
   --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
 }
 
 body {
