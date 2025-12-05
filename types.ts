@@ -122,6 +122,7 @@ export interface ChatSession {
 // --- Site Content Management Types ---
 
 export interface HomePageContent {
+  hero_image_url: string;
   giveaway_bg_image_url: string;
   giveaway_title: string;
   giveaway_description: string;

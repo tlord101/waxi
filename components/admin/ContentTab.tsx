@@ -165,7 +165,10 @@ const ContentTab: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
         <h3 className="text-xl font-bold mb-4 border-b pb-2 dark:border-gray-700 text-black dark:text-white">Home Page Content</h3>
         <div className="space-y-4">
-          <h4 className="font-semibold text-gray-600 dark:text-gray-300">Giveaway Section</h4>
+          <h4 className="font-semibold text-gray-600 dark:text-gray-300">Hero Section</h4>
+          <ImageUploadField label="Hero Image" currentImageUrl={formData.homepage.hero_image_url} onImageChange={(file) => handleImageChange('homepage_hero_image_url', file)} />
+
+          <h4 className="font-semibold pt-4 border-t dark:border-gray-700 text-gray-600 dark:text-gray-300">Giveaway Section</h4>
           <ImageUploadField label="Giveaway Background Image" currentImageUrl={formData.homepage.giveaway_bg_image_url} onImageChange={(file) => handleImageChange('homepage_giveaway_bg_image_url', file)} />
           <input type="text" placeholder="Giveaway Title" value={formData.homepage.giveaway_title} onChange={e => handleInputChange('homepage', 'giveaway_title', e.target.value)} className="w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md"/>
           <textarea placeholder="Giveaway Description" value={formData.homepage.giveaway_description} onChange={e => handleInputChange('homepage', 'giveaway_description', e.target.value)} className="w-full p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md" rows={3}></textarea>

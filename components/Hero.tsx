@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { SiteContentContext } from '../contexts/SiteContentContext';
 
 const Hero: React.FC = () => {
+  const siteContentCtx = useContext(SiteContentContext);
+  const heroImageUrl = siteContentCtx?.content?.homepage?.hero_image_url || 'https://pngimg.com/d/audi_PNG1736.png';
+
   return (
     <>
       <style>{`
@@ -71,10 +75,10 @@ const Hero: React.FC = () => {
           {/* RIGHT SIDE: VISUALS (Width 55%) */}
           <div className="w-full md:w-[55%] relative h-[400px] md:h-[600px] flex items-center justify-end perspective-1000 mt-8 md:mt-0">
             
-            {/* Car Image (White car looks best on Black/Red theme) */}
+            {/* Car Image - Dynamically loaded from admin settings */}
             <div className="relative z-30 w-[110%] md:w-[130%] right-[5%] md:right-0 hover:scale-105 transition-transform duration-700">
               <img 
-                src="https://pngimg.com/d/audi_PNG1736.png" 
+                src={heroImageUrl} 
                 alt="BYD Seal White" 
                 className="w-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]"
               />
