@@ -41,28 +41,33 @@ const LanguageSelector: React.FC = () => {
   }, []);
 
   const handleLanguageChange = (lang: typeof languages[0]) => {
-    // Try multiple methods to trigger GTranslate language change
+    setSelectedLang(lang);
+    setIsOpen(false);
     
-    // Method 1: Try to find and trigger the select element
+    // Trigger GTranslate language change
+    // Method 1: Try doGTranslate function (most reliable)
+    if (typeof (window as any).doGTranslate === 'function') {
+      (window as any).doGTranslate(`en|${lang.code}`);
+      return;
+    }
+    
+    // Method 2: Try to find and click GTranslate link in hidden wrapper
+    const gtLink = document.querySelector(`.gtranslate_wrapper a[data-gt-lang="${lang.code}"]`) as HTMLAnchorElement;
+    if (gtLink) {
+      gtLink.click();
+      return;
+    }
+    
+    // Method 3: Try to find and change the select element
     const select = document.querySelector('.gtranslate_wrapper select') as HTMLSelectElement;
     if (select) {
       select.value = lang.code;
       select.dispatchEvent(new Event('change', { bubbles: true }));
+      return;
     }
     
-    // Method 2: Try to find GTranslate links
-    const gtLink = document.querySelector(`.gtranslate_wrapper a[data-gt-lang="${lang.code}"]`) as HTMLAnchorElement;
-    if (gtLink) {
-      gtLink.click();
-    }
-    
-    // Method 3: Check if doGTranslate function exists globally
-    if (typeof (window as any).doGTranslate === 'function') {
-      (window as any).doGTranslate(`en|${lang.code}`);
-    }
-    
-    setSelectedLang(lang);
-    setIsOpen(false);
+    // Fallback: Log if translation didn't work
+    console.warn(`Could not trigger translation to ${lang.code}. GTranslate may not be fully initialized.`);
   };
 
   return (

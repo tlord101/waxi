@@ -142,7 +142,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, setCurrentPage, isAdminLog
             </button>
 
             <div className="flex items-center space-x-3 sm:space-x-5" ref={wrapperRef}>
-              <div className="gtranslate_wrapper" style={{ display: 'none' }}></div>
+              <div className="gtranslate_wrapper" style={{ position: 'absolute', top: '-9999px', left: '-9999px', visibility: 'hidden' }}></div>
               <LanguageSelector />
               <ThemeToggle theme={theme} onToggle={toggleTheme} />
               <div className="relative">

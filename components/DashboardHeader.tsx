@@ -63,7 +63,7 @@ const DashboardHeader: React.FC<Props> = ({ currentPage, setCurrentPage, onLogou
           <h1 className="text-2xl font-bold">{title || 'My Dashboard'}</h1>
         </div>
         <div className="flex items-center gap-4">
-          <div className="gtranslate_wrapper" style={{ display: 'none' }}></div>
+          <div className="gtranslate_wrapper" style={{ position: 'absolute', top: '-9999px', left: '-9999px', visibility: 'hidden' }}></div>
           <LanguageSelector />
         </div>
       </div>
