@@ -1,9 +1,22 @@
 import React from 'react';
+import { Vehicle } from '../types';
 import { useSiteContent } from '../contexts/SiteContentContext';
 
-const Hero: React.FC = () => {
+interface HeroProps {
+  vehicle?: Vehicle;
+  onExplore?: () => void;
+}
+
+const Hero: React.FC<HeroProps> = ({ vehicle: _vehicle, onExplore: _onExplore }) => {
   const siteContent = useSiteContent();
   const heroImageUrl = siteContent?.content?.homepage?.hero_image_url || 'https://pngimg.com/d/audi_PNG1736.png';
+
+  const handleViewSpecsClick = () => {
+    const lineupSection = document.getElementById('vehicle-lineup');
+    if (lineupSection) {
+      lineupSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <>
@@ -54,8 +67,7 @@ const Hero: React.FC = () => {
             
             <div className="relative pl-6 border-l-4 border-red-600 delay-100 animate-fade-in opacity-0 fill-mode-forwards">
               <p className="text-gray-300 text-lg leading-relaxed max-w-md">
-                The all-new <strong className="text-white">BYD Seal</strong>. 
-                Performance. Passion. Precision.
+                Leading the future of clean mobility, Zhengzhou BYD Autos gives you direct access to factory-priced electric vehicles. Discover our latest lineup and find the perfect BYD built for you.
               </p>
               <p className="text-sm text-red-600 mt-2 font-mono uppercase tracking-widest font-bold">
                 Available Now • Starting at $45,000
@@ -66,7 +78,7 @@ const Hero: React.FC = () => {
               <button onClick={() => { window.location.href = '/Dashboard'; }} className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full hover:scale-105 transition shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center gap-2">
                 Visit Dashboard <i className="fa-solid fa-arrow-right"></i>
               </button>
-              <button className="border border-white hover:border-red-600 text-white hover:text-red-600 py-3 px-8 rounded-full transition bg-transparent hover:bg-white/5">
+              <button onClick={handleViewSpecsClick} className="border border-white hover:border-red-600 text-white hover:text-red-600 py-3 px-8 rounded-full transition bg-transparent hover:bg-white/5">
                 View Specs
               </button>
             </div>

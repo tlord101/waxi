@@ -55,7 +55,7 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
       {heroVehicle && <Hero vehicle={heroVehicle} onExplore={() => onSelectForDetail(heroVehicle)} />}
       
       {/* --- Main Vehicle Listing Section (Merged from VehiclesPage) --- */}
-      <section className="bg-white dark:bg-black">
+      <section id="vehicle-lineup" className="bg-white dark:bg-black">
         <div className="container mx-auto px-6 py-20">
           <h2 className="text-4xl font-bold text-center mb-4">Our Vehicle Lineup</h2>
           <p className="text-center text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
