@@ -7,7 +7,7 @@ import InstallmentPage from './pages/InstallmentPage';
 import GiveawayPage from './pages/GiveawayPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
-import LiveChatWidget from './components/AIAssistant';
+import LiveChatWidget from './components/AIAssistant'; 
 import OrderPage from './pages/OrderPage';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
