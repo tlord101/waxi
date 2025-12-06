@@ -127,6 +127,7 @@ export interface HomePageContent {
   giveaway_title: string;
   giveaway_description: string;
   giveaway_button_text: string;
+  about_bg_image_url: string;
   about_image_url: string;
   about_title: string;
   about_text: string;

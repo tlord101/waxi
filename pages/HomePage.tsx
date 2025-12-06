@@ -59,7 +59,16 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
       
       {/* --- About Us Section (Right Below Hero) --- */}
       {homepageContent && homepageContent.about_image_url && (
-        <section className="relative py-24 bg-white dark:bg-black overflow-hidden">
+        <section className="relative py-24 overflow-hidden">
+          {/* Background Image with Overlay */}
+          {homepageContent.about_bg_image_url && (
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${homepageContent.about_bg_image_url})` }}
+            />
+          )}
+          {/* Gradient overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 dark:from-black/95 to-white/70 dark:to-black/70"></div>
           {/* Decorative background elements */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-byd-red/5 rounded-full blur-3xl -mr-48 -mt-48"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -ml-48 -mb-48"></div>
@@ -95,7 +104,7 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
                 <div className="h-1 w-20 bg-gradient-to-r from-byd-red to-orange-500 rounded-full mb-8"></div>
                 
                 {/* Description Text */}
-                <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8 font-light">
+                <p className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed mb-8 font-light">
                   {homepageContent.about_text || 'At Zhengzhou BYD Vehicles Co., Ltd, we are committed to providing innovative and sustainable transportation solutions. As an authorized dealer in the heart of Zhengzhou, we bring you the latest in electric vehicle technology, backed by unparalleled customer service.'}
                 </p>
                 

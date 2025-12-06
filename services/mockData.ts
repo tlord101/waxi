@@ -295,6 +295,7 @@ export const mockSiteContent: SiteContent = {
     giveaway_title: 'Win a BYD Dolphin!',
     giveaway_description: 'Participate in our exclusive giveaway for a chance to own the future of city driving. A $1,000 entry fee is required to secure your spot.',
     giveaway_button_text: 'Enter the Giveaway',
+    about_bg_image_url: 'https://picsum.photos/seed/byd-factory/1920/1080',
     about_image_url: 'https://picsum.photos/seed/byd-dealership/800/600',
     about_title: 'Welcome to Zhengzhou BYD',
     about_text: 'At Zhengzhou BYD Vehicles Co., Ltd, we are committed to providing innovative and sustainable transportation solutions. As an authorized dealer in the heart of Zhengzhou, we bring you the latest in electric vehicle technology, backed by unparalleled customer service.',
