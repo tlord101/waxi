@@ -92,7 +92,7 @@ const Hero: React.FC<HeroProps> = ({ vehicle: _vehicle, onExplore: _onExplore, c
                 Leading the future of clean mobility, Zhengzhou BYD Autos gives you direct access to factory-priced electric vehicles. Discover our latest lineup and find the perfect BYD built for you.
               </p>
               <p className="text-sm text-red-600 mt-2 font-mono uppercase tracking-widest font-bold">
-                Available Now • Starting at $45,000
+                Zhengzhou BYD Vehicles available now . Starting at $15,000
               </p>
             </div>
 
