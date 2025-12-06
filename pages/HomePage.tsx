@@ -57,6 +57,113 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
     <div>
       {heroVehicle && <Hero vehicle={heroVehicle} onExplore={() => onSelectForDetail(heroVehicle)} onVisitDashboard={onVisitDashboard} currentUser={currentUser} isAdminLoggedIn={isAdminLoggedIn} />}
       
+      {/* --- About Us Section (Right Below Hero) --- */}
+      {homepageContent && homepageContent.about_image_url && (
+        <section className="relative py-24 bg-white dark:bg-black overflow-hidden">
+          {/* Decorative background elements */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-byd-red/5 rounded-full blur-3xl -mr-48 -mt-48"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -ml-48 -mb-48"></div>
+          
+          <div className="relative container mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+              
+              {/* Image Column */}
+              <div className="relative group order-2 lg:order-1">
+                <div className="absolute -inset-2 bg-gradient-to-r from-byd-red via-orange-500 to-red-600 rounded-2xl blur opacity-0 group-hover:opacity-75 transition duration-500"></div>
+                <img 
+                  src={homepageContent.about_image_url} 
+                  alt="About BYD" 
+                  className="relative w-full h-96 lg:h-full rounded-2xl object-cover shadow-2xl"
+                />
+              </div>
+              
+              {/* Content Column */}
+              <div className="order-1 lg:order-2">
+                {/* Pre-heading */}
+                <div className="inline-block mb-4">
+                  <span className="inline-block px-4 py-2 bg-byd-red/10 text-byd-red font-semibold text-sm uppercase tracking-widest rounded-full">
+                    About Our Company
+                  </span>
+                </div>
+                
+                {/* Main Heading */}
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-black dark:text-white mb-6 leading-tight">
+                  {homepageContent.about_title || 'Welcome to Zhengzhou BYD'}
+                </h2>
+                
+                {/* Divider */}
+                <div className="h-1 w-20 bg-gradient-to-r from-byd-red to-orange-500 rounded-full mb-8"></div>
+                
+                {/* Description Text */}
+                <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8 font-light">
+                  {homepageContent.about_text || 'At Zhengzhou BYD Vehicles Co., Ltd, we are committed to providing innovative and sustainable transportation solutions. As an authorized dealer in the heart of Zhengzhou, we bring you the latest in electric vehicle technology, backed by unparalleled customer service.'}
+                </p>
+                
+                {/* Features List */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-byd-red/10 text-byd-red">
+                        <ion-icon name="flash-outline" class="text-2xl"></ion-icon>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-black dark:text-white mb-1">Innovation</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Cutting-edge EV technology</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-byd-red/10 text-byd-red">
+                        <ion-icon name="shield-checkmark-outline" class="text-2xl"></ion-icon>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-black dark:text-white mb-1">Reliability</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Trusted by millions worldwide</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-byd-red/10 text-byd-red">
+                        <ion-icon name="leaf-outline" class="text-2xl"></ion-icon>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-black dark:text-white mb-1">Sustainable</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Zero-emission solutions</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-byd-red/10 text-byd-red">
+                        <ion-icon name="star-outline" class="text-2xl"></ion-icon>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-black dark:text-white mb-1">Excellence</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Premium customer service</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* CTA Button */}
+                <button 
+                  onClick={() => setCurrentPage('About')}
+                  className="inline-flex items-center gap-3 bg-gradient-to-r from-byd-red to-red-600 hover:from-byd-red-dark hover:to-red-700 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
+                >
+                  {homepageContent.about_button_link_text || 'Learn More About Us'}
+                  <ion-icon name="arrow-forward-outline" class="text-xl"></ion-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+      
       {/* --- Main Vehicle Listing Section (Merged from VehiclesPage) --- */}
       <section id="vehicle-lineup" className="bg-white dark:bg-black">
         <div className="container mx-auto px-6 py-20">
