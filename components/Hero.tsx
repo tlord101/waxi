@@ -1,13 +1,16 @@
 import React from 'react';
-import { Vehicle } from '../types';
+import { Vehicle, User } from '../types';
 import { useSiteContent } from '../contexts/SiteContentContext';
 
 interface HeroProps {
   vehicle?: Vehicle;
   onExplore?: () => void;
+  currentUser?: User | null;
+  isAdminLoggedIn?: boolean;
+  onVisitDashboard?: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ vehicle: _vehicle, onExplore: _onExplore }) => {
+const Hero: React.FC<HeroProps> = ({ vehicle: _vehicle, onExplore: _onExplore, currentUser, isAdminLoggedIn, onVisitDashboard }) => {
   const siteContent = useSiteContent();
   const heroImageUrl = siteContent?.content?.homepage?.hero_image_url || 'https://pngimg.com/d/audi_PNG1736.png';
 
@@ -18,8 +21,27 @@ const Hero: React.FC<HeroProps> = ({ vehicle: _vehicle, onExplore: _onExplore })
     }
   };
 
+  const handleVisitDashboard = () => {
+    if (onVisitDashboard) {
+      onVisitDashboard();
+      return;
+    }
+    // Fallback: mirror navbar behavior
+    if (isAdminLoggedIn) {
+      window.dispatchEvent(new CustomEvent('open-dashboard-sidebar'));
+      window.location.href = '/Admin';
+      return;
+    }
+    if (currentUser) {
+      window.dispatchEvent(new CustomEvent('open-dashboard-sidebar'));
+      window.location.href = '/Dashboard';
+      return;
+    }
+    window.location.href = '/Login';
+  };
+
   return (
-    <>
+    <div className="relative bg-black text-white overflow-hidden">
       <style>{`
         body { background-color: #0a0a0a; color: white; overflow-x: hidden; }
         
@@ -54,7 +76,7 @@ const Hero: React.FC<HeroProps> = ({ vehicle: _vehicle, onExplore: _onExplore })
       </div>
 
       {/* MAIN CONTENT */}
-      <main className="flex-grow flex items-center justify-center relative z-10 w-full max-w-[95%] mx-auto px-4 lg:px-8 min-h-screen pt-[50px] md:pt-0">
+      <main className="flex-grow flex items-center justify-center relative z-10 w-full max-w-[95%] mx-auto px-4 lg:px-8 min-h-screen pt-[50px] md:pt-0 bg-black text-white">
         
         <div className="flex flex-col md:flex-row items-center justify-between w-full gap-2 md:gap-12">
 
@@ -75,7 +97,7 @@ const Hero: React.FC<HeroProps> = ({ vehicle: _vehicle, onExplore: _onExplore })
             </div>
 
             <div className="flex flex-wrap gap-4 pt-4 delay-200 animate-fade-in opacity-0 fill-mode-forwards">
-              <button onClick={() => { window.location.href = '/Dashboard'; }} className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full hover:scale-105 transition shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center gap-2">
+              <button onClick={handleVisitDashboard} className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full hover:scale-105 transition shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center gap-2">
                 Visit Dashboard <i className="fa-solid fa-arrow-right"></i>
               </button>
               <button onClick={handleViewSpecsClick} className="border border-white hover:border-red-600 text-white hover:text-red-600 py-3 px-8 rounded-full transition bg-transparent hover:bg-white/5">
@@ -100,7 +122,7 @@ const Hero: React.FC<HeroProps> = ({ vehicle: _vehicle, onExplore: _onExplore })
 
         </div>
       </main>
-    </>
+    </div>
   );
 };
 

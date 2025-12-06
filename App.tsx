@@ -168,6 +168,20 @@ const App: React.FC = () => {
     setCurrentPage('VehicleDetail');
   };
 
+  const handleVisitDashboard = () => {
+    if (isAdminLoggedIn) {
+      setCurrentPage('Admin');
+      setTimeout(() => window.dispatchEvent(new CustomEvent('open-dashboard-sidebar')), 120);
+      return;
+    }
+    if (currentUser) {
+      setCurrentPage('Dashboard');
+      setTimeout(() => window.dispatchEvent(new CustomEvent('open-dashboard-sidebar')), 120);
+      return;
+    }
+    setCurrentPage('Login');
+  };
+
   const handleAdminLogout = async () => {
     await logoutUser();
     setIsAdminLoggedIn(false);
@@ -267,10 +281,10 @@ const App: React.FC = () => {
 
     switch (currentPage) {
       case 'Home':
-        return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} />;
+        return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} onVisitDashboard={handleVisitDashboard} currentUser={currentUser} isAdminLoggedIn={isAdminLoggedIn} />;
       case 'Vehicles':
         // The "Vehicles" page now renders the enhanced HomePage component which contains the full list.
-        return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} />;
+        return <HomePage vehicles={vehicles} setCurrentPage={setCurrentPage} onSelectForInstallment={handleSelectForInstallment} onSelectForPurchase={handleSelectForPurchase} onSelectForDetail={handleSelectForDetail} onVisitDashboard={handleVisitDashboard} currentUser={currentUser} isAdminLoggedIn={isAdminLoggedIn} />;
       case 'Installment':
         return <InstallmentPage vehicle={selectedVehicleForInstallment} setCurrentPage={setCurrentPage} />;
       case 'Giveaway':

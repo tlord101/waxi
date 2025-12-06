@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Hero from '../components/Hero';
 // FIX: Import Page from types.ts to break circular dependency.
-import { Page, Vehicle } from '../types';
+import { Page, Vehicle, User } from '../types';
 import VehicleCard from '../components/VehicleCard';
 import { useSiteContent } from '../contexts/SiteContentContext';
 import CompareBar from '../components/CompareBar';
@@ -13,9 +13,12 @@ interface HomePageProps {
   onSelectForInstallment: (vehicle: Vehicle) => void;
   onSelectForPurchase: (vehicle: Vehicle) => void;
   onSelectForDetail: (vehicle: Vehicle) => void;
+  onVisitDashboard?: () => void;
+  currentUser?: User | null;
+  isAdminLoggedIn?: boolean;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase, onSelectForDetail }) => {
+const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase, onSelectForDetail, onVisitDashboard, currentUser, isAdminLoggedIn }) => {
   const { content } = useSiteContent();
   const homepageContent = content?.homepage;
 
@@ -52,7 +55,7 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
 
   return (
     <div>
-      {heroVehicle && <Hero vehicle={heroVehicle} onExplore={() => onSelectForDetail(heroVehicle)} />}
+      {heroVehicle && <Hero vehicle={heroVehicle} onExplore={() => onSelectForDetail(heroVehicle)} onVisitDashboard={onVisitDashboard} currentUser={currentUser} isAdminLoggedIn={isAdminLoggedIn} />}
       
       {/* --- Main Vehicle Listing Section (Merged from VehiclesPage) --- */}
       <section id="vehicle-lineup" className="bg-white dark:bg-black">
