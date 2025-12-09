@@ -21,6 +21,10 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectForInstallment, onSelectForPurchase, onSelectForDetail, onVisitDashboard, currentUser, isAdminLoggedIn }) => {
   const { content } = useSiteContent();
   const homepageContent = content?.homepage;
+  const aboutText = homepageContent?.about_text || 'At Zhengzhou BYD Vehicles Co., Ltd, we are committed to providing innovative and sustainable transportation solutions. As an authorized dealer in the heart of Zhengzhou, we bring you the latest in electric vehicle technology, backed by unparalleled customer service.';
+  const aboutBulletItems = aboutText.includes('✓')
+    ? aboutText.split('✓').map(item => item.trim()).filter(Boolean)
+    : [];
 
   // State from VehiclesPage
   const [compareList, setCompareList] = useState<Vehicle[]>([]);
@@ -103,10 +107,21 @@ const HomePage: React.FC<HomePageProps> = ({ vehicles, setCurrentPage, onSelectF
                 {/* Divider */}
                 <div className="h-1 w-20 bg-gradient-to-r from-byd-red to-orange-500 rounded-full"></div>
                 
-                {/* Description Text */}
-                <p className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed font-light">
-                  {homepageContent.about_text || 'At Zhengzhou BYD Vehicles Co., Ltd, we are committed to providing innovative and sustainable transportation solutions. As an authorized dealer in the heart of Zhengzhou, we bring you the latest in electric vehicle technology, backed by unparalleled customer service.'}
-                </p>
+                {/* Description Text / Bulleted Highlights */}
+                {aboutBulletItems.length > 0 ? (
+                  <ul className="space-y-3 text-gray-800 dark:text-gray-200 leading-relaxed font-light">
+                    {aboutBulletItems.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <span className="mt-1 text-byd-red">✓</span>
+                        <span className="text-base md:text-lg whitespace-pre-line">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed font-light whitespace-pre-line">
+                    {aboutText}
+                  </p>
+                )}
                 
                 {/* Features List */}
                 <div className="grid grid-cols-2 gap-6 pt-4">
