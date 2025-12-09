@@ -10,7 +10,7 @@ import ContactPage from './pages/ContactPage';
 import LiveChatWidget from './components/AIAssistant'; 
 import OrderPage from './pages/OrderPage';
 import AdminPage from './pages/AdminPage';
-import LoginPage from './pages/LoginPage';
+import LoginPage from  './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import WalletPage from './pages/WalletPage';
